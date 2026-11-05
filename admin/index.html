@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -239,6 +240,9 @@ th{background:#eee}
 ========================= */
 
 const ADMIN_UID = "feec62cf-3af7-4315-add9-96b6aeb117ff";
+
+/* 每次讀取 1000 筆，避開 Supabase Max Rows 限制 */
+const PAGE_SIZE = 1000;
 
 let supabaseClient = null;
 let currentUser = null;
@@ -487,6 +491,7 @@ $("logout").onclick = async () => {
 
   currentUser = null;
   currentFactorId = null;
+  rows = [];
 
   $("dataPanel").classList.add("hidden");
   $("mfaPanel").classList.add("hidden");
@@ -591,7 +596,7 @@ $("enroll").onclick = async () => {
 
 
 /* =========================
-   七、新增：修復未驗證 TOTP 因子
+   七、修復未驗證 TOTP 因子
 ========================= */
 
 $("repairFactor").onclick = async () => {
@@ -807,22 +812,54 @@ $("verify").onclick = async () => {
 
 /* =========================
    九、載入候選人資料
+   修正重點：分批讀取全部資料
 ========================= */
 
 async function loadRows(){
 
  await requireAAL2();
 
- const {data,error} =
-  await supabaseClient
-   .from("candidates")
-   .select("id,data,is_published,created_at,updated_at")
-   .order("created_at",{ascending:true})
-   .limit(5000);
+ let allRows = [];
+ let from = 0;
+ let hasMore = true;
 
- if(error) throw error;
+ say(
+  "dataStatus",
+  "正在分批載入候選人資料，請稍候……"
+ );
 
- rows = data || [];
+ while(hasMore){
+
+  const to = from + PAGE_SIZE - 1;
+
+  const {data,error} =
+   await supabaseClient
+    .from("candidates")
+    .select("id,data,is_published,created_at,updated_at")
+    .order("created_at",{ascending:true})
+    .order("id",{ascending:true})
+    .range(from,to);
+
+  if(error) throw error;
+
+  const batch = data || [];
+
+  allRows = allRows.concat(batch);
+
+  say(
+   "dataStatus",
+   "正在載入候選人資料："+allRows.length+" 筆……"
+  );
+
+  if(batch.length < PAGE_SIZE){
+   hasMore = false;
+  }else{
+   from += PAGE_SIZE;
+  }
+
+ }
+
+ rows = allRows;
 
  renderRows();
 
@@ -917,13 +954,21 @@ $("filter").onchange = renderRows;
 
 $("refresh").onclick = async () => {
 
+ const button = $("refresh");
+
  try{
+
+  button.disabled = true;
 
   await loadRows();
 
  }catch(e){
 
-  say("dataStatus",e.message);
+  say("dataStatus","載入失敗："+e.message);
+
+ }finally{
+
+  button.disabled = false;
 
  }
 
