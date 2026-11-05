@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -140,6 +139,25 @@ th{background:#eee}
 <input id="totp" inputmode="numeric" maxlength="6" placeholder="000000">
 
 <button class="primary" id="verify">驗證並提升安全等級</button>
+
+<hr>
+
+<h2>管理員驗證器修復</h2>
+
+<p class="small">
+若之前建立的 TOTP 因子一直處於 unverified，
+而且原本的驗證器無法使用，可以透過伺服器端修復功能，
+刪除指定的未驗證因子，再重新建立驗證器。
+此操作不會刪除管理員帳號或候選人資料。
+</p>
+
+<button class="danger" id="repairFactor">
+修復未驗證 TOTP 因子
+</button>
+
+<div id="repairStatus" class="status">
+尚未執行修復。
+</div>
 
 <div id="mfaStatus" class="status">尚未完成 AAL2 驗證</div>
 </div>
@@ -396,8 +414,6 @@ $("login").onclick = async () => {
 
   showAdmin();
 
-  /* 登入後檢查既有 TOTP 因子 */
-
   const {data:factorData,error:factorError} =
    await supabaseClient.auth.mfa.listFactors();
 
@@ -510,8 +526,6 @@ $("enroll").onclick = async () => {
   const verified =
    factors.find(x=>x.status === "verified");
 
-  /* 已有未驗證因子：直接使用，不重新建立 */
-
   if(unverified){
 
    currentFactorId = unverified.id;
@@ -528,8 +542,6 @@ $("enroll").onclick = async () => {
 
   }
 
-  /* 已有 verified 因子 */
-
   if(verified){
 
    currentFactorId = verified.id;
@@ -545,8 +557,6 @@ $("enroll").onclick = async () => {
    return;
 
   }
-
-  /* 完全沒有因子，才建立新的 */
 
   const {data:enrollData,error:enrollError} =
    await supabaseClient.auth.mfa.enroll({
@@ -581,7 +591,126 @@ $("enroll").onclick = async () => {
 
 
 /* =========================
-   七、TOTP 驗證
+   七、新增：修復未驗證 TOTP 因子
+========================= */
+
+$("repairFactor").onclick = async () => {
+
+ const button = $("repairFactor");
+
+ try{
+
+  requireAdmin();
+
+  if(!supabaseClient){
+   throw new Error("Supabase 尚未連線，請重新登入。");
+  }
+
+  const confirmed = confirm(
+   "即將執行 TOTP 驗證器修復。\n\n"+
+   "修復範圍：\n"+
+   "1. 僅限目前管理員帳號。\n"+
+   "2. 僅刪除名稱為「地方選舉管理後台」的未驗證 TOTP 因子。\n"+
+   "3. 不會刪除管理員帳號。\n"+
+   "4. 不會修改或刪除候選人資料。\n\n"+
+   "修復後需要重新建立並綁定手機驗證器。\n\n"+
+   "確定要繼續嗎？"
+  );
+
+  if(!confirmed) return;
+
+  button.disabled = true;
+
+  say(
+   "repairStatus",
+   "正在向 Supabase 伺服器提出修復請求，請稍候……"
+  );
+
+  const {data,error} =
+   await supabaseClient.functions.invoke(
+    "repair-admin-totp",
+    {
+     body:{}
+    }
+   );
+
+  if(error){
+
+   let detail = error.message || "Edge Function 呼叫失敗。";
+
+   if(error.context){
+
+    try{
+
+     const response = await error.context.json();
+
+     if(response.error){
+      detail = response.error;
+     }
+
+    }catch(_){}
+
+   }
+
+   throw new Error(detail);
+
+  }
+
+  if(!data){
+   throw new Error("伺服器沒有回傳修復結果。");
+  }
+
+  if(!data.success){
+   throw new Error(data.error || "修復未成功。");
+  }
+
+  if(data.deleted === 1){
+
+   currentFactorId = null;
+
+   $("totp").value = "";
+   $("qrArea").textContent = "";
+
+   say(
+    "repairStatus",
+    "修復成功！\n"+
+    data.message+
+    "\n\n現在可以按「建立／檢查 TOTP 驗證器」，重新建立驗證器。"
+   );
+
+   say(
+    "mfaStatus",
+    "舊的未驗證因子已由伺服器移除。請重新建立 TOTP 驗證器。"
+   );
+
+  }else{
+
+   say(
+    "repairStatus",
+    data.message || "伺服器沒有找到符合條件的未驗證因子，沒有進行刪除。"
+   );
+
+  }
+
+ }catch(e){
+
+  say(
+   "repairStatus",
+   "修復失敗：\n"+e.message+
+   "\n\n請先不要重複操作，將錯誤訊息提供給我。"
+  );
+
+ }finally{
+
+  button.disabled = false;
+
+ }
+
+};
+
+
+/* =========================
+   八、TOTP 驗證
 ========================= */
 
 $("verify").onclick = async () => {
@@ -592,16 +721,9 @@ $("verify").onclick = async () => {
 
   const code = $("totp").value.trim();
 
-  /* 修正：正確檢查六位數字 */
-
   if(!/^\d{6}$/.test(code)){
    throw new Error("請輸入 6 位數驗證碼。");
   }
-
-  /*
-   * 如果目前沒有 factor ID，
-   * 重新取得 Supabase 已存在的因子。
-   */
 
   if(!currentFactorId){
 
@@ -632,16 +754,12 @@ $("verify").onclick = async () => {
 
   }
 
-  /* 建立驗證挑戰 */
-
   const {data:challenge,error:challengeError} =
    await supabaseClient.auth.mfa.challenge({
     factorId:currentFactorId
    });
 
   if(challengeError) throw challengeError;
-
-  /* 驗證手機 App 的六位數代碼 */
 
   const {data:verifyData,error:verifyError} =
    await supabaseClient.auth.mfa.verify({
@@ -651,8 +769,6 @@ $("verify").onclick = async () => {
    });
 
   if(verifyError) throw verifyError;
-
-  /* 再次確認安全等級 */
 
   const {data:aal,error:aalError} =
    await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -690,7 +806,7 @@ $("verify").onclick = async () => {
 
 
 /* =========================
-   八、載入候選人資料
+   九、載入候選人資料
 ========================= */
 
 async function loadRows(){
@@ -720,7 +836,7 @@ async function loadRows(){
 
 
 /* =========================
-   九、候選人資料列表
+   十、候選人資料列表
 ========================= */
 
 function renderRows(){
@@ -796,7 +912,7 @@ $("filter").onchange = renderRows;
 
 
 /* =========================
-   十、重新載入資料
+   十一、重新載入資料
 ========================= */
 
 $("refresh").onclick = async () => {
@@ -815,7 +931,7 @@ $("refresh").onclick = async () => {
 
 
 /* =========================
-   十一、編輯候選人
+   十二、編輯候選人
 ========================= */
 
 function edit(id){
@@ -839,7 +955,7 @@ function edit(id){
 
 
 /* =========================
-   十二、新增候選人
+   十三、新增候選人
 ========================= */
 
 $("newRecord").onclick = () => {
@@ -874,7 +990,7 @@ $("cancelEdit").onclick = () => {
 
 
 /* =========================
-   十三、儲存候選人
+   十四、儲存候選人
 ========================= */
 
 $("saveRecord").onclick = async () => {
@@ -937,7 +1053,7 @@ $("saveRecord").onclick = async () => {
 
 
 /* =========================
-   十四、刪除候選人
+   十五、刪除候選人
 ========================= */
 
 $("deleteRecord").onclick = async () => {
@@ -972,7 +1088,7 @@ $("deleteRecord").onclick = async () => {
 
 
 /* =========================
-   十五、發布單筆候選人
+   十六、發布單筆候選人
 ========================= */
 
 async function publishOne(id){
@@ -1001,7 +1117,7 @@ async function publishOne(id){
 
 
 /* =========================
-   十六、全部發布草稿
+   十七、全部發布草稿
 ========================= */
 
 $("publishAll").onclick = async () => {
@@ -1038,7 +1154,7 @@ $("publishAll").onclick = async () => {
 
 
 /* =========================
-   十七、匯入 1,693 筆初始資料
+   十八、匯入 1,693 筆初始資料
 ========================= */
 
 $("importBtn").onclick = async () => {
