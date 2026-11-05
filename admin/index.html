@@ -72,6 +72,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;borde
 </div>
 </main>
 <script>
+(() => {
 const ADMIN_UID = "feec62cf-3af7-4315-add9-96b6aeb117ff";
 let supabase = null, currentUser = null, currentFactorId = null, editingId = null, rows = [];
 const $ = id => document.getElementById(id);
@@ -112,4 +113,5 @@ $("deleteRecord").onclick=async()=>{if(!editingId||!confirm("確定永久刪除�
 async function publishOne(id){try{await requireAAL2();const {error}=await supabase.rpc("publish_candidate",{candidate_id:id});if(error)throw error;await loadRows()}catch(e){say("dataStatus",e.message)}}
 $("publishAll").onclick=async()=>{if(!confirm("確定將所有草稿發布至公開網站？"))return;try{await requireAAL2();const {data,error}=await supabase.rpc("publish_all_candidate_drafts");if(error)throw error;await loadRows();say("dataStatus","已發布草稿。RPC 回傳："+JSON.stringify(data));}catch(e){say("dataStatus",e.message)}};
 $("importBtn").onclick=async()=>{if(!confirm("將匯入 1,693 筆初始資料，全部設為草稿。若已匯入過，請勿重複執行。確定繼續？"))return;try{await requireAAL2();const res=await fetch("../data/initial-candidates.json");if(!res.ok)throw new Error("無法讀取 data/initial-candidates.json。請確認網站檔案結構或使用 GitHub Pages 根目錄部署。");const items=await res.json();let inserted=0;for(let i=0;i<items.length;i+=100){const batch=items.slice(i,i+100).map(data=>({data,is_published:false,published_data:null}));const {error}=await supabase.from("candidates").insert(batch);if(error)throw error;inserted+=batch.length;say("dataStatus","匯入中："+inserted+"/"+items.length+"（全部為草稿）");}await loadRows();say("dataStatus","匯入完成："+inserted+" 筆，全部為草稿。");}catch(e){say("dataStatus","匯入失敗："+e.message+"\\n若已部分匯入，請先檢查資料庫，避免直接重複匯入。")}};
+})();
 </script></body></html>
