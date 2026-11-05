@@ -85,8 +85,8 @@ body{padding:12px}
 }
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n</head><body><div class="main-wrapper"><section class="intro-area"><h1 class="intro-title">我想快速了解……</h1></section><section class="level-area"><h2 class="section-title">地方層級</h2><div class="level-list"><button class="level-button" data-level="直轄市" type="button">直轄市</button><button class="level-button" data-level="縣市" type="button">縣市</button><button class="level-button" data-level="直轄市山地原住民區" type="button">直轄市山地原住民區</button></div></section><section class="role-area"><h2 class="section-title">職位分類</h2><div class="role-list"><button class="role-button" data-role="地方首長" type="button">地方首長</button><button class="role-button" data-role="地方民意代表" type="button">地方民意代表</button></div></section><section class="results-area"><h2 class="results-title">地區及候選人</h2><div id="resultsContent"><div class="empty-message">請先選擇左側的地方層級及職位分類<br>系統將顯示符合條件的地區及候選人</div></div><p class="data-note">資料來源：中央選舉委員會115年地方公職人員選舉候選人登記名冊。</p></section></div><script>
 // 請填入 Supabase 專案 URL 與 Publishable/anon key（可公開的 anon key，不是 Secret/service_role key）
-const SUPABASE_URL = "請填入_SUPABASE_PROJECT_URL";
-const SUPABASE_ANON_KEY = "請填入_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+const SUPABASE_URL = "https://mvmkdhdfpomgnsukxsh.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_rToUq4v8aQa7N1cotVj4zQ_H0mdRwRF";
 const regionData = {"直轄市":["臺北市","新北市","桃園市","臺中市","臺南市","高雄市"],"縣市":["基隆市","新竹市","嘉義市","新竹縣","苗栗縣","彰化縣","南投縣","雲林縣","嘉義縣","屏東縣","宜蘭縣","花蓮縣","臺東縣","澎湖縣","金門縣","連江縣"],"直轄市山地原住民區":["新北市烏來區","桃園市復興區","臺中市和平區","高雄市桃源區","高雄市那瑪夏區","高雄市茂林區"]};
 let records = [];
 
