@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>地方選舉候選人管理後台</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:#222;background:#f5f5f5}
+main{max-width:1250px;margin:auto}.panel{background:#fff;border:1px solid #bbb;padding:22px;margin:0 0 18px}
+h1{font-size:26px;margin:0 0 18px}h2{font-size:19px;margin:0 0 14px}
+label{display:block;font-size:14px;margin:10px 0 5px}input,textarea,select{width:100%;padding:10px;border:1px solid #999;font:inherit;background:#fff}
+textarea{min-height:180px;font-family:ui-monospace,monospace;font-size:13px}
+button{padding:9px 14px;border:1px solid #333;background:#fff;cursor:pointer;font:inherit;margin:5px 5px 5px 0}
+button.primary{background:#222;color:#fff}button.danger{border-color:#a22;color:#a22}
+button:disabled{opacity:.45;cursor:not-allowed}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.status{padding:10px;background:#eee;white-space:pre-wrap;line-height:1.6;margin:10px 0}
+.small{font-size:12px;color:#666;line-height:1.7}.hidden{display:none!important}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}th{background:#eee}
+.table-wrap{overflow:auto;max-height:480px}.pill{display:inline-block;padding:2px 7px;border:1px solid #888;font-size:12px}
+@media(max-width:700px){body{padding:12px}.row{grid-template-columns:1fr}.panel{padding:15px}}
+</style></head>
+<body><main>
+<h1>地方選舉候選人管理後台</h1>
+<div class="panel">
+<h2>一、系統連線設定</h2>
+<div class="row"><div><label>Supabase Project URL</label><input id="url" placeholder="https://xxxx.supabase.co"></div>
+<div><label>Publishable key / anon public key</label><input id="key" placeholder="sb_publishable_... 或舊版 anon key"></div></div>
+<p class="small">只可填入 Publishable key 或 anon public key。絕不可填入 Secret key、service_role key 或資料庫密碼。設定只保存在這台瀏覽器的 localStorage。</p>
+<button class="primary" id="saveConfig">儲存連線設定</button>
+<div id="connectionStatus" class="status">尚未連線</div>
+</div>
+
+<div class="panel" id="authPanel">
+<h2>二、管理員登入</h2>
+<div class="row"><div><label>管理員 Email</label><input id="email" type="email" autocomplete="username"></div>
+<div><label>密碼</label><input id="password" type="password" autocomplete="current-password"></div></div>
+<button class="primary" id="login">登入</button><button id="logout">登出</button>
+<div id="authStatus" class="status">尚未登入</div>
+</div>
+
+<div class="panel hidden" id="mfaPanel">
+<h2>三、雙重驗證（TOTP）</h2>
+<p class="small">第一次使用請先建立驗證器。請使用 Google Authenticator、Microsoft Authenticator 或相容 TOTP App。若已有驗證器，直接輸入 6 位數驗證碼。</p>
+<button id="enroll">建立 TOTP 驗證器</button>
+<div id="qrArea" class="small"></div>
+<label>驗證器 6 位數代碼</label><input id="totp" inputmode="numeric" maxlength="6" placeholder="000000">
+<button class="primary" id="verify">驗證並提升安全等級</button>
+<div id="mfaStatus" class="status">尚未完成 AAL2 驗證</div>
+</div>
+
+<div class="panel hidden" id="dataPanel">
+<h2>四、候選人資料管理</h2>
+<div class="toolbar">
+<button id="refresh">重新載入</button><button id="newRecord">新增候選人</button>
+<button id="importBtn">匯入初始 1,693 筆（僅草稿）</button>
+<button class="primary" id="publishAll">全部發布草稿</button>
+</div>
+<div class="row">
+<div><label>搜尋姓名／地區／政黨</label><input id="search" placeholder="輸入關鍵字"></div>
+<div><label>資料狀態</label><select id="filter"><option value="all">全部</option><option value="draft">草稿</option><option value="published">已發布</option></select></div>
+</div>
+<div class="status" id="dataStatus">請先完成 MFA AAL2 驗證。</div>
+<div class="table-wrap"><table><thead><tr><th>姓名</th><th>地區／職位</th><th>政黨</th><th>狀態</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+
+<div class="panel hidden" id="editorPanel">
+<h2 id="editorTitle">編輯候選人資料</h2>
+<p class="small">請以 JSON 格式編輯單筆資料。欄位：level、region、role、position、district、date、name、party、note。</p>
+<textarea id="recordJson" spellcheck="false"></textarea>
+<div class="toolbar"><button class="primary" id="saveRecord">儲存為草稿</button><button id="cancelEdit">取消</button><button class="danger" id="deleteRecord">刪除資料</button></div>
+<div class="small" id="editStatus"></div>
+</div>
+</main>
+<script>
+const ADMIN_UID = "feec62cf-3af7-4315-add9-96b6aeb117ff";
+let supabase = null, currentUser = null, currentFactorId = null, editingId = null, rows = [];
+const $ = id => document.getElementById(id);
+function say(id,msg){$(id).textContent=msg}
+function config(){return {url:$("url").value.trim(),key:$("key").value.trim()}}
+function connect(){
+ const c=config(); if(!c.url||!c.key) throw new Error("請先填入 Supabase URL 與 Publishable/anon key。");
+ supabase=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ return supabase;
+}
+function requireAdmin(){
+ if(!currentUser || currentUser.id!==ADMIN_UID) throw new Error("目前登入帳號不是設定的唯一管理員帳號。");
+}
+async function requireAAL2(){
+ requireAdmin();
+ const {data,error}=await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+ if(error) throw error;
+ if(data.currentLevel!=="aal2") throw new Error("此操作需要 AAL2。請先完成 TOTP 驗證。");
+}
+function showAdmin(){ $("mfaPanel").classList.remove("hidden"); $("dataPanel").classList.remove("hidden"); }
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+$("url").value=localStorage.getItem("lec_supabase_url")||"";
+$("key").value=localStorage.getItem("lec_supabase_key")||"";
+$("saveConfig").onclick=()=>{try{const c=config();if(!c.url||!c.key)throw new Error("請完整填寫 URL 與 key");localStorage.setItem("lec_supabase_url",c.url);localStorage.setItem("lec_supabase_key",c.key);connect();say("connectionStatus","已儲存設定。請登入管理員帳號。");}catch(e){say("connectionStatus",e.message)}};
+$("login").onclick=async()=>{try{connect();const {data,error}=await supabase.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)throw error;currentUser=data.user;if(currentUser.id!==ADMIN_UID){await supabase.auth.signOut();currentUser=null;throw new Error("此帳號不是唯一管理員，已自動登出。");}showAdmin();const {data:aal}=await supabase.auth.mfa.getAuthenticatorAssuranceLevel();say("authStatus","登入成功："+currentUser.email+"\\n目前安全等級："+aal.currentLevel+"（需要 aal2 才能管理資料）");say("mfaStatus","登入完成。請完成 TOTP 驗證後管理資料。");}catch(e){say("authStatus",e.message)}};
+$("logout").onclick=async()=>{if(supabase)await supabase.auth.signOut();currentUser=null;$("dataPanel").classList.add("hidden");$("mfaPanel").classList.add("hidden");say("authStatus","已登出");};
+$("enroll").onclick=async()=>{try{requireAdmin();const {data,error}=await supabase.auth.mfa.enroll({factorType:"totp",friendlyName:"地方選舉管理後台"});if(error)throw error;currentFactorId=data.id;$("qrArea").innerHTML='<p>請使用驗證器 App 掃描下方 QR Code：</p><img alt="TOTP QR Code" style="max-width:220px" src="'+data.totp.qr_code+'"><p>若無法掃描，可手動輸入：<code>'+esc(data.totp.secret)+'</code></p>';say("mfaStatus","已建立待驗證的 TOTP 因子，請掃描 QR Code 後輸入 6 位數代碼。");}catch(e){say("mfaStatus",e.message)}};
+$("verify").onclick=async()=>{try{requireAdmin();const code=$("totp").value.trim();if(!/^\\d{6}$/.test(code))throw new Error("請輸入 6 位數驗證碼。");if(!currentFactorId){const {data,error}=await supabase.auth.mfa.listFactors();if(error)throw error;const f=data.totp.find(x=>x.status==="verified");if(!f)throw new Error("尚未建立已驗證的 TOTP 因子，請先按「建立 TOTP 驗證器」。");currentFactorId=f.id;}const {data:challenge,error:ce}=await supabase.auth.mfa.challenge({factorId:currentFactorId});if(ce)throw ce;const {data,error}=await supabase.auth.mfa.verify({factorId:currentFactorId,challengeId:challenge.id,code});if(error)throw error;const {data:aal,error:ae}=await supabase.auth.mfa.getAuthenticatorAssuranceLevel();if(ae)throw ae;say("mfaStatus","驗證完成，目前安全等級："+aal.currentLevel);if(aal.currentLevel==="aal2")await loadRows();}catch(e){say("mfaStatus",e.message)}};
+async function loadRows(){await requireAAL2();const {data,error}=await supabase.from("candidates").select("id,data,is_published,created_at,updated_at").order("created_at",{ascending:true}).limit(5000);if(error)throw error;rows=data||[];renderRows();say("dataStatus","已載入 "+rows.length+" 筆資料。管理操作已通過 AAL2 檢查。");}
+function renderRows(){const q=$("search").value.trim().toLowerCase(),f=$("filter").value;const list=rows.filter(r=>{const d=r.data||{};const hay=[d.name,d.region,d.party,d.position,d.district].join(" ").toLowerCase();return (!q||hay.includes(q))&&(f==="all"||(f==="draft"&&!r.is_published)||(f==="published"&&r.is_published));});$("rows").innerHTML=list.map(r=>{const d=r.data||{};return '<tr><td>'+esc(d.name)+'</td><td>'+esc(d.region)+'<br>'+esc(d.position)+'<br>'+esc(d.district)+'</td><td>'+esc(d.party)+'</td><td><span class="pill">'+(r.is_published?"已發布":"草稿")+'</span></td><td><button data-edit="'+r.id+'">編輯</button><button data-pub="'+r.id+'">'+(r.is_published?"重新發布":"發布")+'</button></td></tr>';}).join("");$("rows").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>edit(b.dataset.edit));$("rows").querySelectorAll("[data-pub]").forEach(b=>b.onclick=()=>publishOne(b.dataset.pub));}
+$("search").oninput=renderRows;$("filter").onchange=renderRows;
+$("refresh").onclick=async()=>{try{await loadRows()}catch(e){say("dataStatus",e.message)}};
+function edit(id){const r=rows.find(x=>x.id===id);editingId=id;$("editorTitle").textContent="編輯候選人資料";$("recordJson").value=JSON.stringify(r.data,null,2);$("deleteRecord").classList.remove("hidden");$("editorPanel").classList.remove("hidden");}
+$("newRecord").onclick=()=>{editingId=null;$("editorTitle").textContent="新增候選人";$("recordJson").value=JSON.stringify({level:"",region:"",role:"",position:"",district:"",date:"",name:"",party:"",note:""},null,2);$("deleteRecord").classList.add("hidden");$("editorPanel").classList.remove("hidden");};
+$("cancelEdit").onclick=()=>$("editorPanel").classList.add("hidden");
+$("saveRecord").onclick=async()=>{try{await requireAAL2();const obj=JSON.parse($("recordJson").value);for(const k of ["level","region","role","position","district","date","name","party","note"])if(!(k in obj))throw new Error("缺少欄位："+k);let result;if(editingId)result=await supabase.from("candidates").update({data:obj,is_published:false,published_data:null}).eq("id",editingId);else result=await supabase.from("candidates").insert({data:obj});if(result.error)throw result.error;$("editorPanel").classList.add("hidden");await loadRows();say("editStatus","已儲存為草稿。");}catch(e){say("editStatus",e.message)}};
+$("deleteRecord").onclick=async()=>{if(!editingId||!confirm("確定永久刪除此筆候選人資料？"))return;try{await requireAAL2();const {error}=await supabase.from("candidates").delete().eq("id",editingId);if(error)throw error;$("editorPanel").classList.add("hidden");await loadRows()}catch(e){say("editStatus",e.message)}};
+async function publishOne(id){try{await requireAAL2();const {error}=await supabase.rpc("publish_candidate",{candidate_id:id});if(error)throw error;await loadRows()}catch(e){say("dataStatus",e.message)}}
+$("publishAll").onclick=async()=>{if(!confirm("確定將所有草稿發布至公開網站？"))return;try{await requireAAL2();const {data,error}=await supabase.rpc("publish_all_candidate_drafts");if(error)throw error;await loadRows();say("dataStatus","已發布草稿。RPC 回傳："+JSON.stringify(data));}catch(e){say("dataStatus",e.message)}};
+$("importBtn").onclick=async()=>{if(!confirm("將匯入 1,693 筆初始資料，全部設為草稿。若已匯入過，請勿重複執行。確定繼續？"))return;try{await requireAAL2();const res=await fetch("../data/initial-candidates.json");if(!res.ok)throw new Error("無法讀取 data/initial-candidates.json。請確認網站檔案結構或使用 GitHub Pages 根目錄部署。");const items=await res.json();let inserted=0;for(let i=0;i<items.length;i+=100){const batch=items.slice(i,i+100).map(data=>({data,is_published:false,published_data:null}));const {error}=await supabase.from("candidates").insert(batch);if(error)throw error;inserted+=batch.length;say("dataStatus","匯入中："+inserted+"/"+items.length+"（全部為草稿）");}await loadRows();say("dataStatus","匯入完成："+inserted+" 筆，全部為草稿。");}catch(e){say("dataStatus","匯入失敗："+e.message+"\\n若已部分匯入，請先檢查資料庫，避免直接重複匯入。")}};
+</script></body></html>

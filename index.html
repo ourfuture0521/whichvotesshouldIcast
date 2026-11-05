@@ -1,0 +1,319 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>地方選舉候選人資訊</title><style>
+*{box-sizing:border-box}
+/* 隱藏瀏覽器捲軸，但保留頁面原本的上下滑動 */
+html,body{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
+}
+html{overflow-y:auto}
+body{overflow-y:visible;overflow-x:hidden;margin:0;padding:20px;min-height:100vh;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:#333;background:#fff}
+.main-wrapper{width:100%;max-width:1600px;min-height:700px;margin:0 auto;border:1px solid #333;display:grid;grid-template-columns:280px 280px minmax(0,1fr);grid-template-rows:196px minmax(480px,auto);grid-template-areas:"intro intro results" "level role results"}
+.intro-area{grid-area:intro;padding:30px 28px;display:flex;align-items:flex-start;justify-content:flex-start;border-right:1px solid #333;min-width:0}
+.intro-title{margin:0;font-size:32px;font-weight:700;line-height:1.5;letter-spacing:2px;white-space:nowrap}
+.level-area{grid-area:level;padding:20px 28px 35px;border-right:1px solid #333;display:flex;flex-direction:column;align-items:flex-start;gap:22px}
+.role-area{grid-area:role;padding:20px 28px 35px;border-right:1px solid #333;display:flex;flex-direction:column;align-items:flex-start;gap:28px}
+.section-title{margin:0 0 10px;font-size:23px;font-weight:700;letter-spacing:2px;white-space:nowrap}
+.level-list,.role-list{width:100%;display:flex;flex-direction:column;align-items:stretch;gap:16px}
+.level-button,.role-button,.region-card{border:1px solid #333;border-radius:0;background:transparent;color:#333;font-family:inherit;cursor:pointer;transition:border-width .15s,font-weight .15s}
+.level-button{width:100%;min-height:112px;padding:18px 10px;font-size:21px;font-weight:500}
+.role-button{width:100%;min-height:112px;padding:18px 10px;font-size:21px;font-weight:500}
+.level-button:hover,.role-button:hover,.region-card:hover{border-width:2px}
+.level-button.active,.role-button.active,.region-card.active{border:2px solid #333;font-weight:700}
+.level-button.active,
+.role-button.active,
+.region-card.active{
+  background:#e0e0e0;
+}
+.results-area{grid-area:results;min-width:0;padding:38px 38px 42px;display:flex;flex-direction:column}
+.results-title{margin:0 0 24px;font-size:25px;font-weight:700;letter-spacing:2px}
+.empty-message{min-height:300px;display:flex;justify-content:center;align-items:center;text-align:center;font-size:17px;line-height:2;color:#666}
+.region-hint{margin:0 0 22px;font-size:15px;color:#666;line-height:1.9}
+.region-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.region-card{min-height:124px;padding:16px;font-size:19px;font-weight:500;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center}
+.region-subtitle{font-size:13px;font-weight:400}
+.candidate-area{margin-top:34px;padding-top:24px;border-top:1px solid #333}
+.candidate-heading{margin:0 0 8px;font-size:21px;font-weight:700}
+.candidate-summary{margin:0 0 18px;color:#666;font-size:14px;line-height:1.8}
+.district-group{margin:18px 0 24px}
+.district-title{margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #aaa;font-size:16px;font-weight:700}
+.candidate-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.candidate-card{width:100%;min-width:0;padding:15px 17px;border:1px solid #333;background:#fff;color:#333;font-family:inherit;text-align:left;display:flex;flex-direction:column;gap:7px;cursor:pointer;transition:background .15s,border-width .15s}\n.candidate-card:hover{background:#f5f5f5;border-width:2px}\n.candidate-card:focus-visible{outline:2px solid #333;outline-offset:3px}\n.candidate-detail{padding:24px 0 10px}\n.detail-back{margin:0 0 24px;padding:10px 18px;border:1px solid #333;background:#fff;color:#333;font:inherit;cursor:pointer}\n.detail-back:hover{background:#e0e0e0}\n.detail-name{margin:0 0 24px;font-size:26px;font-weight:700}\n.detail-list{margin:0;border-top:1px solid #aaa}\n.detail-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;padding:16px 10px;border-bottom:1px solid #ddd;line-height:1.8}\n.detail-label{font-weight:700}\n.detail-value{overflow-wrap:anywhere}\n@media(max-width:480px){.detail-row{grid-template-columns:1fr;gap:4px}}
+.candidate-name{font-size:17px;font-weight:700;overflow-wrap:anywhere}
+.candidate-party{font-size:14px;color:#555;overflow-wrap:anywhere}
+.candidate-meta{font-size:12px;color:#777;line-height:1.6}
+.candidate-note{font-size:13px;color:#555;line-height:1.6}
+.no-candidates{padding:22px 16px;border:1px solid #333;color:#666;line-height:1.8}
+.data-note{margin-top:24px;color:#777;font-size:12px;line-height:1.7}
+@media(max-width:1100px){
+.main-wrapper{grid-template-columns:230px 230px minmax(0,1fr)}
+.intro-title{font-size:28px}
+.level-area,.role-area{padding-left:18px;padding-right:18px}
+.results-area{padding:30px 24px}
+.region-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+body{padding:12px}
+.main-wrapper{grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto;grid-template-areas:"intro intro" "level role" "results results"}
+.intro-area{min-height:125px;border-right:0;border-bottom:1px solid #333;padding:25px 20px}
+.intro-title{font-size:27px}
+.level-area,.role-area{padding:25px 16px}
+.level-area{border-right:1px solid #333}
+.role-area{border-right:0}
+.role-button{min-height:90px;font-size:17px}
+.results-area{border-top:1px solid #333;padding:25px 18px}
+.candidate-list{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+.intro-title{font-size:22px;letter-spacing:0}
+.section-title{font-size:19px}
+.level-area,.role-area{padding-left:12px;padding-right:12px}
+.level-button{font-size:14px;min-height:62px}
+.role-button{font-size:15px;padding:10px 5px}
+.region-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.region-card{min-height:90px;font-size:16px;padding:10px}
+.results-area{padding:22px 12px}
+}
+@media(max-width:360px){
+.intro-title{font-size:19px}
+.region-grid{grid-template-columns:1fr}
+}
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n</head><body><div class="main-wrapper"><section class="intro-area"><h1 class="intro-title">我想快速了解……</h1></section><section class="level-area"><h2 class="section-title">地方層級</h2><div class="level-list"><button class="level-button" data-level="直轄市" type="button">直轄市</button><button class="level-button" data-level="縣市" type="button">縣市</button><button class="level-button" data-level="直轄市山地原住民區" type="button">直轄市山地原住民區</button></div></section><section class="role-area"><h2 class="section-title">職位分類</h2><div class="role-list"><button class="role-button" data-role="地方首長" type="button">地方首長</button><button class="role-button" data-role="地方民意代表" type="button">地方民意代表</button></div></section><section class="results-area"><h2 class="results-title">地區及候選人</h2><div id="resultsContent"><div class="empty-message">請先選擇左側的地方層級及職位分類<br>系統將顯示符合條件的地區及候選人</div></div><p class="data-note">資料來源：中央選舉委員會115年地方公職人員選舉候選人登記名冊。</p></section></div><script>
+// 請填入 Supabase 專案 URL 與 Publishable/anon key（可公開的 anon key，不是 Secret/service_role key）
+const SUPABASE_URL = "請填入_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "請填入_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+const regionData = {"直轄市":["臺北市","新北市","桃園市","臺中市","臺南市","高雄市"],"縣市":["基隆市","新竹市","嘉義市","新竹縣","苗栗縣","彰化縣","南投縣","雲林縣","嘉義縣","屏東縣","宜蘭縣","花蓮縣","臺東縣","澎湖縣","金門縣","連江縣"],"直轄市山地原住民區":["新北市烏來區","桃園市復興區","臺中市和平區","高雄市桃源區","高雄市那瑪夏區","高雄市茂林區"]};
+let records = [];
+
+async function loadPublishedCandidates() {
+  if (SUPABASE_URL.startsWith("請填入_") || SUPABASE_ANON_KEY.startsWith("請填入_")) {
+    throw new Error("尚未設定 Supabase URL 與 Publishable/anon key。請先依 README 完成設定。");
+  }
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const all = [];
+  const pageSize = 1000;
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await client
+      .from("candidates")
+      .select("published_data")
+      .eq("is_published", true)
+      .not("published_data", "is", null)
+      .range(from, from + pageSize - 1);
+    if (error) throw error;
+    all.push(...(data || []).map(row => row.published_data));
+    if (!data || data.length < pageSize) break;
+  }
+  all.sort((a, b) => String(a.date || "").localeCompare(String(b.date || ""), "zh-Hant"));
+  return all;
+}
+
+async function startApp(){
+const loading = document.getElementById("resultsContent");
+loading.innerHTML = '<div class="empty-message">正在載入已發布的候選人資料…</div>';
+try {
+  records = await loadPublishedCandidates();
+} catch (error) {
+  loading.innerHTML = '<div class="empty-message">目前無法載入候選人資料。<br>' + String(error.message || error).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) + '</div>';
+  return;
+}
+
+let selectedLevel="", selectedRole="", selectedRegion="";
+const resultsContent=document.getElementById("resultsContent");
+
+
+document.querySelectorAll(".level-button").forEach(button => {
+button.addEventListener("click", () => {
+// 再次點擊目前已選取的地方層級：取消選取
+if (selectedLevel === button.dataset.level) {
+selectedLevel = "";
+selectedRegion = "";
+button.classList.remove("active");
+} else {
+selectedLevel = button.dataset.level;
+selectedRegion = "";
+document.querySelectorAll(".level-button").forEach(item => item.classList.toggle("active", item === button));
+}
+renderResults();
+});
+});
+
+document.querySelectorAll(".role-button").forEach(button => {
+button.addEventListener("click", () => {
+// 再次點擊目前已選取的職位分類：取消選取
+if (selectedRole === button.dataset.role) {
+selectedRole = "";
+selectedRegion = "";
+button.classList.remove("active");
+} else {
+selectedRole = button.dataset.role;
+selectedRegion = "";
+document.querySelectorAll(".role-button").forEach(item => item.classList.toggle("active", item === button));
+}
+renderResults();
+});
+});
+
+function escapeHTML(value) {
+return String(value ?? "").replace(/[&<>"']/g, char => ({
+"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+}[char]));
+}
+
+function renderResults() {
+if (!selectedLevel || !selectedRole) {
+resultsContent.innerHTML = '<div class="empty-message">請先完成地方層級及職位分類的選擇<br>即可瀏覽符合條件的地區及候選人</div>';
+return;
+}
+
+const regions = regionData[selectedLevel] || [];
+let output = `
+<p class="region-hint">
+目前選擇：<strong>${escapeHTML(selectedLevel)}</strong>
+／ <strong>${escapeHTML(selectedRole)}</strong><br>
+請選擇下列地區，查看候選人資訊。
+</p><div class="region-grid">
+`;
+
+regions.forEach(region => {
+const count = records.filter(r => r.level === selectedLevel && r.role === selectedRole && r.region === region).length;
+output += `
+<button class="region-card ${selectedRegion === region ? "active" : ""}" data-region="${escapeHTML(region)}" type="button"><span>${escapeHTML(region)}</span><span class="region-subtitle">${count} 位候選人・查看名單</span></button>
+`;
+});
+output += "</div>";
+
+if (selectedRegion) {
+const candidates = records.filter(r => r.level === selectedLevel && r.role === selectedRole && r.region === selectedRegion);
+output += `
+<div class="candidate-area"><h3 class="candidate-heading">${escapeHTML(selectedRegion)}｜${escapeHTML(selectedRole)}</h3><p class="candidate-summary">共 ${candidates.length} 位候選人。候選人資料依登記日期由早至晚排序。</p>
+`;
+
+if (candidates.length) {
+const grouped = new Map();
+// 依登記日期由早至晚排序；同一選舉區內也依此順序列出
+const sortedCandidates = [...candidates].sort((a, b) => {
+  function dateValue(value) {
+    const match = String(value || "").match(/(\d+)\s*[\/.-]\s*(\d+)\s*[\/.-]\s*(\d+)/);
+    if (!match) return Number.MAX_SAFE_INTEGER;
+    return Number(match[1]) * 10000 + Number(match[2]) * 100 + Number(match[3]);
+  }
+  return dateValue(a.date) - dateValue(b.date);
+});
+sortedCandidates.forEach(candidate => {
+if (!grouped.has(candidate.district)) grouped.set(candidate.district, []);
+grouped.get(candidate.district).push(candidate);
+});
+
+// 選區依名稱中的數字由小到大排列（例如第1選舉區、第2選舉區……第10選舉區）
+const sortedGroups = [...grouped.entries()].sort(([districtA], [districtB]) => {
+  const numberA = String(districtA).match(/第\s*(\d+)\s*選舉區/);
+  const numberB = String(districtB).match(/第\s*(\d+)\s*選舉區/);
+
+  if (numberA && numberB) {
+    return Number(numberA[1]) - Number(numberB[1]);
+  }
+  if (numberA) return -1;
+  if (numberB) return 1;
+
+  return String(districtA).localeCompare(String(districtB), "zh-Hant", {
+    numeric: true,
+    sensitivity: "base"
+  });
+});
+
+for (const [district, people] of sortedGroups) {
+output += `<section class="district-group"><h4 class="district-title">${escapeHTML(district)}（${people.length} 人）</h4><div class="candidate-list">`;
+people.forEach(candidate => {
+const candidateIndex = records.indexOf(candidate);
+output += `
+<button class="candidate-card" type="button" data-candidate-index="${candidateIndex}" aria-label="查看${escapeHTML(candidate.name)}的候選人專屬資訊">
+<div class="candidate-name">${escapeHTML(candidate.name)}</div><div class="candidate-party">${escapeHTML(candidate.party || "未提供政黨")}</div><div class="candidate-meta">${escapeHTML(candidate.position)}｜登記日期：${escapeHTML(candidate.date || "未提供")}</div>
+${candidate.note ? `<div class="candidate-note">${escapeHTML(candidate.note)}</div>` : ""}
+</button>
+`;
+});
+output += "</div></section>";
+}
+} else {
+output += '<div class="no-candidates">目前這個地區在所選職位分類中沒有候選人登記資料。</div>';
+}
+output += "</div>";
+}
+
+resultsContent.innerHTML = output;
+resultsContent.querySelectorAll(".region-card").forEach(button => {
+button.addEventListener("click", () => {
+// 再次點擊目前已選取的地區：取消選取
+selectedRegion = selectedRegion === button.dataset.region ? "" : button.dataset.region;
+renderResults();
+});
+});
+
+resultsContent.querySelectorAll(".candidate-card").forEach(button => {
+button.addEventListener("click", () => {
+const candidateIndex = Number(button.dataset.candidateIndex);
+history.pushState({ candidateIndex }, "", "#candidate-" + candidateIndex);
+renderCandidateDetail(candidateIndex);
+});
+});
+}
+
+function renderCandidateDetail(candidateIndex) {
+const candidate = records[candidateIndex];
+if (!candidate) {
+renderResults();
+return;
+}
+
+const fields = [
+["姓名", candidate.name || "未提供"],
+["推薦政黨", candidate.party || "未提供政黨"],
+["參選職位", candidate.position || "未提供"],
+["選舉區", candidate.district || "未提供"],
+["登記日期", candidate.date || "未提供"],
+["備註", candidate.note || "無"]
+];
+
+resultsContent.innerHTML = `
+<div class="candidate-detail">
+<button class="detail-back" id="detailBack" type="button">← 返回候選人名單</button>
+<h3 class="detail-name">${escapeHTML(candidate.name || "候選人資訊")}</h3>
+<div class="detail-list">
+${fields.map(([label, value]) => `<div class="detail-row"><div class="detail-label">${escapeHTML(label)}</div><div class="detail-value">${escapeHTML(value)}</div></div>`).join("")}
+</div>
+</div>
+`;
+document.getElementById("detailBack").addEventListener("click", () => {
+if (history.state && typeof history.state.candidateIndex === "number") {
+history.back();
+} else {
+history.replaceState({}, "", location.pathname + location.search);
+renderResults();
+}
+});
+}
+
+window.addEventListener("popstate", event => {
+if (event.state && typeof event.state.candidateIndex === "number") {
+renderCandidateDetail(event.state.candidateIndex);
+} else {
+renderResults();
+}
+});
+
+const initialCandidateMatch = location.hash.match(/^#candidate-(\d+)$/);
+if (initialCandidateMatch) {
+const initialIndex = Number(initialCandidateMatch[1]);
+history.replaceState({ candidateIndex: initialIndex }, "", location.href);
+renderCandidateDetail(initialIndex);
+} else {
+renderResults();
+}
+}
+startApp().catch(error=>{document.getElementById("resultsContent").textContent="候選人資料載入失敗，請使用較新的瀏覽器。";console.error(error);});
+</script></body></html>

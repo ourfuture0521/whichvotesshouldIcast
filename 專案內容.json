@@ -1,0 +1,16 @@
+{
+  "project": "地方選舉候選人管理系統_第一階段",
+  "source_file": "地方選舉候選人資訊_候選人專屬頁面_完整程式(2).html",
+  "candidate_records_recovered": 1693,
+  "all_initial_records_are_drafts": true,
+  "admin_uid_configured": "feec62cf-3af7-4315-add9-96b6aeb117ff",
+  "files": [
+    "README_安裝與安全設定.md",
+    "public/index.html",
+    "public/source-original.html",
+    "admin/index.html",
+    "supabase/schema.sql",
+    "data/initial-candidates.json",
+    "data/regions.json"
+  ]
+}
