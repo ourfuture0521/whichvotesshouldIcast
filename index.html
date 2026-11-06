@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -690,6 +691,27 @@ function escapeHTML(value) {
 }
 
 
+// 抽籤號次排序：支援一般數字及圈號數字，未編號者排最後。
+function drawNumberSortValue(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return null;
+  const circledDigits = "⓪①②③④⑤⑥⑦⑧⑨⑩";
+  if (circledDigits.includes(text)) return circledDigits.indexOf(text);
+  const match = text.match(/\d+/);
+  return match ? Number(match[0]) : null;
+}
+
+function compareCandidatesByDrawNumber(a, b) {
+  const numberA = drawNumberSortValue(a?.draw_number);
+  const numberB = drawNumberSortValue(b?.draw_number);
+  if (numberA !== null && numberB === null) return -1;
+  if (numberA === null && numberB !== null) return 1;
+  if (numberA !== null && numberB !== null && numberA !== numberB) return numberA - numberB;
+  const dateDifference = dateValue(a?.date) - dateValue(b?.date);
+  if (dateDifference !== 0) return dateDifference;
+  return String(a?.name || "").localeCompare(String(b?.name || ""), "zh-Hant");
+}
+
 // ==========================================
 // 三、讀取 Supabase 已發布候選人資料
 // ==========================================
@@ -766,15 +788,8 @@ async function loadPublishedCandidates() {
 
   }
 
-  // 全部資料依登記日期排序。
-  all.sort((a, b) => {
-
-    const dateA = String(a.date || "");
-    const dateB = String(b.date || "");
-
-    return dateA.localeCompare(dateB, "zh-Hant");
-
-  });
+  // 全部資料依抽籤號次排序；未編號者排在最後。
+  all.sort(compareCandidatesByDrawNumber);
 
   return all;
 }
@@ -906,7 +921,7 @@ function renderResults() {
 
         <p class="candidate-summary">
           有效候選人 ${getEligibleCount(candidates)} 位；不得登記 ${candidates.length - getEligibleCount(candidates)} 位。
-          候選人資料依登記日期由早至晚排序。
+          候選人依抽籤號次由小至大排列；未編號者列於最後。
         </p>
     `;
 
@@ -914,12 +929,8 @@ function renderResults() {
 
       const grouped = new Map();
 
-      // 依登記日期排序。
-      const sortedCandidates = [...candidates].sort((a, b) => {
-
-        return dateValue(a.date) - dateValue(b.date);
-
-      });
+      // 各選區內依抽籤號次由小到大排序；未編號者排在最後。
+      const sortedCandidates = [...candidates].sort(compareCandidatesByDrawNumber);
 
       sortedCandidates.forEach(candidate => {
 
