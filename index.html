@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -273,9 +272,78 @@ body {
 }
 
 .candidate-name {
-  font-size: 17px;
+  font-size: 20px; /* 原本 17px，增加 3px */
   font-weight: 700;
   overflow-wrap: anywhere;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.candidate-draw-number {
+  display: inline-block;
+  font-size: 22px; /* 姓名原始 17px + 5px */
+  line-height: 1.2;
+  font-weight: 700;
+  color: #333;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.candidate-status-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.candidate-status-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 20px; /* 與姓名相同 */
+  line-height: 1.25;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.candidate-status-tag.not-registered {
+  color: #fff;
+  background: #d9534f;
+  border-color: #c94440;
+}
+
+.candidate-status-tag.uncontested {
+  color: #29220a;
+  background: #f4cf45;
+  border-color: #d7ad20;
+}
+
+.candidate-status-tag.incumbent {
+  color: #fff;
+  background: #168fc8;
+  border-color: #087db5;
+}
+
+.candidate-card.is-not-registered {
+  background: #e5e5e5;
+  color: #777;
+  opacity: .58;
+  border-color: #aaa;
+}
+
+.candidate-card.is-not-registered:hover {
+  background: #dedede;
+  opacity: .72;
+}
+
+.candidate-card.is-not-registered .candidate-party,
+.candidate-card.is-not-registered .candidate-meta,
+.candidate-card.is-not-registered .candidate-note {
+  color: #888;
 }
 
 .candidate-party {
@@ -325,6 +393,10 @@ body {
   margin: 0 0 24px;
   font-size: 26px;
   font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .detail-list {
@@ -734,6 +806,29 @@ function dateValue(value) {
 // 五、顯示地區及候選人
 // ==========================================
 
+function isNotRegistered(candidate) {
+  const flags = Array.isArray(candidate.status_flags) ? candidate.status_flags : [];
+  return flags.includes("not_registered");
+}
+
+function getCandidateStatusTags(candidate) {
+  const flags = Array.isArray(candidate.status_flags) ? candidate.status_flags : [];
+  const definitions = [
+    ["not_registered", "不得登記", "not-registered"],
+    ["uncontested", "同額競選", "uncontested"],
+    ["incumbent", "現任者", "incumbent"]
+  ];
+  return definitions
+    .filter(([key]) => flags.includes(key))
+    .map(([, label, className]) =>
+      `<span class="candidate-status-tag ${className}">${label}</span>`
+    ).join("");
+}
+
+function getEligibleCount(list) {
+  return list.filter(candidate => !isNotRegistered(candidate)).length;
+}
+
 function renderResults() {
 
   if (!selectedLevel || !selectedRole) {
@@ -766,11 +861,11 @@ function renderResults() {
 
   regions.forEach(region => {
 
-    const count = records.filter(candidate =>
+    const count = getEligibleCount(records.filter(candidate =>
       candidate.level === selectedLevel &&
       candidate.role === selectedRole &&
       candidate.region === region
-    ).length;
+    ));
 
     output += `
       <button
@@ -810,7 +905,7 @@ function renderResults() {
         </h3>
 
         <p class="candidate-summary">
-          共 ${candidates.length} 位候選人。
+          有效候選人 ${getEligibleCount(candidates)} 位；不得登記 ${candidates.length - getEligibleCount(candidates)} 位。
           候選人資料依登記日期由早至晚排序。
         </p>
     `;
@@ -878,7 +973,7 @@ function renderResults() {
           <section class="district-group">
 
             <h4 class="district-title">
-              ${escapeHTML(district)}（${people.length} 人）
+              ${escapeHTML(district)}（${getEligibleCount(people)} 位有效候選人）
             </h4>
 
             <div class="candidate-list">
@@ -888,14 +983,20 @@ function renderResults() {
 
           output += `
             <button
-              class="candidate-card"
+              class="candidate-card ${isNotRegistered(candidate) ? "is-not-registered" : ""}"
               type="button"
               data-candidate-id="${escapeHTML(candidate._rowId)}"
               aria-label="查看${escapeHTML(candidate.name)}的候選人專屬資訊"
             >
 
               <div class="candidate-name">
-                ${escapeHTML(candidate.name)}
+                <span>${escapeHTML(candidate.name)}</span>
+                ${candidate.draw_number !== undefined && String(candidate.draw_number).trim() !== ""
+                  ? `<span class="candidate-draw-number">${escapeHTML(candidate.draw_number)}</span>`
+                  : ""}
+                ${getCandidateStatusTags(candidate)
+                  ? `<span class="candidate-status-tags">${getCandidateStatusTags(candidate)}</span>`
+                  : ""}
               </div>
 
               <div class="candidate-party">
@@ -909,8 +1010,14 @@ function renderResults() {
               </div>
 
               ${
-                candidate.note
-                  ? `<div class="candidate-note">${escapeHTML(candidate.note)}</div>`
+                ([...(Array.isArray(candidate.notes) ? candidate.notes : []), candidate.note || ""]
+                  .map(value => String(value || "").trim())
+                  .filter(Boolean).length)
+                  ? `<div class="candidate-note">${[...(Array.isArray(candidate.notes) ? candidate.notes : []), candidate.note || ""]
+                      .map(value => String(value || "").trim())
+                      .filter(Boolean)
+                      .map(value => escapeHTML(value))
+                      .join("；")}</div>`
                   : ""
               }
 
@@ -1019,7 +1126,9 @@ function renderCandidateDetail(candidateId) {
     ["參選職位", candidate.position || "未提供"],
     ["選舉區", candidate.district || "未提供"],
     ["登記日期", candidate.date || "未提供"],
-    ["備註", candidate.note || "無"]
+    ["抽籤號次", candidate.draw_number || "未設定"],
+    ["狀態標記", (Array.isArray(candidate.status_flags) ? candidate.status_flags : []).map(flag => ({not_registered:"不得登記",uncontested:"同額競選",incumbent:"現任者"}[flag] || flag)).join("、") || "無"],
+    ["備註", [...(Array.isArray(candidate.notes) ? candidate.notes : []), candidate.note || ""].filter(Boolean).join("、") || "無"]
   ];
 
   resultsContent.innerHTML = `
@@ -1036,6 +1145,10 @@ function renderCandidateDetail(candidateId) {
 
       <h3 class="detail-name">
         ${escapeHTML(candidate.name || "候選人資訊")}
+        ${candidate.draw_number !== undefined && String(candidate.draw_number).trim() !== ""
+          ? `<span class="candidate-draw-number">${escapeHTML(candidate.draw_number)}</span>`
+          : ""}
+        ${getCandidateStatusTags(candidate)}
       </h3>
 
       <div class="detail-list">
