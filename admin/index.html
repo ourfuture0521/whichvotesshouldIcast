@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -10,63 +9,297 @@
 
 <style>
 *{box-sizing:border-box}
+
 body{
- margin:0;padding:24px;
+ margin:0;
+ padding:24px;
  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
- color:#222;background:#f5f5f5
+ color:#222;
+ background:#f5f5f5
 }
+
 main{max-width:1250px;margin:auto}
+
 .panel{
- background:#fff;border:1px solid #bbb;
- padding:22px;margin:0 0 18px
+ background:#fff;
+ border:1px solid #bbb;
+ padding:22px;
+ margin:0 0 18px
 }
+
 h1{font-size:26px;margin:0 0 18px}
 h2{font-size:19px;margin:0 0 14px}
-label{display:block;font-size:14px;margin:10px 0 5px}
-input,textarea,select{
- width:100%;padding:10px;border:1px solid #999;
- font:inherit;background:#fff
+
+label{
+ display:block;
+ font-size:14px;
+ margin:10px 0 5px
 }
+
+input,textarea,select{
+ width:100%;
+ padding:10px;
+ border:1px solid #999;
+ font:inherit;
+ background:#fff
+}
+
 textarea{
- min-height:180px;font-family:ui-monospace,monospace;
+ min-height:180px;
+ font-family:ui-monospace,monospace;
  font-size:13px
 }
+
 button{
- padding:9px 14px;border:1px solid #333;
- background:#fff;cursor:pointer;font:inherit;
+ padding:9px 14px;
+ border:1px solid #333;
+ background:#fff;
+ cursor:pointer;
+ font:inherit;
  margin:5px 5px 5px 0
 }
-button.primary{background:#222;color:#fff}
-button.danger{border-color:#a22;color:#a22}
-button:disabled{opacity:.45;cursor:not-allowed}
+
+button.primary{
+ background:#222;
+ color:#fff
+}
+
+button.danger{
+ border-color:#a22;
+ color:#a22
+}
+
+button:disabled{
+ opacity:.45;
+ cursor:not-allowed
+}
+
 .row{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
  gap:12px
 }
+
 .toolbar{
- display:flex;flex-wrap:wrap;gap:6px;align-items:center
+ display:flex;
+ flex-wrap:wrap;
+ gap:6px;
+ align-items:center
 }
+
 .status{
- padding:10px;background:#eee;white-space:pre-wrap;
- line-height:1.6;margin:10px 0
+ padding:10px;
+ background:#eee;
+ white-space:pre-wrap;
+ line-height:1.6;
+ margin:10px 0
 }
-.small{font-size:12px;color:#666;line-height:1.7}
+
+.small{
+ font-size:12px;
+ color:#666;
+ line-height:1.7
+}
+
 .hidden{display:none!important}
-table{width:100%;border-collapse:collapse;font-size:13px}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ font-size:13px
+}
+
 th,td{
- padding:9px;border-bottom:1px solid #ddd;
- text-align:left;vertical-align:top
+ padding:9px;
+ border-bottom:1px solid #ddd;
+ text-align:left;
+ vertical-align:top
 }
+
 th{background:#eee}
-.table-wrap{overflow:auto;max-height:480px}
-.pill{
- display:inline-block;padding:2px 7px;
- border:1px solid #888;font-size:12px
+
+.table-wrap{
+ overflow:auto;
+ max-height:480px
 }
+
+.pill{
+ display:inline-block;
+ padding:2px 7px;
+ border:1px solid #888;
+ font-size:12px
+}
+
+/* =========================
+   進階篩選器
+========================= */
+
+.advanced-filter{
+ margin-top:18px;
+ padding:16px;
+ border:1px solid #ccc;
+ background:#fafafa
+}
+
+.filter-heading{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ flex-wrap:wrap;
+ gap:8px;
+ margin-bottom:12px
+}
+
+.filter-heading strong{
+ font-size:16px
+}
+
+.filter-toggle{
+ min-width:100px;
+ border:1px solid #777;
+ background:#fff;
+ transition:.15s
+}
+
+.filter-toggle.active{
+ background:#222;
+ color:#fff;
+ border-color:#222
+}
+
+.filter-toggle .filter-count{
+ display:inline-block;
+ margin-left:5px;
+ font-size:11px;
+ opacity:.8
+}
+
+.filter-buttons{
+ display:flex;
+ flex-wrap:wrap;
+ gap:7px;
+ margin-bottom:12px
+}
+
+.filter-buttons button{
+ margin:0
+}
+
+.filter-box{
+ border:1px solid #ccc;
+ background:#fff;
+ padding:13px;
+ margin-top:10px
+}
+
+.filter-box-title{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ flex-wrap:wrap;
+ gap:8px;
+ margin-bottom:10px;
+ font-size:14px;
+ font-weight:700
+}
+
+.filter-options{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:8px
+}
+
+.filter-option{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ min-width:0;
+ padding:8px 9px;
+ border:1px solid #ddd;
+ background:#fafafa;
+ cursor:pointer;
+ margin:0;
+ font-size:13px;
+ line-height:1.5
+}
+
+.filter-option:hover{
+ background:#f0f0f0;
+ border-color:#999
+}
+
+.filter-option input{
+ width:16px;
+ height:16px;
+ flex-shrink:0;
+ margin:0;
+ cursor:pointer
+}
+
+.filter-option span{
+ overflow-wrap:anywhere
+}
+
+.filter-option small{
+ margin-left:auto;
+ color:#888;
+ flex-shrink:0;
+ font-size:11px
+}
+
+.filter-result{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ flex-wrap:wrap;
+ gap:8px;
+ padding:12px;
+ margin-top:12px;
+ background:#eee;
+ font-size:13px
+}
+
+.filter-result strong{
+ font-size:16px
+}
+
+.filter-empty{
+ color:#888;
+ font-size:13px;
+ padding:8px
+}
+
+.filter-clear{
+ padding:6px 11px;
+ font-size:12px;
+ margin:0
+}
+
+@media(max-width:900px){
+ .filter-options{
+  grid-template-columns:repeat(3,minmax(0,1fr))
+ }
+}
+
 @media(max-width:700px){
  body{padding:12px}
  .row{grid-template-columns:1fr}
  .panel{padding:15px}
+
+ .filter-options{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+ }
+
+ .filter-toggle{
+  flex:1;
+  min-width:0
+ }
+}
+
+@media(max-width:420px){
+ .filter-options{
+  grid-template-columns:1fr
+ }
 }
 </style>
 </head>
@@ -189,6 +422,119 @@ th{background:#eee}
  </div>
 </div>
 
+
+<!-- =========================
+     進階篩選器
+========================= -->
+
+<div class="advanced-filter">
+
+ <div class="filter-heading">
+  <strong>進階篩選</strong>
+  <span class="small">可同時開啟多種條件，組合查詢候選人</span>
+ </div>
+
+ <div class="filter-buttons">
+
+  <button
+   type="button"
+   class="filter-toggle"
+   id="toggleLevel"
+   aria-expanded="false"
+   aria-controls="levelFilterBox">
+   層級篩選
+  </button>
+
+  <button
+   type="button"
+   class="filter-toggle"
+   id="togglePosition"
+   aria-expanded="false"
+   aria-controls="positionFilterBox">
+   職位篩選
+  </button>
+
+  <button
+   type="button"
+   class="filter-toggle"
+   id="toggleRegion"
+   aria-expanded="false"
+   aria-controls="regionFilterBox">
+   地區篩選
+  </button>
+
+ </div>
+
+
+ <!-- 層級 -->
+
+ <div class="filter-box hidden" id="levelFilterBox">
+
+  <div class="filter-box-title">
+   <span>選擇層級</span>
+   <button type="button" class="filter-clear" data-clear="level">
+    清除此條件
+   </button>
+  </div>
+
+  <div class="filter-options" id="levelOptions"></div>
+
+ </div>
+
+
+ <!-- 職位 -->
+
+ <div class="filter-box hidden" id="positionFilterBox">
+
+  <div class="filter-box-title">
+   <span>選擇職位／職務類別</span>
+   <button type="button" class="filter-clear" data-clear="position">
+    清除此條件
+   </button>
+  </div>
+
+  <p class="small">
+   同時讀取 role（職務類別）及 position（具體職位）欄位。
+  </p>
+
+  <div class="filter-options" id="positionOptions"></div>
+
+ </div>
+
+
+ <!-- 地區 -->
+
+ <div class="filter-box hidden" id="regionFilterBox">
+
+  <div class="filter-box-title">
+   <span>選擇地區</span>
+   <button type="button" class="filter-clear" data-clear="region">
+    清除此條件
+   </button>
+  </div>
+
+  <div class="filter-options" id="regionOptions"></div>
+
+ </div>
+
+
+ <div class="filter-result">
+
+  <div>
+   <div class="small">符合目前所有條件的候選人</div>
+   <strong id="filteredCount">0</strong>
+   <span class="small">／ <span id="totalCount">0</span> 筆</span>
+  </div>
+
+  <button type="button" class="filter-clear" id="clearAllFilters">
+   清除全部篩選
+  </button>
+
+ </div>
+
+</div>
+
+
 <div class="status" id="dataStatus">請先完成 MFA AAL2 驗證。</div>
 
 <div class="table-wrap">
@@ -205,6 +551,7 @@ th{background:#eee}
 <tbody id="rows"></tbody>
 </table>
 </div>
+
 </div>
 
 
@@ -249,6 +596,20 @@ let currentUser = null;
 let currentFactorId = null;
 let editingId = null;
 let rows = [];
+
+/* 進階篩選選取狀態 */
+const selectedFilters = {
+ level:new Set(),
+ position:new Set(),
+ region:new Set()
+};
+
+/* 進階篩選面板開啟狀態 */
+const filterPanelOpen = {
+ level:false,
+ position:false,
+ region:false
+};
 
 const $ = id => document.getElementById(id);
 
@@ -343,7 +704,337 @@ function esc(v){
 
 
 /* =========================
-   三、初始化連線設定
+   三、進階篩選功能
+========================= */
+
+/*
+  欄位對應：
+
+  層級：
+  data.level
+
+  職位：
+  data.role + data.position
+
+  地區：
+  data.region
+
+  同一類別內多選 = OR
+  不同類別之間 = AND
+*/
+
+
+function getFilterValue(value){
+
+ return String(value ?? "").trim();
+
+}
+
+
+/* 取得所有候選人中不重複的篩選選項 */
+
+function getFilterOptions(type){
+
+ const values = new Set();
+
+ rows.forEach(r=>{
+
+  const d = r.data || {};
+
+  if(type === "level"){
+
+   values.add(getFilterValue(d.level));
+
+  }
+
+  if(type === "region"){
+
+   values.add(getFilterValue(d.region));
+
+  }
+
+  if(type === "position"){
+
+   values.add(getFilterValue(d.role));
+   values.add(getFilterValue(d.position));
+
+  }
+
+ });
+
+ return Array.from(values).sort((a,b)=>{
+
+  if(a === "") return 1;
+  if(b === "") return -1;
+
+  return a.localeCompare(b,"zh-Hant");
+
+ });
+
+}
+
+
+/* 計算每個選項對應的候選人數 */
+
+function getFilterOptionCount(type,value){
+
+ return rows.filter(r=>{
+
+  const d = r.data || {};
+
+  if(type === "level"){
+   return getFilterValue(d.level) === value;
+  }
+
+  if(type === "region"){
+   return getFilterValue(d.region) === value;
+  }
+
+  if(type === "position"){
+   return (
+    getFilterValue(d.role) === value ||
+    getFilterValue(d.position) === value
+   );
+  }
+
+  return false;
+
+ }).length;
+
+}
+
+
+/* 建立某個篩選分類的選項 */
+
+function renderFilterOptions(type){
+
+ const containerId = {
+  level:"levelOptions",
+  position:"positionOptions",
+  region:"regionOptions"
+ }[type];
+
+ const container = $(containerId);
+
+ const options = getFilterOptions(type);
+ const selected = selectedFilters[type];
+
+ if(options.length === 0){
+
+  container.innerHTML =
+   '<div class="filter-empty">目前沒有可用的篩選資料。</div>';
+
+  return;
+
+ }
+
+ container.innerHTML = options.map(value=>{
+
+  const checked = selected.has(value);
+  const count = getFilterOptionCount(type,value);
+
+  const label = value === "" ? "未填寫" : value;
+
+  return `
+   <label class="filter-option">
+    <input
+     type="checkbox"
+     data-filter-type="${type}"
+     data-filter-value="${esc(value)}"
+     ${checked ? "checked" : ""}
+    >
+    <span>${esc(label)}</span>
+    <small>${count}</small>
+   </label>
+  `;
+
+ }).join("");
+
+}
+
+
+/* 更新篩選按鈕顯示 */
+
+function updateFilterButtons(){
+
+ const settings = [
+  {
+   type:"level",
+   button:"toggleLevel",
+   label:"層級篩選"
+  },
+  {
+   type:"position",
+   button:"togglePosition",
+   label:"職位篩選"
+  },
+  {
+   type:"region",
+   button:"toggleRegion",
+   label:"地區篩選"
+  }
+ ];
+
+ settings.forEach(item=>{
+
+  const button = $(item.button);
+  const count = selectedFilters[item.type].size;
+  const isOpen = filterPanelOpen[item.type];
+
+  button.classList.toggle("active",isOpen);
+
+  button.setAttribute(
+   "aria-expanded",
+   isOpen ? "true" : "false"
+  );
+
+  button.innerHTML =
+   item.label+
+   (count ? `<span class="filter-count">(${count})</span>` : "");
+
+ });
+
+}
+
+
+/* 開啟或關閉篩選面板 */
+
+function toggleFilterPanel(type){
+
+ const boxId = {
+  level:"levelFilterBox",
+  position:"positionFilterBox",
+  region:"regionFilterBox"
+ }[type];
+
+ filterPanelOpen[type] = !filterPanelOpen[type];
+
+ $(boxId).classList.toggle(
+  "hidden",
+  !filterPanelOpen[type]
+ );
+
+ updateFilterButtons();
+
+}
+
+
+/* 清除指定類別 */
+
+function clearFilter(type){
+
+ selectedFilters[type].clear();
+
+ renderFilterOptions(type);
+
+ updateFilterButtons();
+
+ renderRows();
+
+}
+
+
+/* 清除所有篩選 */
+
+function clearAllFilters(){
+
+ selectedFilters.level.clear();
+ selectedFilters.position.clear();
+ selectedFilters.region.clear();
+
+ renderFilterOptions("level");
+ renderFilterOptions("position");
+ renderFilterOptions("region");
+
+ updateFilterButtons();
+
+ renderRows();
+
+}
+
+
+/* 進階篩選事件 */
+
+$("toggleLevel").onclick = ()=>{
+ toggleFilterPanel("level");
+};
+
+$("togglePosition").onclick = ()=>{
+ toggleFilterPanel("position");
+};
+
+$("toggleRegion").onclick = ()=>{
+ toggleFilterPanel("region");
+};
+
+
+/* 各類別清除按鈕 */
+
+document.querySelectorAll("[data-clear]").forEach(button=>{
+
+ button.onclick = ()=>{
+
+  clearFilter(button.dataset.clear);
+
+ };
+
+});
+
+
+$("clearAllFilters").onclick = clearAllFilters;
+
+
+/* 篩選選項變動 */
+
+["levelOptions","positionOptions","regionOptions"].forEach(containerId=>{
+
+ $(containerId).addEventListener("change",event=>{
+
+  const checkbox = event.target;
+
+  if(!checkbox.matches('input[type="checkbox"][data-filter-type]')){
+   return;
+  }
+
+  const type = checkbox.dataset.filterType;
+  const value = checkbox.dataset.filterValue;
+
+  if(!selectedFilters[type]) return;
+
+  if(checkbox.checked){
+
+   selectedFilters[type].add(value);
+
+  }else{
+
+   selectedFilters[type].delete(value);
+
+  }
+
+  updateFilterButtons();
+
+  renderRows();
+
+ });
+
+});
+
+
+/* 重新整理篩選選項 */
+
+function renderAdvancedFilters(){
+
+ renderFilterOptions("level");
+ renderFilterOptions("position");
+ renderFilterOptions("region");
+
+ updateFilterButtons();
+
+}
+
+
+/* =========================
+   四、初始化連線設定
 ========================= */
 
 $("url").value =
@@ -387,7 +1078,7 @@ $("saveConfig").onclick = () => {
 
 
 /* =========================
-   四、管理員登入
+   五、管理員登入
 ========================= */
 
 $("login").onclick = async () => {
@@ -478,7 +1169,7 @@ $("login").onclick = async () => {
 
 
 /* =========================
-   五、登出
+   六、登出
 ========================= */
 
 $("logout").onclick = async () => {
@@ -492,6 +1183,10 @@ $("logout").onclick = async () => {
   currentUser = null;
   currentFactorId = null;
   rows = [];
+
+  selectedFilters.level.clear();
+  selectedFilters.position.clear();
+  selectedFilters.region.clear();
 
   $("dataPanel").classList.add("hidden");
   $("mfaPanel").classList.add("hidden");
@@ -509,7 +1204,7 @@ $("logout").onclick = async () => {
 
 
 /* =========================
-   六、TOTP 因子檢查及建立
+   七、TOTP 因子檢查及建立
 ========================= */
 
 $("enroll").onclick = async () => {
@@ -596,7 +1291,7 @@ $("enroll").onclick = async () => {
 
 
 /* =========================
-   七、修復未驗證 TOTP 因子
+   八、修復未驗證 TOTP 因子
 ========================= */
 
 $("repairFactor").onclick = async () => {
@@ -715,7 +1410,7 @@ $("repairFactor").onclick = async () => {
 
 
 /* =========================
-   八、TOTP 驗證
+   九、TOTP 驗證
 ========================= */
 
 $("verify").onclick = async () => {
@@ -811,8 +1506,8 @@ $("verify").onclick = async () => {
 
 
 /* =========================
-   九、載入候選人資料
-   修正重點：分批讀取全部資料
+   十、載入候選人資料
+   分批讀取全部資料
 ========================= */
 
 async function loadRows(){
@@ -861,6 +1556,9 @@ async function loadRows(){
 
  rows = allRows;
 
+ /* 載入資料後，自動建立篩選選項 */
+ renderAdvancedFilters();
+
  renderRows();
 
  say(
@@ -873,7 +1571,7 @@ async function loadRows(){
 
 
 /* =========================
-   十、候選人資料列表
+   十一、候選人資料列表
 ========================= */
 
 function renderRows(){
@@ -890,19 +1588,72 @@ function renderRows(){
    d.region,
    d.party,
    d.position,
+   d.role,
+   d.level,
    d.district
   ].join(" ").toLowerCase();
 
+
+  /* 原本的姓名／地區／政黨搜尋 */
+
+  const matchesSearch =
+   !q || hay.includes(q);
+
+
+  /* 原本的草稿／已發布篩選 */
+
+  const matchesStatus =
+   f === "all" ||
+   (f === "draft" && !r.is_published) ||
+   (f === "published" && r.is_published);
+
+
+  /* 層級篩選 */
+
+  const levelSelected = selectedFilters.level;
+
+  const matchesLevel =
+   levelSelected.size === 0 ||
+   levelSelected.has(getFilterValue(d.level));
+
+
+  /* 職位篩選
+     同時比對 role 與 position
+  */
+
+  const positionSelected = selectedFilters.position;
+
+  const candidatePositions = [
+   getFilterValue(d.role),
+   getFilterValue(d.position)
+  ];
+
+  const matchesPosition =
+   positionSelected.size === 0 ||
+   candidatePositions.some(value=>positionSelected.has(value));
+
+
+  /* 地區篩選 */
+
+  const regionSelected = selectedFilters.region;
+
+  const matchesRegion =
+   regionSelected.size === 0 ||
+   regionSelected.has(getFilterValue(d.region));
+
+
+  /* 所有不同條件必須同時符合 */
+
   return (
-   (!q || hay.includes(q)) &&
-   (
-    f === "all" ||
-    (f === "draft" && !r.is_published) ||
-    (f === "published" && r.is_published)
-   )
+   matchesSearch &&
+   matchesStatus &&
+   matchesLevel &&
+   matchesPosition &&
+   matchesRegion
   );
 
  });
+
 
  $("rows").innerHTML = list.map(r=>{
 
@@ -933,12 +1684,28 @@ function renderRows(){
 
  }).join("");
 
+
+ /* 更新篩選結果統計 */
+
+ $("filteredCount").textContent = list.length;
+ $("totalCount").textContent = rows.length;
+
+
+ /* 綁定編輯按鈕 */
+
  $("rows").querySelectorAll("[data-edit]").forEach(b=>{
+
   b.onclick = ()=>edit(b.dataset.edit);
+
  });
 
+
+ /* 綁定發布按鈕 */
+
  $("rows").querySelectorAll("[data-pub]").forEach(b=>{
+
   b.onclick = ()=>publishOne(b.dataset.pub);
+
  });
 
 }
@@ -949,7 +1716,7 @@ $("filter").onchange = renderRows;
 
 
 /* =========================
-   十一、重新載入資料
+   十二、重新載入資料
 ========================= */
 
 $("refresh").onclick = async () => {
@@ -976,7 +1743,7 @@ $("refresh").onclick = async () => {
 
 
 /* =========================
-   十二、編輯候選人
+   十三、編輯候選人
 ========================= */
 
 function edit(id){
@@ -1000,7 +1767,7 @@ function edit(id){
 
 
 /* =========================
-   十三、新增候選人
+   十四、新增候選人
 ========================= */
 
 $("newRecord").onclick = () => {
@@ -1035,7 +1802,7 @@ $("cancelEdit").onclick = () => {
 
 
 /* =========================
-   十四、儲存候選人
+   十五、儲存候選人
 ========================= */
 
 $("saveRecord").onclick = async () => {
@@ -1098,7 +1865,7 @@ $("saveRecord").onclick = async () => {
 
 
 /* =========================
-   十五、刪除候選人
+   十六、刪除候選人
 ========================= */
 
 $("deleteRecord").onclick = async () => {
@@ -1133,7 +1900,7 @@ $("deleteRecord").onclick = async () => {
 
 
 /* =========================
-   十六、發布單筆候選人
+   十七、發布單筆候選人
 ========================= */
 
 async function publishOne(id){
@@ -1162,7 +1929,7 @@ async function publishOne(id){
 
 
 /* =========================
-   十七、全部發布草稿
+   十八、全部發布草稿
 ========================= */
 
 $("publishAll").onclick = async () => {
@@ -1199,7 +1966,7 @@ $("publishAll").onclick = async () => {
 
 
 /* =========================
-   十八、匯入 1,693 筆初始資料
+   十九、匯入 1,693 筆初始資料
 ========================= */
 
 $("importBtn").onclick = async () => {
