@@ -130,6 +130,64 @@ th{background:#eee}
  font-size:12px
 }
 
+.editor-fields{
+ margin:16px 0;
+ padding:16px;
+ border:1px solid #ccc;
+ background:#fafafa
+}
+.editor-fields h3{font-size:16px;margin:0 0 10px}
+.field-grid{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:12px
+}
+.check-grid{
+ display:flex;
+ flex-wrap:wrap;
+ gap:10px;
+ margin-top:8px
+}
+.check-item{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ border:1px solid #ccc;
+ padding:9px 11px;
+ background:#fff;
+ margin:0
+}
+.check-item input{width:17px;height:17px;margin:0}
+.note-entry{
+ display:flex;
+ gap:8px;
+ align-items:flex-start;
+ margin:7px 0
+}
+.note-entry span{flex:1;white-space:pre-wrap;overflow-wrap:anywhere}
+.note-entry button{margin:0;padding:4px 8px}
+.note-add-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+.note-add-row button{margin:0}
+.record-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.record-tag{
+ display:inline-block;
+ padding:2px 6px;
+ border:1px solid #888;
+ font-size:11px;
+ white-space:nowrap
+}
+.record-tag.warning{color:#b33;border-color:#b33}
+.record-tag.gold{color:#987000;border-color:#c69b00}
+.record-tag.blue{color:#087db5;border-color:#168ac5}
+.number-tag{font-weight:700;color:#333}
+.notes-preview{margin-top:5px;font-size:12px;color:#666}
+.notes-preview summary{cursor:pointer}
+.notes-preview ul{padding-left:18px;margin:5px 0}
+@media(max-width:700px){
+ .field-grid{grid-template-columns:1fr}
+ .note-add-row{grid-template-columns:1fr}
+}
+
 /* =========================
    進階篩選器
 ========================= */
@@ -560,9 +618,36 @@ th{background:#eee}
 
 <p class="small">
 請以 JSON 格式編輯單筆資料。
-欄位：level、region、role、position、district、date、name、party、note。
+欄位：level、region、role、position、district、date、name、party、note、draw_number、status_flags、notes。
 </p>
 
+
+<div class="editor-fields">
+ <h3>候選人前台標記</h3>
+ <p class="small">以下設定會儲存在候選人資料中。標記可同時選取；抽籤號次可輸入數字（例如 5）或直接輸入圈號（例如 ⑤）。</p>
+ <div class="field-grid">
+  <div>
+   <label for="drawNumber">抽籤號次</label>
+   <input id="drawNumber" type="text" placeholder="例如：5 或 ⑤">
+  </div>
+  <div>
+   <label>候選人狀態標記（可複選）</label>
+   <div class="check-grid">
+    <label class="check-item"><input type="checkbox" id="flagNotRegistered"> 不得登記</label>
+    <label class="check-item"><input type="checkbox" id="flagUncontested"> 同額競選</label>
+    <label class="check-item"><input type="checkbox" id="flagIncumbent"> 現任者</label>
+   </div>
+  </div>
+ </div>
+ <label>備註條列</label>
+ <div id="notesList" class="small">目前沒有備註。</div>
+ <div class="note-add-row">
+  <input id="newNote" type="text" placeholder="輸入一條備註後按新增">
+  <button type="button" id="addNote">新增備註</button>
+ </div>
+</div>
+
+<label for="recordJson">進階 JSON 資料（可保留原本欄位）</label>
 <textarea id="recordJson" spellcheck="false"></textarea>
 
 <div class="toolbar">
@@ -701,6 +786,80 @@ function esc(v){
  }[c]));
 
 }
+
+function getCandidateFlags(data){
+ const flags = Array.isArray(data?.status_flags) ? data.status_flags : [];
+ return new Set(flags);
+}
+
+function getCandidateNotes(data){
+ if(Array.isArray(data?.notes)){
+  return data.notes.map(x=>String(x ?? "").trim()).filter(Boolean);
+ }
+ const legacy = String(data?.note ?? "").trim();
+ return legacy ? [legacy] : [];
+}
+
+function renderEditorNotes(){
+ const notes = editorNotes;
+ const container = $("notesList");
+ if(!notes.length){
+  container.innerHTML = '<span class="small">目前沒有備註。</span>';
+  return;
+ }
+ container.innerHTML = notes.map((note,index)=>`
+  <div class="note-entry">
+   <span>${index+1}. ${esc(note)}</span>
+   <button type="button" class="danger" data-remove-note="${index}">移除</button>
+  </div>
+ `).join("");
+ container.querySelectorAll("[data-remove-note]").forEach(button=>{
+  button.onclick=()=>{
+   editorNotes.splice(Number(button.dataset.removeNote),1);
+   renderEditorNotes();
+  };
+ });
+}
+
+let editorNotes = [];
+
+function loadStructuredEditorFields(data){
+ const d = data || {};
+ $("drawNumber").value = String(d.draw_number ?? "");
+ const flags = getCandidateFlags(d);
+ $("flagNotRegistered").checked = flags.has("not_registered");
+ $("flagUncontested").checked = flags.has("uncontested");
+ $("flagIncumbent").checked = flags.has("incumbent");
+ editorNotes = getCandidateNotes(d);
+ renderEditorNotes();
+ $("newNote").value = "";
+}
+
+function applyStructuredEditorFields(data){
+ const d = data;
+ d.draw_number = $("drawNumber").value.trim();
+ d.status_flags = [
+  $("flagNotRegistered").checked ? "not_registered" : null,
+  $("flagUncontested").checked ? "uncontested" : null,
+  $("flagIncumbent").checked ? "incumbent" : null
+ ].filter(Boolean);
+ d.notes = editorNotes.slice();
+ return d;
+}
+
+$("addNote").onclick = ()=>{
+ const value = $("newNote").value.trim();
+ if(!value) return;
+ editorNotes.push(value);
+ $("newNote").value = "";
+ renderEditorNotes();
+};
+$("newNote").addEventListener("keydown",event=>{
+ if(event.key === "Enter"){
+  event.preventDefault();
+  $("addNote").click();
+ }
+});
 
 
 /* =========================
@@ -1574,6 +1733,15 @@ async function loadRows(){
    十一、候選人資料列表
 ========================= */
 
+function getStatusTagHtml(data){
+ const flags = getCandidateFlags(data);
+ const labels = [];
+ if(flags.has("not_registered")) labels.push('<span class="record-tag warning">不得登記</span>');
+ if(flags.has("uncontested")) labels.push('<span class="record-tag gold">同額競選</span>');
+ if(flags.has("incumbent")) labels.push('<span class="record-tag blue">現任者</span>');
+ return labels.join("");
+}
+
 function renderRows(){
 
  const q = $("search").value.trim().toLowerCase();
@@ -1659,9 +1827,21 @@ function renderRows(){
 
   const d = r.data || {};
 
+  const drawNumber = String(d.draw_number ?? "").trim();
+  const notes = getCandidateNotes(d);
+  const noteHtml = notes.length
+   ? `<details class="notes-preview"><summary>備註 ${notes.length} 條</summary><ul>${notes.map(note=>`<li>${esc(note)}</li>`).join("")}</ul></details>`
+   : "";
+  const flagsHtml = getStatusTagHtml(d);
+
   return `
    <tr>
-    <td>${esc(d.name)}</td>
+    <td>
+     <strong>${esc(d.name)}</strong>
+     ${drawNumber ? `<span class="number-tag"> ${esc(drawNumber)}</span>` : ""}
+     ${flagsHtml ? `<div class="record-tags">${flagsHtml}</div>` : ""}
+     ${noteHtml}
+    </td>
     <td>
      ${esc(d.region)}<br>
      ${esc(d.position)}<br>
@@ -1759,9 +1939,12 @@ function edit(id){
  $("recordJson").value =
   JSON.stringify(r.data,null,2);
 
+ loadStructuredEditorFields(r.data);
+
  $("deleteRecord").classList.remove("hidden");
 
  $("editorPanel").classList.remove("hidden");
+ $("editorPanel").scrollIntoView({behavior:"smooth",block:"start"});
 
 }
 
@@ -1786,12 +1969,22 @@ $("newRecord").onclick = () => {
    date:"",
    name:"",
    party:"",
-   note:""
+   note:"",
+   draw_number:"",
+   status_flags:[],
+   notes:[]
   },null,2);
+
+ loadStructuredEditorFields({
+  draw_number:"",
+  status_flags:[],
+  notes:[]
+ });
 
  $("deleteRecord").classList.add("hidden");
 
  $("editorPanel").classList.remove("hidden");
+ $("editorPanel").scrollIntoView({behavior:"smooth",block:"start"});
 
 };
 
@@ -1812,6 +2005,7 @@ $("saveRecord").onclick = async () => {
   await requireAAL2();
 
   const obj = JSON.parse($("recordJson").value);
+  applyStructuredEditorFields(obj);
 
   for(const k of [
    "level","region","role","position","district",
@@ -1827,6 +2021,14 @@ $("saveRecord").onclick = async () => {
   let result;
 
   if(editingId){
+
+   const existing = rows.find(x=>x.id === editingId);
+   if(existing?.is_published){
+    const confirmed = confirm(
+     "這筆候選人目前已發布。儲存後會依照原系統規則轉為草稿，公開前台暫時不會顯示更新內容。\n\n儲存後請重新檢查資料，再按「發布」讓更新內容重新公開。\n\n確定儲存嗎？"
+    );
+    if(!confirmed) return;
+   }
 
    result = await supabaseClient
     .from("candidates")
