@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -52,9 +53,26 @@ th{background:#eee}
 .notes-preview summary{cursor:pointer}
 .notes-preview ul{padding-left:18px;margin:5px 0}
 
+/* 部分發布選單 */
+.publish-section{margin-top:14px;padding:16px;border:1px solid #ccc;background:#fafafa}
+.publish-section h3{font-size:16px;margin:0 0 8px}
+.publish-category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.publish-category-item{display:flex;align-items:center;gap:9px;margin:0;padding:11px;border:1px solid #ccc;background:#fff;cursor:pointer}
+.publish-category-item:hover{background:#f3f3f3;border-color:#888}
+.publish-category-item input{width:18px;height:18px;flex-shrink:0;margin:0}
+.publish-category-item span{flex:1}
+.publish-category-item small{color:#777;white-space:nowrap}
+.publish-selection-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+.publish-selection-toolbar button{margin:0}
+.publish-selection-summary{padding:10px;background:#eee;margin-top:12px;font-size:13px;line-height:1.7}
+.publish-selection-summary strong{font-size:16px}
+.publish-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.publish-actions button{margin:0}
+
 @media(max-width:700px){
  .field-grid{grid-template-columns:1fr}
  .note-add-row{grid-template-columns:1fr}
+ .publish-category-grid{grid-template-columns:1fr}
 }
 
 /* 進階篩選器 */
@@ -166,11 +184,54 @@ th{background:#eee}
 
 <div class="panel hidden" id="dataPanel">
 <h2>四、候選人資料管理</h2>
+
 <div class="toolbar">
  <button id="refresh">重新載入</button>
  <button id="newRecord">新增候選人</button>
  <button id="importBtn">匯入初始 1,693 筆（僅草稿）</button>
- <button class="primary" id="publishAll">全部發布草稿</button>
+</div>
+
+<!-- 發布功能 -->
+<div class="publish-section">
+ <h3>發布編輯資料</h3>
+ <p class="small">
+ 編輯資料儲存後，前台仍會維持目前已發布的版本。
+ 請在確認資料無誤後，使用以下功能發布。
+ </p>
+
+ <div class="publish-actions">
+  <button class="primary" id="publishAll">一鍵上傳所有編輯</button>
+  <button id="togglePartialPublish">上傳部分編輯</button>
+ </div>
+
+ <div id="partialPublishPanel" class="hidden">
+  <hr>
+  <h3>選擇要上傳的類別</h3>
+  <p class="small">
+  勾選需要發布的層級及職務類別，再按下「確定上傳」。
+  只會發布所選類別中有待發布修改的候選人。
+  </p>
+
+  <div class="publish-selection-toolbar">
+   <button type="button" id="selectAllCategories">全選類別</button>
+   <button type="button" id="clearCategorySelection">取消全選</button>
+   <span class="small" id="categorySelectionCount">尚未選擇類別</span>
+  </div>
+
+  <div class="publish-category-grid" id="publishCategoryOptions"></div>
+
+  <div class="publish-selection-summary">
+   預計發布候選人：
+   <strong id="partialPublishCount">0</strong>
+   筆
+   <div class="small" id="partialPublishDescription">請先選擇要發布的類別。</div>
+  </div>
+
+  <div class="publish-actions">
+   <button type="button" class="primary" id="confirmPartialPublish">確定上傳</button>
+   <button type="button" id="cancelPartialPublish">取消</button>
+  </div>
+ </div>
 </div>
 
 <div class="row">
@@ -330,6 +391,9 @@ const filterPanelOpen = {
  region:false
 };
 
+/* 部分發布選取狀態 */
+const selectedPublishCategories = new Set();
+
 const $ = id => document.getElementById(id);
 
 function say(id,msg){
@@ -422,6 +486,200 @@ function hasPendingChanges(record){
         JSON.stringify(record.published_data ?? null);
 }
 
+/* 判斷一筆資料是否需要發布 */
+function needsPublishing(record){
+ return !!record && (
+  !record.is_published ||
+  hasPendingChanges(record)
+ );
+}
+
+/* 將不同職位名稱歸類為首長或民意代表 */
+function getPublishRoleGroup(data){
+ const text = [
+  data?.role,
+  data?.position
+ ].filter(Boolean).join(" ");
+
+ if(/民意代表|議員|代表/.test(text)){
+  return "民意代表";
+ }
+
+ if(/首長|市長|縣長|區長|鄉長|鎮長/.test(text)){
+  return "首長";
+ }
+
+ return null;
+}
+
+/* 取得發布分類識別碼 */
+function getPublishCategoryKey(level,roleGroup){
+ return String(level || "").trim()+"|||"+roleGroup;
+}
+
+/* 建立部分發布類別 */
+function getPublishCategories(){
+ const levelOrder = [
+  "直轄市",
+  "縣市",
+  "直轄市山地原住民區",
+  "鄉鎮市"
+ ];
+
+ const levels = new Set(
+  rows.map(r=>String(r.data?.level || "").trim()).filter(Boolean)
+ );
+
+ const orderedLevels = [
+  ...levelOrder.filter(level=>levels.has(level)),
+  ...Array.from(levels).filter(level=>!levelOrder.includes(level)).sort((a,b)=>a.localeCompare(b,"zh-Hant"))
+ ];
+
+ const categories = [];
+
+ orderedLevels.forEach(level=>{
+  ["首長","民意代表"].forEach(roleGroup=>{
+   const categoryRows = rows.filter(r=>{
+    const d = r.data || {};
+    return String(d.level || "").trim() === level &&
+           getPublishRoleGroup(d) === roleGroup;
+   });
+
+   const pendingCount = categoryRows.filter(needsPublishing).length;
+
+   categories.push({
+    key:getPublishCategoryKey(level,roleGroup),
+    level,
+    roleGroup,
+    label:level+"／"+roleGroup,
+    total:categoryRows.length,
+    pendingCount
+   });
+  });
+ });
+
+ return categories;
+}
+
+/* 取得選取類別中的待發布資料 */
+function getSelectedPublishRows(){
+ const categories = new Set(selectedPublishCategories);
+
+ return rows.filter(r=>{
+  if(!needsPublishing(r)) return false;
+
+  const d = r.data || {};
+  const roleGroup = getPublishRoleGroup(d);
+
+  if(!roleGroup) return false;
+
+  const key = getPublishCategoryKey(
+   String(d.level || "").trim(),
+   roleGroup
+  );
+
+  return categories.has(key);
+ });
+}
+
+/* 更新部分發布選單 */
+function renderPublishCategories(){
+ const container = $("publishCategoryOptions");
+ const categories = getPublishCategories();
+
+ if(!categories.length){
+  container.innerHTML = '<div class="filter-empty">目前沒有可分類的候選人資料。</div>';
+  updatePartialPublishSummary();
+  return;
+ }
+
+ container.innerHTML = categories.map(category=>{
+  const checked = selectedPublishCategories.has(category.key);
+
+  return `
+   <label class="publish-category-item">
+    <input
+     type="checkbox"
+     data-publish-category="${esc(category.key)}"
+     ${checked ? "checked" : ""}
+    >
+    <span>${esc(category.label)}</span>
+    <small>待發布 ${category.pendingCount} 筆</small>
+   </label>
+  `;
+ }).join("");
+
+ container.querySelectorAll("[data-publish-category]").forEach(input=>{
+  input.addEventListener("change",()=>{
+   const key = input.dataset.publishCategory;
+
+   if(input.checked){
+    selectedPublishCategories.add(key);
+   }else{
+    selectedPublishCategories.delete(key);
+   }
+
+   updatePartialPublishSummary();
+  });
+ });
+
+ updatePartialPublishSummary();
+}
+
+/* 更新部分發布數量 */
+function updatePartialPublishSummary(){
+ const categories = getPublishCategories();
+ const selected = categories.filter(c=>selectedPublishCategories.has(c.key));
+ const selectedRows = getSelectedPublishRows();
+
+ $("categorySelectionCount").textContent =
+  "已選擇 "+selected.length+" 個類別";
+
+ $("partialPublishCount").textContent = selectedRows.length;
+
+ if(selected.length === 0){
+  $("partialPublishDescription").textContent =
+   "請先選擇要發布的類別。";
+ }else{
+  $("partialPublishDescription").textContent =
+   "已選擇："+selected.map(c=>c.label).join("、")+
+   "。其中有 "+selectedRows.length+" 筆資料需要發布。";
+ }
+
+ $("confirmPartialPublish").disabled =
+  selected.length === 0 || selectedRows.length === 0;
+}
+
+/* 部分發布選單按鈕 */
+$("togglePartialPublish").onclick = ()=>{
+ const panel = $("partialPublishPanel");
+ const opening = panel.classList.contains("hidden");
+
+ panel.classList.toggle("hidden",!opening);
+
+ if(opening){
+  renderPublishCategories();
+ }
+};
+
+$("selectAllCategories").onclick = ()=>{
+ getPublishCategories().forEach(c=>{
+  selectedPublishCategories.add(c.key);
+ });
+ renderPublishCategories();
+};
+
+$("clearCategorySelection").onclick = ()=>{
+ selectedPublishCategories.clear();
+ renderPublishCategories();
+};
+
+$("cancelPartialPublish").onclick = ()=>{
+ $("partialPublishPanel").classList.add("hidden");
+};
+
+let editorNotes = [];
+
 function renderEditorNotes(){
  const notes = editorNotes;
  const container = $("notesList");
@@ -445,8 +703,6 @@ function renderEditorNotes(){
   };
  });
 }
-
-let editorNotes = [];
 
 function loadStructuredEditorFields(data){
  const d = data || {};
@@ -757,10 +1013,12 @@ $("logout").onclick = async () => {
   selectedFilters.level.clear();
   selectedFilters.position.clear();
   selectedFilters.region.clear();
+  selectedPublishCategories.clear();
 
   $("dataPanel").classList.add("hidden");
   $("mfaPanel").classList.add("hidden");
   $("editorPanel").classList.add("hidden");
+  $("partialPublishPanel").classList.add("hidden");
 
   say("authStatus","已登出");
  }catch(e){
@@ -986,13 +1244,14 @@ async function loadRows(){
 
  renderAdvancedFilters();
  renderRows();
+ renderPublishCategories();
 
- const pendingCount = rows.filter(hasPendingChanges).length;
+ const pendingCount = rows.filter(needsPublishing).length;
 
  say("dataStatus",
   "已載入 "+rows.length+
   " 筆資料。管理操作已通過 AAL2 檢查。"+
-  "\n目前有 "+pendingCount+" 筆已發布候選人存在尚未發布的修改。"
+  "\n目前有 "+pendingCount+" 筆草稿或待發布修改。"
  );
 }
 
@@ -1022,7 +1281,6 @@ function renderRows(){
 
   const matchesSearch = !q || hay.includes(q);
 
-  /* 有待發布修改的已發布資料，也會列入草稿／待發布修改篩選 */
   const matchesStatus =
    f === "all" ||
    (f === "draft" && (!r.is_published || pending)) ||
@@ -1111,7 +1369,6 @@ function renderRows(){
  $("rows").querySelectorAll("[data-pub]").forEach(b=>{
   b.onclick = ()=>publishOne(b.dataset.pub);
  });
-
 }
 
 $("search").oninput = renderRows;
@@ -1188,6 +1445,7 @@ $("saveRecord").onclick = async () => {
  const button = $("saveRecord");
 
  try{
+  button.disabled = true;
   await requireAAL2();
 
   const obj = JSON.parse($("recordJson").value);
@@ -1203,18 +1461,6 @@ $("saveRecord").onclick = async () => {
   let result;
 
   if(editingId){
-   const existing = rows.find(x=>x.id === editingId);
-
-   /*
-    * 重要修改：
-    * 編輯已發布候選人時，只更新 data。
-    * 不修改 is_published。
-    * 不清空 published_data。
-    *
-    * 因此前台會繼續讀取舊的 published_data，
-    * 直到管理員正式按下發布。
-    */
-
    result = await supabaseClient
     .from("candidates")
     .update({
@@ -1296,9 +1542,9 @@ async function publishOne(id){
  }
 }
 
-/* 十八、全部發布草稿及待發布修改 */
+/* 十八、一鍵發布所有草稿及待發布修改 */
 $("publishAll").onclick = async () => {
- const pendingCount = rows.filter(r=>!r.is_published || hasPendingChanges(r)).length;
+ const pendingCount = rows.filter(needsPublishing).length;
 
  if(pendingCount === 0){
   alert("目前沒有尚未發布的草稿或修改。");
@@ -1308,7 +1554,7 @@ $("publishAll").onclick = async () => {
  if(!confirm(
   "確定要一次發布所有草稿及待發布修改？\n\n"+
   "預計更新 "+pendingCount+" 筆候選人資料。\n\n"+
-  "發布後，前台將一次切換至最新資料。"
+  "發布後，前台將更新為最新資料。"
  )){
   return;
  }
@@ -1329,7 +1575,7 @@ $("publishAll").onclick = async () => {
   await loadRows();
 
   say("dataStatus",
-   "已完成批次發布。\nRPC 回傳："+JSON.stringify(data)
+   "已完成全部批次發布。\nRPC 回傳："+JSON.stringify(data)
   );
 
  }catch(e){
@@ -1339,7 +1585,110 @@ $("publishAll").onclick = async () => {
  }
 };
 
-/* 十九、匯入 1,693 筆初始資料 */
+/* 十九、部分發布指定類別 */
+$("confirmPartialPublish").onclick = async ()=>{
+ const button = $("confirmPartialPublish");
+
+ const selectedRows = getSelectedPublishRows();
+ const categories = getPublishCategories()
+  .filter(c=>selectedPublishCategories.has(c.key));
+
+ if(!categories.length){
+  alert("請先勾選要發布的類別。");
+  return;
+ }
+
+ if(!selectedRows.length){
+  alert("所選類別目前沒有尚未發布的資料。");
+  return;
+ }
+
+ const categoryNames = categories.map(c=>c.label).join("\n");
+
+ if(!confirm(
+  "確定只發布以下類別？\n\n"+
+  categoryNames+
+  "\n\n預計發布 "+selectedRows.length+" 筆候選人資料。\n\n"+
+  "未勾選的類別不會受到影響。"
+  )){
+  return;
+ }
+
+ try{
+  button.disabled = true;
+  $("publishAll").disabled = true;
+
+  await requireAAL2();
+
+  let successCount = 0;
+  let failedItem = null;
+
+  say("dataStatus",
+   "正在發布所選類別，共 "+selectedRows.length+" 筆……"
+  );
+
+  /*
+   * 逐筆呼叫既有 publish_candidate RPC。
+   * 每筆發布成功後，才會將該筆資料的草稿更新至 published_data。
+   * 不會修改未選取類別的資料。
+   */
+  for(let i=0;i<selectedRows.length;i++){
+   const record = selectedRows[i];
+
+   const {error} = await supabaseClient.rpc(
+    "publish_candidate",
+    {candidate_id:record.id}
+   );
+
+   if(error){
+    failedItem = {
+     name:record.data?.name || record.id,
+     error:error.message
+    };
+    break;
+   }
+
+   successCount++;
+
+   say("dataStatus",
+    "部分發布進度："+successCount+"/"+selectedRows.length+
+    " 筆\n目前發布："+(record.data?.name || record.id)
+   );
+  }
+
+  await loadRows();
+
+  if(failedItem){
+   say("dataStatus",
+    "部分發布已中止。\n"+
+    "成功發布："+successCount+" 筆\n"+
+    "預計發布："+selectedRows.length+" 筆\n"+
+    "失敗資料："+failedItem.name+"\n"+
+    "錯誤原因："+failedItem.error+
+    "\n\n已成功發布的資料不會回復；其餘資料仍保留原本發布狀態。"
+   );
+  }else{
+   say("dataStatus",
+    "部分發布完成！\n"+
+    "成功發布："+successCount+" 筆\n"+
+    "發布類別："+categories.map(c=>c.label).join("、")+
+    "\n其他未勾選類別維持原本資料。"
+   );
+
+   selectedPublishCategories.clear();
+   renderPublishCategories();
+   $("partialPublishPanel").classList.add("hidden");
+  }
+
+ }catch(e){
+  say("dataStatus","部分發布失敗："+e.message);
+ }finally{
+  button.disabled = false;
+  $("publishAll").disabled = false;
+ }
+};
+
+/* 二十、匯入 1,693 筆初始資料 */
 $("importBtn").onclick = async () => {
  if(!confirm(
   "將匯入 1,693 筆初始資料，全部設為草稿。若已匯入過，請勿重複執行。確定繼續？"
