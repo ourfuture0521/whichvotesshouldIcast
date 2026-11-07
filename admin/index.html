@@ -9,173 +9,41 @@
 
 <style>
 *{box-sizing:border-box}
-
-body{
- margin:0;
- padding:24px;
- font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
- color:#222;
- background:#f5f5f5
-}
-
+body{margin:0;padding:24px;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:#222;background:#f5f5f5}
 main{max-width:1250px;margin:auto}
-
-.panel{
- background:#fff;
- border:1px solid #bbb;
- padding:22px;
- margin:0 0 18px
-}
-
+.panel{background:#fff;border:1px solid #bbb;padding:22px;margin:0 0 18px}
 h1{font-size:26px;margin:0 0 18px}
 h2{font-size:19px;margin:0 0 14px}
-
-label{
- display:block;
- font-size:14px;
- margin:10px 0 5px
-}
-
-input,textarea,select{
- width:100%;
- padding:10px;
- border:1px solid #999;
- font:inherit;
- background:#fff
-}
-
-textarea{
- min-height:180px;
- font-family:ui-monospace,monospace;
- font-size:13px
-}
-
-button{
- padding:9px 14px;
- border:1px solid #333;
- background:#fff;
- cursor:pointer;
- font:inherit;
- margin:5px 5px 5px 0
-}
-
-button.primary{
- background:#222;
- color:#fff
-}
-
-button.danger{
- border-color:#a22;
- color:#a22
-}
-
-button:disabled{
- opacity:.45;
- cursor:not-allowed
-}
-
-.row{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:12px
-}
-
-.toolbar{
- display:flex;
- flex-wrap:wrap;
- gap:6px;
- align-items:center
-}
-
-.status{
- padding:10px;
- background:#eee;
- white-space:pre-wrap;
- line-height:1.6;
- margin:10px 0
-}
-
-.small{
- font-size:12px;
- color:#666;
- line-height:1.7
-}
-
+label{display:block;font-size:14px;margin:10px 0 5px}
+input,textarea,select{width:100%;padding:10px;border:1px solid #999;font:inherit;background:#fff}
+textarea{min-height:180px;font-family:ui-monospace,monospace;font-size:13px}
+button{padding:9px 14px;border:1px solid #333;background:#fff;cursor:pointer;font:inherit;margin:5px 5px 5px 0}
+button.primary{background:#222;color:#fff}
+button.danger{border-color:#a22;color:#a22}
+button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.status{padding:10px;background:#eee;white-space:pre-wrap;line-height:1.6;margin:10px 0}
+.small{font-size:12px;color:#666;line-height:1.7}
 .hidden{display:none!important}
-
-table{
- width:100%;
- border-collapse:collapse;
- font-size:13px
-}
-
-th,td{
- padding:9px;
- border-bottom:1px solid #ddd;
- text-align:left;
- vertical-align:top
-}
-
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}
 th{background:#eee}
-
-.table-wrap{
- overflow:auto;
- max-height:480px
-}
-
-.pill{
- display:inline-block;
- padding:2px 7px;
- border:1px solid #888;
- font-size:12px
-}
-
-.editor-fields{
- margin:16px 0;
- padding:16px;
- border:1px solid #ccc;
- background:#fafafa
-}
+.table-wrap{overflow:auto;max-height:480px}
+.pill{display:inline-block;padding:2px 7px;border:1px solid #888;font-size:12px}
+.editor-fields{margin:16px 0;padding:16px;border:1px solid #ccc;background:#fafafa}
 .editor-fields h3{font-size:16px;margin:0 0 10px}
-.field-grid{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:12px
-}
-.check-grid{
- display:flex;
- flex-wrap:wrap;
- gap:10px;
- margin-top:8px
-}
-.check-item{
- display:flex;
- align-items:center;
- gap:7px;
- border:1px solid #ccc;
- padding:9px 11px;
- background:#fff;
- margin:0
-}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.check-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.check-item{display:flex;align-items:center;gap:7px;border:1px solid #ccc;padding:9px 11px;background:#fff;margin:0}
 .check-item input{width:17px;height:17px;margin:0}
-.note-entry{
- display:flex;
- gap:8px;
- align-items:flex-start;
- margin:7px 0
-}
+.note-entry{display:flex;gap:8px;align-items:flex-start;margin:7px 0}
 .note-entry span{flex:1;white-space:pre-wrap;overflow-wrap:anywhere}
 .note-entry button{margin:0;padding:4px 8px}
 .note-add-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
 .note-add-row button{margin:0}
 .record-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-.record-tag{
- display:inline-block;
- padding:2px 6px;
- border:1px solid #888;
- font-size:11px;
- white-space:nowrap
-}
+.record-tag{display:inline-block;padding:2px 6px;border:1px solid #888;font-size:11px;white-space:nowrap}
 .record-tag.warning{color:#b33;border-color:#b33}
 .record-tag.gold{color:#987000;border-color:#c69b00}
 .record-tag.blue{color:#087db5;border-color:#168ac5}
@@ -183,181 +51,46 @@ th{background:#eee}
 .notes-preview{margin-top:5px;font-size:12px;color:#666}
 .notes-preview summary{cursor:pointer}
 .notes-preview ul{padding-left:18px;margin:5px 0}
+
 @media(max-width:700px){
  .field-grid{grid-template-columns:1fr}
  .note-add-row{grid-template-columns:1fr}
 }
 
-/* =========================
-   進階篩選器
-========================= */
-
-.advanced-filter{
- margin-top:18px;
- padding:16px;
- border:1px solid #ccc;
- background:#fafafa
-}
-
-.filter-heading{
- display:flex;
- justify-content:space-between;
- align-items:center;
- flex-wrap:wrap;
- gap:8px;
- margin-bottom:12px
-}
-
-.filter-heading strong{
- font-size:16px
-}
-
-.filter-toggle{
- min-width:100px;
- border:1px solid #777;
- background:#fff;
- transition:.15s
-}
-
-.filter-toggle.active{
- background:#222;
- color:#fff;
- border-color:#222
-}
-
-.filter-toggle .filter-count{
- display:inline-block;
- margin-left:5px;
- font-size:11px;
- opacity:.8
-}
-
-.filter-buttons{
- display:flex;
- flex-wrap:wrap;
- gap:7px;
- margin-bottom:12px
-}
-
-.filter-buttons button{
- margin:0
-}
-
-.filter-box{
- border:1px solid #ccc;
- background:#fff;
- padding:13px;
- margin-top:10px
-}
-
-.filter-box-title{
- display:flex;
- align-items:center;
- justify-content:space-between;
- flex-wrap:wrap;
- gap:8px;
- margin-bottom:10px;
- font-size:14px;
- font-weight:700
-}
-
-.filter-options{
- display:grid;
- grid-template-columns:repeat(4,minmax(0,1fr));
- gap:8px
-}
-
-.filter-option{
- display:flex;
- align-items:center;
- gap:7px;
- min-width:0;
- padding:8px 9px;
- border:1px solid #ddd;
- background:#fafafa;
- cursor:pointer;
- margin:0;
- font-size:13px;
- line-height:1.5
-}
-
-.filter-option:hover{
- background:#f0f0f0;
- border-color:#999
-}
-
-.filter-option input{
- width:16px;
- height:16px;
- flex-shrink:0;
- margin:0;
- cursor:pointer
-}
-
-.filter-option span{
- overflow-wrap:anywhere
-}
-
-.filter-option small{
- margin-left:auto;
- color:#888;
- flex-shrink:0;
- font-size:11px
-}
-
-.filter-result{
- display:flex;
- justify-content:space-between;
- align-items:center;
- flex-wrap:wrap;
- gap:8px;
- padding:12px;
- margin-top:12px;
- background:#eee;
- font-size:13px
-}
-
-.filter-result strong{
- font-size:16px
-}
-
-.filter-empty{
- color:#888;
- font-size:13px;
- padding:8px
-}
-
-.filter-clear{
- padding:6px 11px;
- font-size:12px;
- margin:0
-}
+/* 進階篩選器 */
+.advanced-filter{margin-top:18px;padding:16px;border:1px solid #ccc;background:#fafafa}
+.filter-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.filter-heading strong{font-size:16px}
+.filter-toggle{min-width:100px;border:1px solid #777;background:#fff;transition:.15s}
+.filter-toggle.active{background:#222;color:#fff;border-color:#222}
+.filter-toggle .filter-count{display:inline-block;margin-left:5px;font-size:11px;opacity:.8}
+.filter-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.filter-buttons button{margin:0}
+.filter-box{border:1px solid #ccc;background:#fff;padding:13px;margin-top:10px}
+.filter-box-title{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:14px;font-weight:700}
+.filter-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.filter-option{display:flex;align-items:center;gap:7px;min-width:0;padding:8px 9px;border:1px solid #ddd;background:#fafafa;cursor:pointer;margin:0;font-size:13px;line-height:1.5}
+.filter-option:hover{background:#f0f0f0;border-color:#999}
+.filter-option input{width:16px;height:16px;flex-shrink:0;margin:0;cursor:pointer}
+.filter-option span{overflow-wrap:anywhere}
+.filter-option small{margin-left:auto;color:#888;flex-shrink:0;font-size:11px}
+.filter-result{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:12px;margin-top:12px;background:#eee;font-size:13px}
+.filter-result strong{font-size:16px}
+.filter-empty{color:#888;font-size:13px;padding:8px}
+.filter-clear{padding:6px 11px;font-size:12px;margin:0}
 
 @media(max-width:900px){
- .filter-options{
-  grid-template-columns:repeat(3,minmax(0,1fr))
- }
+ .filter-options{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
-
 @media(max-width:700px){
  body{padding:12px}
  .row{grid-template-columns:1fr}
  .panel{padding:15px}
-
- .filter-options{
-  grid-template-columns:repeat(2,minmax(0,1fr))
- }
-
- .filter-toggle{
-  flex:1;
-  min-width:0
- }
+ .filter-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .filter-toggle{flex:1;min-width:0}
 }
-
 @media(max-width:420px){
- .filter-options{
-  grid-template-columns:1fr
- }
+ .filter-options{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -369,7 +102,6 @@ th{background:#eee}
 
 <div class="panel">
 <h2>一、系統連線設定</h2>
-
 <div class="row">
  <div>
   <label>Supabase Project URL</label>
@@ -380,21 +112,17 @@ th{background:#eee}
   <input id="key" placeholder="sb_publishable_... 或舊版 anon key">
  </div>
 </div>
-
 <p class="small">
 只可填入 Publishable key 或 anon public key。
 絕不可填入 Secret key、service_role key 或資料庫密碼。
 設定只保存在這台瀏覽器的 localStorage。
 </p>
-
 <button class="primary" id="saveConfig">儲存連線設定</button>
 <div id="connectionStatus" class="status">尚未連線</div>
 </div>
 
-
 <div class="panel" id="authPanel">
 <h2>二、管理員登入</h2>
-
 <div class="row">
  <div>
   <label>管理員 Email</label>
@@ -405,59 +133,39 @@ th{background:#eee}
   <input id="password" type="password" autocomplete="current-password">
  </div>
 </div>
-
 <button class="primary" id="login">登入</button>
 <button id="logout">登出</button>
-
 <div id="authStatus" class="status">尚未登入</div>
 </div>
 
-
 <div class="panel hidden" id="mfaPanel">
 <h2>三、雙重驗證（TOTP）</h2>
-
 <p class="small">
 第一次使用請先建立驗證器。
 請使用 Google Authenticator、Microsoft Authenticator
 或相容 TOTP App。
 若已有驗證器，直接輸入 6 位數驗證碼。
 </p>
-
 <button id="enroll">建立／檢查 TOTP 驗證器</button>
-
 <div id="qrArea" class="small"></div>
-
 <label>驗證器 6 位數代碼</label>
 <input id="totp" inputmode="numeric" maxlength="6" placeholder="000000">
-
 <button class="primary" id="verify">驗證並提升安全等級</button>
-
 <hr>
-
 <h2>管理員驗證器修復</h2>
-
 <p class="small">
 若之前建立的 TOTP 因子一直處於 unverified，
 而且原本的驗證器無法使用，可以透過伺服器端修復功能，
 刪除指定的未驗證因子，再重新建立驗證器。
 此操作不會刪除管理員帳號或候選人資料。
 </p>
-
-<button class="danger" id="repairFactor">
-修復未驗證 TOTP 因子
-</button>
-
-<div id="repairStatus" class="status">
-尚未執行修復。
-</div>
-
+<button class="danger" id="repairFactor">修復未驗證 TOTP 因子</button>
+<div id="repairStatus" class="status">尚未執行修復。</div>
 <div id="mfaStatus" class="status">尚未完成 AAL2 驗證</div>
 </div>
 
-
 <div class="panel hidden" id="dataPanel">
 <h2>四、候選人資料管理</h2>
-
 <div class="toolbar">
  <button id="refresh">重新載入</button>
  <button id="newRecord">新增候選人</button>
@@ -474,124 +182,57 @@ th{background:#eee}
   <label>資料狀態</label>
   <select id="filter">
    <option value="all">全部</option>
-   <option value="draft">草稿</option>
+   <option value="draft">草稿／待發布修改</option>
    <option value="published">已發布</option>
   </select>
  </div>
 </div>
 
-
-<!-- =========================
-     進階篩選器
-========================= -->
-
 <div class="advanced-filter">
-
  <div class="filter-heading">
   <strong>進階篩選</strong>
   <span class="small">可同時開啟多種條件，組合查詢候選人</span>
  </div>
-
  <div class="filter-buttons">
-
-  <button
-   type="button"
-   class="filter-toggle"
-   id="toggleLevel"
-   aria-expanded="false"
-   aria-controls="levelFilterBox">
-   層級篩選
-  </button>
-
-  <button
-   type="button"
-   class="filter-toggle"
-   id="togglePosition"
-   aria-expanded="false"
-   aria-controls="positionFilterBox">
-   職位篩選
-  </button>
-
-  <button
-   type="button"
-   class="filter-toggle"
-   id="toggleRegion"
-   aria-expanded="false"
-   aria-controls="regionFilterBox">
-   地區篩選
-  </button>
-
+  <button type="button" class="filter-toggle" id="toggleLevel" aria-expanded="false" aria-controls="levelFilterBox">層級篩選</button>
+  <button type="button" class="filter-toggle" id="togglePosition" aria-expanded="false" aria-controls="positionFilterBox">職位篩選</button>
+  <button type="button" class="filter-toggle" id="toggleRegion" aria-expanded="false" aria-controls="regionFilterBox">地區篩選</button>
  </div>
-
-
- <!-- 層級 -->
 
  <div class="filter-box hidden" id="levelFilterBox">
-
   <div class="filter-box-title">
    <span>選擇層級</span>
-   <button type="button" class="filter-clear" data-clear="level">
-    清除此條件
-   </button>
+   <button type="button" class="filter-clear" data-clear="level">清除此條件</button>
   </div>
-
   <div class="filter-options" id="levelOptions"></div>
-
  </div>
-
-
- <!-- 職位 -->
 
  <div class="filter-box hidden" id="positionFilterBox">
-
   <div class="filter-box-title">
    <span>選擇職位／職務類別</span>
-   <button type="button" class="filter-clear" data-clear="position">
-    清除此條件
-   </button>
+   <button type="button" class="filter-clear" data-clear="position">清除此條件</button>
   </div>
-
-  <p class="small">
-   同時讀取 role（職務類別）及 position（具體職位）欄位。
-  </p>
-
+  <p class="small">同時讀取 role（職務類別）及 position（具體職位）欄位。</p>
   <div class="filter-options" id="positionOptions"></div>
-
  </div>
-
-
- <!-- 地區 -->
 
  <div class="filter-box hidden" id="regionFilterBox">
-
   <div class="filter-box-title">
    <span>選擇地區</span>
-   <button type="button" class="filter-clear" data-clear="region">
-    清除此條件
-   </button>
+   <button type="button" class="filter-clear" data-clear="region">清除此條件</button>
   </div>
-
   <div class="filter-options" id="regionOptions"></div>
-
  </div>
 
-
  <div class="filter-result">
-
   <div>
    <div class="small">符合目前所有條件的候選人</div>
    <strong id="filteredCount">0</strong>
    <span class="small">／ <span id="totalCount">0</span> 筆</span>
   </div>
-
-  <button type="button" class="filter-clear" id="clearAllFilters">
-   清除全部篩選
-  </button>
-
+  <button type="button" class="filter-clear" id="clearAllFilters">清除全部篩選</button>
  </div>
-
 </div>
-
 
 <div class="status" id="dataStatus">請先完成 MFA AAL2 驗證。</div>
 
@@ -609,18 +250,14 @@ th{background:#eee}
 <tbody id="rows"></tbody>
 </table>
 </div>
-
 </div>
-
 
 <div class="panel hidden" id="editorPanel">
 <h2 id="editorTitle">編輯候選人資料</h2>
-
 <p class="small">
 請以 JSON 格式編輯單筆資料。
 欄位：level、region、role、position、district、date、name、party、note、draw_number、status_flags、notes。
 </p>
-
 
 <div class="editor-fields">
  <h3>候選人前台標記</h3>
@@ -629,7 +266,14 @@ th{background:#eee}
   <div>
    <label for="drawNumber">抽籤號次</label>
    <input id="drawNumber" type="text" list="drawNumberOptions" inputmode="numeric" placeholder="輸入號次，或從 1～30 選擇">
-   <datalist id="drawNumberOptions"><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option><option value="5"></option><option value="6"></option><option value="7"></option><option value="8"></option><option value="9"></option><option value="10"></option><option value="11"></option><option value="12"></option><option value="13"></option><option value="14"></option><option value="15"></option><option value="16"></option><option value="17"></option><option value="18"></option><option value="19"></option><option value="20"></option><option value="21"></option><option value="22"></option><option value="23"></option><option value="24"></option><option value="25"></option><option value="26"></option><option value="27"></option><option value="28"></option><option value="29"></option><option value="30"></option></datalist>
+   <datalist id="drawNumberOptions">
+    <option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option><option value="5"></option>
+    <option value="6"></option><option value="7"></option><option value="8"></option><option value="9"></option><option value="10"></option>
+    <option value="11"></option><option value="12"></option><option value="13"></option><option value="14"></option><option value="15"></option>
+    <option value="16"></option><option value="17"></option><option value="18"></option><option value="19"></option><option value="20"></option>
+    <option value="21"></option><option value="22"></option><option value="23"></option><option value="24"></option><option value="25"></option>
+    <option value="26"></option><option value="27"></option><option value="28"></option><option value="29"></option><option value="30"></option>
+   </datalist>
   </div>
   <div>
    <label>候選人狀態標記（可複選）</label>
@@ -650,31 +294,22 @@ th{background:#eee}
 
 <label for="recordJson">進階 JSON 資料（可保留原本欄位）</label>
 <textarea id="recordJson" spellcheck="false"></textarea>
-
 <div class="toolbar">
  <button class="primary" id="saveRecord">儲存為草稿</button>
  <button id="cancelEdit">取消</button>
  <button class="danger" id="deleteRecord">刪除資料</button>
 </div>
-
 <div class="small" id="editStatus"></div>
 </div>
 
 </main>
 
-
 <script>
 (() => {
-
 "use strict";
 
-/* =========================
-   一、基本設定
-========================= */
-
+/* 一、基本設定 */
 const ADMIN_UID = "feec62cf-3af7-4315-add9-96b6aeb117ff";
-
-/* 每次讀取 1000 筆，避開 Supabase Max Rows 限制 */
 const PAGE_SIZE = 1000;
 
 let supabaseClient = null;
@@ -683,14 +318,12 @@ let currentFactorId = null;
 let editingId = null;
 let rows = [];
 
-/* 進階篩選選取狀態 */
 const selectedFilters = {
  level:new Set(),
  position:new Set(),
  region:new Set()
 };
 
-/* 進階篩選面板開啟狀態 */
 const filterPanelOpen = {
  level:false,
  position:false,
@@ -710,13 +343,8 @@ function config(){
  };
 }
 
-
-/* =========================
-   二、Supabase 連線
-========================= */
-
+/* 二、Supabase 連線 */
 function connect(){
-
  const c = config();
 
  if(!c.url || !c.key){
@@ -727,33 +355,24 @@ function connect(){
   throw new Error("Supabase JS 載入失敗，請檢查網路或 CDN。");
  }
 
- supabaseClient = window.supabase.createClient(
-  c.url,
-  c.key,
-  {
-   auth:{
-    persistSession:true,
-    autoRefreshToken:true,
-    detectSessionInUrl:true
-   }
+ supabaseClient = window.supabase.createClient(c.url,c.key,{
+  auth:{
+   persistSession:true,
+   autoRefreshToken:true,
+   detectSessionInUrl:true
   }
- );
+ });
 
  return supabaseClient;
 }
 
-
 function requireAdmin(){
-
  if(!currentUser || currentUser.id !== ADMIN_UID){
   throw new Error("目前登入帳號不是設定的唯一管理員帳號。");
  }
-
 }
 
-
 async function requireAAL2(){
-
  requireAdmin();
 
  const {data,error} =
@@ -764,20 +383,14 @@ async function requireAAL2(){
  if(data.currentLevel !== "aal2"){
   throw new Error("此操作需要 AAL2。請先完成 TOTP 驗證。");
  }
-
 }
-
 
 function showAdmin(){
-
  $("mfaPanel").classList.remove("hidden");
  $("dataPanel").classList.remove("hidden");
-
 }
 
-
 function esc(v){
-
  return String(v ?? "").replace(/[&<>"']/g,c=>({
   "&":"&amp;",
   "<":"&lt;",
@@ -785,7 +398,6 @@ function esc(v){
   '"':"&quot;",
   "'":"&#39;"
  }[c]));
-
 }
 
 function getCandidateFlags(data){
@@ -801,19 +413,31 @@ function getCandidateNotes(data){
  return legacy ? [legacy] : [];
 }
 
+/* 判斷資料是否有尚未發布的修改 */
+function hasPendingChanges(record){
+ if(!record || !record.is_published) return false;
+ if(record.published_data == null) return true;
+
+ return JSON.stringify(record.data ?? null) !==
+        JSON.stringify(record.published_data ?? null);
+}
+
 function renderEditorNotes(){
  const notes = editorNotes;
  const container = $("notesList");
+
  if(!notes.length){
   container.innerHTML = '<span class="small">目前沒有備註。</span>';
   return;
  }
+
  container.innerHTML = notes.map((note,index)=>`
   <div class="note-entry">
    <span>${index+1}. ${esc(note)}</span>
    <button type="button" class="danger" data-remove-note="${index}">移除</button>
   </div>
  `).join("");
+
  container.querySelectorAll("[data-remove-note]").forEach(button=>{
   button.onclick=()=>{
    editorNotes.splice(Number(button.dataset.removeNote),1);
@@ -827,10 +451,12 @@ let editorNotes = [];
 function loadStructuredEditorFields(data){
  const d = data || {};
  $("drawNumber").value = String(d.draw_number ?? "");
+
  const flags = getCandidateFlags(d);
  $("flagNotRegistered").checked = flags.has("not_registered");
  $("flagUncontested").checked = flags.has("uncontested");
  $("flagIncumbent").checked = flags.has("incumbent");
+
  editorNotes = getCandidateNotes(d);
  renderEditorNotes();
  $("newNote").value = "";
@@ -838,12 +464,14 @@ function loadStructuredEditorFields(data){
 
 function applyStructuredEditorFields(data){
  const d = data;
+
  d.draw_number = $("drawNumber").value.trim();
  d.status_flags = [
   $("flagNotRegistered").checked ? "not_registered" : null,
   $("flagUncontested").checked ? "uncontested" : null,
   $("flagIncumbent").checked ? "incumbent" : null
  ].filter(Boolean);
+
  d.notes = editorNotes.slice();
  return d;
 }
@@ -855,6 +483,7 @@ $("addNote").onclick = ()=>{
  $("newNote").value = "";
  renderEditorNotes();
 };
+
 $("newNote").addEventListener("keydown",event=>{
  if(event.key === "Enter"){
   event.preventDefault();
@@ -862,112 +491,50 @@ $("newNote").addEventListener("keydown",event=>{
  }
 });
 
-
-/* =========================
-   三、進階篩選功能
-========================= */
-
-/*
-  欄位對應：
-
-  層級：
-  data.level
-
-  職位：
-  data.role + data.position
-
-  地區：
-  data.region
-
-  同一類別內多選 = OR
-  不同類別之間 = AND
-*/
-
-
+/* 三、進階篩選功能 */
 function getFilterValue(value){
-
  return String(value ?? "").trim();
-
 }
 
-
-/* 取得所有候選人中不重複的篩選選項 */
-
 function getFilterOptions(type){
-
  const values = new Set();
 
  rows.forEach(r=>{
-
   const d = r.data || {};
 
-  if(type === "level"){
-
-   values.add(getFilterValue(d.level));
-
-  }
-
-  if(type === "region"){
-
-   values.add(getFilterValue(d.region));
-
-  }
+  if(type === "level") values.add(getFilterValue(d.level));
+  if(type === "region") values.add(getFilterValue(d.region));
 
   if(type === "position"){
-
    values.add(getFilterValue(d.role));
    values.add(getFilterValue(d.position));
-
   }
-
  });
 
  return Array.from(values).sort((a,b)=>{
-
   if(a === "") return 1;
   if(b === "") return -1;
-
   return a.localeCompare(b,"zh-Hant");
-
  });
-
 }
 
-
-/* 計算每個選項對應的候選人數 */
-
 function getFilterOptionCount(type,value){
-
  return rows.filter(r=>{
-
   const d = r.data || {};
 
-  if(type === "level"){
-   return getFilterValue(d.level) === value;
-  }
-
-  if(type === "region"){
-   return getFilterValue(d.region) === value;
-  }
+  if(type === "level") return getFilterValue(d.level) === value;
+  if(type === "region") return getFilterValue(d.region) === value;
 
   if(type === "position"){
-   return (
-    getFilterValue(d.role) === value ||
-    getFilterValue(d.position) === value
-   );
+   return getFilterValue(d.role) === value ||
+          getFilterValue(d.position) === value;
   }
 
   return false;
-
  }).length;
-
 }
 
-
-/* 建立某個篩選分類的選項 */
-
 function renderFilterOptions(type){
-
  const containerId = {
   level:"levelOptions",
   position:"positionOptions",
@@ -975,92 +542,54 @@ function renderFilterOptions(type){
  }[type];
 
  const container = $(containerId);
-
  const options = getFilterOptions(type);
  const selected = selectedFilters[type];
 
  if(options.length === 0){
-
-  container.innerHTML =
-   '<div class="filter-empty">目前沒有可用的篩選資料。</div>';
-
+  container.innerHTML = '<div class="filter-empty">目前沒有可用的篩選資料。</div>';
   return;
-
  }
 
  container.innerHTML = options.map(value=>{
-
   const checked = selected.has(value);
   const count = getFilterOptionCount(type,value);
-
   const label = value === "" ? "未填寫" : value;
 
   return `
    <label class="filter-option">
-    <input
-     type="checkbox"
+    <input type="checkbox"
      data-filter-type="${type}"
      data-filter-value="${esc(value)}"
-     ${checked ? "checked" : ""}
-    >
+     ${checked ? "checked" : ""}>
     <span>${esc(label)}</span>
     <small>${count}</small>
    </label>
   `;
-
  }).join("");
-
 }
 
-
-/* 更新篩選按鈕顯示 */
-
 function updateFilterButtons(){
-
  const settings = [
-  {
-   type:"level",
-   button:"toggleLevel",
-   label:"層級篩選"
-  },
-  {
-   type:"position",
-   button:"togglePosition",
-   label:"職位篩選"
-  },
-  {
-   type:"region",
-   button:"toggleRegion",
-   label:"地區篩選"
-  }
+  {type:"level",button:"toggleLevel",label:"層級篩選"},
+  {type:"position",button:"togglePosition",label:"職位篩選"},
+  {type:"region",button:"toggleRegion",label:"地區篩選"}
  ];
 
  settings.forEach(item=>{
-
   const button = $(item.button);
   const count = selectedFilters[item.type].size;
   const isOpen = filterPanelOpen[item.type];
 
   button.classList.toggle("active",isOpen);
-
-  button.setAttribute(
-   "aria-expanded",
-   isOpen ? "true" : "false"
-  );
+  button.setAttribute("aria-expanded",isOpen ? "true" : "false");
 
   button.innerHTML =
    item.label+
    (count ? `<span class="filter-count">(${count})</span>` : "");
-
  });
-
 }
 
-
-/* 開啟或關閉篩選面板 */
-
 function toggleFilterPanel(type){
-
  const boxId = {
   level:"levelFilterBox",
   position:"positionFilterBox",
@@ -1068,36 +597,18 @@ function toggleFilterPanel(type){
  }[type];
 
  filterPanelOpen[type] = !filterPanelOpen[type];
-
- $(boxId).classList.toggle(
-  "hidden",
-  !filterPanelOpen[type]
- );
-
+ $(boxId).classList.toggle("hidden",!filterPanelOpen[type]);
  updateFilterButtons();
-
 }
-
-
-/* 清除指定類別 */
 
 function clearFilter(type){
-
  selectedFilters[type].clear();
-
  renderFilterOptions(type);
-
  updateFilterButtons();
-
  renderRows();
-
 }
 
-
-/* 清除所有篩選 */
-
 function clearAllFilters(){
-
  selectedFilters.level.clear();
  selectedFilters.position.clear();
  selectedFilters.region.clear();
@@ -1105,56 +616,25 @@ function clearAllFilters(){
  renderFilterOptions("level");
  renderFilterOptions("position");
  renderFilterOptions("region");
-
  updateFilterButtons();
-
  renderRows();
-
 }
 
-
-/* 進階篩選事件 */
-
-$("toggleLevel").onclick = ()=>{
- toggleFilterPanel("level");
-};
-
-$("togglePosition").onclick = ()=>{
- toggleFilterPanel("position");
-};
-
-$("toggleRegion").onclick = ()=>{
- toggleFilterPanel("region");
-};
-
-
-/* 各類別清除按鈕 */
+$("toggleLevel").onclick = ()=>toggleFilterPanel("level");
+$("togglePosition").onclick = ()=>toggleFilterPanel("position");
+$("toggleRegion").onclick = ()=>toggleFilterPanel("region");
 
 document.querySelectorAll("[data-clear]").forEach(button=>{
-
- button.onclick = ()=>{
-
-  clearFilter(button.dataset.clear);
-
- };
-
+ button.onclick = ()=>clearFilter(button.dataset.clear);
 });
-
 
 $("clearAllFilters").onclick = clearAllFilters;
 
-
-/* 篩選選項變動 */
-
 ["levelOptions","positionOptions","regionOptions"].forEach(containerId=>{
-
  $(containerId).addEventListener("change",event=>{
-
   const checkbox = event.target;
 
-  if(!checkbox.matches('input[type="checkbox"][data-filter-type]')){
-   return;
-  }
+  if(!checkbox.matches('input[type="checkbox"][data-filter-type]')) return;
 
   const type = checkbox.dataset.filterType;
   const value = checkbox.dataset.filterValue;
@@ -1162,57 +642,32 @@ $("clearAllFilters").onclick = clearAllFilters;
   if(!selectedFilters[type]) return;
 
   if(checkbox.checked){
-
    selectedFilters[type].add(value);
-
   }else{
-
    selectedFilters[type].delete(value);
-
   }
 
   updateFilterButtons();
-
   renderRows();
-
  });
-
 });
 
-
-/* 重新整理篩選選項 */
-
 function renderAdvancedFilters(){
-
  renderFilterOptions("level");
  renderFilterOptions("position");
  renderFilterOptions("region");
-
  updateFilterButtons();
-
 }
 
-
-/* =========================
-   四、初始化連線設定
-========================= */
-
-$("url").value =
- localStorage.getItem("lec_supabase_url") || "";
-
-$("key").value =
- localStorage.getItem("lec_supabase_key") || "";
-
+/* 四、初始化連線設定 */
+$("url").value = localStorage.getItem("lec_supabase_url") || "";
+$("key").value = localStorage.getItem("lec_supabase_key") || "";
 
 $("saveConfig").onclick = () => {
-
  try{
-
   const c = config();
 
-  if(!c.url || !c.key){
-   throw new Error("請完整填寫 URL 與 key");
-  }
+  if(!c.url || !c.key) throw new Error("請完整填寫 URL 與 key");
 
   if(!/^https:\/\/[a-zA-Z0-9.-]+\.supabase\.co\/?$/.test(c.url)){
    throw new Error("Project URL 格式不正確，請確認 Supabase Dashboard 提供的網址。");
@@ -1223,48 +678,30 @@ $("saveConfig").onclick = () => {
 
   connect();
 
-  say(
-   "connectionStatus",
-   "已儲存設定並成功建立 Supabase 連線物件。請登入管理員帳號。"
-  );
-
+  say("connectionStatus","已儲存設定並成功建立 Supabase 連線物件。請登入管理員帳號。");
  }catch(e){
-
   say("connectionStatus",e.message);
-
  }
-
 };
 
-
-/* =========================
-   五、管理員登入
-========================= */
-
+/* 五、管理員登入 */
 $("login").onclick = async () => {
-
  try{
-
   connect();
 
-  const {data,error} =
-   await supabaseClient.auth.signInWithPassword({
-    email:$("email").value.trim(),
-    password:$("password").value
-   });
+  const {data,error} = await supabaseClient.auth.signInWithPassword({
+   email:$("email").value.trim(),
+   password:$("password").value
+  });
 
   if(error) throw error;
 
   currentUser = data.user;
 
   if(!currentUser || currentUser.id !== ADMIN_UID){
-
    await supabaseClient.auth.signOut();
-
    currentUser = null;
-
    throw new Error("此帳號不是唯一管理員，已自動登出。");
-
   }
 
   showAdmin();
@@ -1275,70 +712,43 @@ $("login").onclick = async () => {
   if(factorError) throw factorError;
 
   const totpFactors = factorData.totp || [];
+  const unverifiedFactor = totpFactors.find(x=>x.status === "unverified");
+  const verifiedFactor = totpFactors.find(x=>x.status === "verified");
 
-  const unverifiedFactor =
-   totpFactors.find(x=>x.status === "unverified");
-
-  const verifiedFactor =
-   totpFactors.find(x=>x.status === "verified");
-
-  currentFactorId =
-   unverifiedFactor?.id || verifiedFactor?.id || null;
+  currentFactorId = unverifiedFactor?.id || verifiedFactor?.id || null;
 
   const {data:aal,error:aalError} =
    await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
 
   if(aalError) throw aalError;
 
-  say(
-   "authStatus",
+  say("authStatus",
    "登入成功："+currentUser.email+
    "\n目前安全等級："+aal.currentLevel+
    "（需要 aal2 才能管理資料）"
   );
 
   if(currentFactorId){
-
-   say(
-    "mfaStatus",
+   say("mfaStatus",
     unverifiedFactor
      ? "找到既有尚未完成驗證的 TOTP 因子。請使用原本手機 App 的 6 位數代碼完成驗證。"
      : "找到已驗證的 TOTP 因子。請輸入手機 App 的 6 位數代碼。"
    );
-
   }else{
-
-   say(
-    "mfaStatus",
-    "目前沒有 TOTP 因子，請按「建立／檢查 TOTP 驗證器」。"
-   );
-
+   say("mfaStatus","目前沒有 TOTP 因子，請按「建立／檢查 TOTP 驗證器」。");
   }
 
-  if(aal.currentLevel === "aal2"){
-   await loadRows();
-  }
+  if(aal.currentLevel === "aal2") await loadRows();
 
  }catch(e){
-
   say("authStatus",e.message);
-
  }
-
 };
 
-
-/* =========================
-   六、登出
-========================= */
-
+/* 六、登出 */
 $("logout").onclick = async () => {
-
  try{
-
-  if(supabaseClient){
-   await supabaseClient.auth.signOut();
-  }
+  if(supabaseClient) await supabaseClient.auth.signOut();
 
   currentUser = null;
   currentFactorId = null;
@@ -1353,69 +763,37 @@ $("logout").onclick = async () => {
   $("editorPanel").classList.add("hidden");
 
   say("authStatus","已登出");
-
  }catch(e){
-
   say("authStatus",e.message);
-
  }
-
 };
 
-
-/* =========================
-   七、TOTP 因子檢查及建立
-========================= */
-
+/* 七、TOTP 因子檢查及建立 */
 $("enroll").onclick = async () => {
-
  try{
-
   requireAdmin();
 
-  const {data,error} =
-   await supabaseClient.auth.mfa.listFactors();
-
+  const {data,error} = await supabaseClient.auth.mfa.listFactors();
   if(error) throw error;
 
   const factors = data.totp || [];
-
-  const unverified =
-   factors.find(x=>x.status === "unverified");
-
-  const verified =
-   factors.find(x=>x.status === "verified");
+  const unverified = factors.find(x=>x.status === "unverified");
+  const verified = factors.find(x=>x.status === "verified");
 
   if(unverified){
-
    currentFactorId = unverified.id;
-
    $("qrArea").textContent =
     "已找到既有尚未驗證的 TOTP 因子。請使用原本手機 App 中對應的 6 位數代碼，直接按下「驗證並提升安全等級」。不需要重新掃描 QR Code。";
-
-   say(
-    "mfaStatus",
-    "已找到既有 unverified 因子，請輸入原本驗證器的 6 位數代碼。"
-   );
-
+   say("mfaStatus","已找到既有 unverified 因子，請輸入原本驗證器的 6 位數代碼。");
    return;
-
   }
 
   if(verified){
-
    currentFactorId = verified.id;
-
    $("qrArea").textContent =
     "已找到既有 verified TOTP 因子。請直接使用手機 App 的 6 位數代碼完成登入驗證。";
-
-   say(
-    "mfaStatus",
-    "已找到已驗證的 TOTP 因子，請輸入手機 App 的 6 位數代碼。"
-   );
-
+   say("mfaStatus","已找到已驗證的 TOTP 因子，請輸入手機 App 的 6 位數代碼。");
    return;
-
   }
 
   const {data:enrollData,error:enrollError} =
@@ -1430,41 +808,23 @@ $("enroll").onclick = async () => {
 
   $("qrArea").innerHTML =
    '<p>請使用驗證器 App 掃描下方 QR Code：</p>'+
-   '<img alt="TOTP QR Code" style="max-width:220px" src="'+
-   enrollData.totp.qr_code+'">'+
-   '<p>若無法掃描，可手動輸入：<code>'+
-   esc(enrollData.totp.secret)+
-   '</code></p>';
+   '<img alt="TOTP QR Code" style="max-width:220px" src="'+enrollData.totp.qr_code+'">'+
+   '<p>若無法掃描，可手動輸入：<code>'+esc(enrollData.totp.secret)+'</code></p>';
 
-  say(
-   "mfaStatus",
-   "已建立新的 TOTP 因子。請掃描 QR Code 後輸入 6 位數代碼。"
-  );
-
+  say("mfaStatus","已建立新的 TOTP 因子。請掃描 QR Code 後輸入 6 位數代碼。");
  }catch(e){
-
   say("mfaStatus",e.message);
-
  }
-
 };
 
-
-/* =========================
-   八、修復未驗證 TOTP 因子
-========================= */
-
+/* 八、修復未驗證 TOTP 因子 */
 $("repairFactor").onclick = async () => {
-
  const button = $("repairFactor");
 
  try{
-
   requireAdmin();
 
-  if(!supabaseClient){
-   throw new Error("Supabase 尚未連線，請重新登入。");
-  }
+  if(!supabaseClient) throw new Error("Supabase 尚未連線，請重新登入。");
 
   const confirmed = confirm(
    "即將執行 TOTP 驗證器修復。\n\n"+
@@ -1480,144 +840,81 @@ $("repairFactor").onclick = async () => {
   if(!confirmed) return;
 
   button.disabled = true;
+  say("repairStatus","正在向 Supabase 伺服器提出修復請求，請稍候……");
 
-  say(
-   "repairStatus",
-   "正在向 Supabase 伺服器提出修復請求，請稍候……"
+  const {data,error} = await supabaseClient.functions.invoke(
+   "repair-admin-totp",
+   {body:{}}
   );
 
-  const {data,error} =
-   await supabaseClient.functions.invoke(
-    "repair-admin-totp",
-    {
-     body:{}
-    }
-   );
-
   if(error){
-
    let detail = error.message || "Edge Function 呼叫失敗。";
 
    if(error.context){
-
     try{
-
      const response = await error.context.json();
-
-     if(response.error){
-      detail = response.error;
-     }
-
+     if(response.error) detail = response.error;
     }catch(_){}
-
    }
 
    throw new Error(detail);
-
   }
 
-  if(!data){
-   throw new Error("伺服器沒有回傳修復結果。");
-  }
-
-  if(!data.success){
-   throw new Error(data.error || "修復未成功。");
-  }
+  if(!data) throw new Error("伺服器沒有回傳修復結果。");
+  if(!data.success) throw new Error(data.error || "修復未成功。");
 
   if(data.deleted === 1){
-
    currentFactorId = null;
-
    $("totp").value = "";
    $("qrArea").textContent = "";
 
-   say(
-    "repairStatus",
-    "修復成功！\n"+
-    data.message+
+   say("repairStatus",
+    "修復成功！\n"+data.message+
     "\n\n現在可以按「建立／檢查 TOTP 驗證器」，重新建立驗證器。"
    );
 
-   say(
-    "mfaStatus",
-    "舊的未驗證因子已由伺服器移除。請重新建立 TOTP 驗證器。"
-   );
-
+   say("mfaStatus","舊的未驗證因子已由伺服器移除。請重新建立 TOTP 驗證器。");
   }else{
-
-   say(
-    "repairStatus",
+   say("repairStatus",
     data.message || "伺服器沒有找到符合條件的未驗證因子，沒有進行刪除。"
    );
-
   }
-
  }catch(e){
-
-  say(
-   "repairStatus",
+  say("repairStatus",
    "修復失敗：\n"+e.message+
    "\n\n請先不要重複操作，將錯誤訊息提供給我。"
   );
-
  }finally{
-
   button.disabled = false;
-
  }
-
 };
 
-
-/* =========================
-   九、TOTP 驗證
-========================= */
-
+/* 九、TOTP 驗證 */
 $("verify").onclick = async () => {
-
  try{
-
   requireAdmin();
 
   const code = $("totp").value.trim();
-
-  if(!/^\d{6}$/.test(code)){
-   throw new Error("請輸入 6 位數驗證碼。");
-  }
+  if(!/^\d{6}$/.test(code)) throw new Error("請輸入 6 位數驗證碼。");
 
   if(!currentFactorId){
-
-   const {data,error} =
-    await supabaseClient.auth.mfa.listFactors();
-
+   const {data,error} = await supabaseClient.auth.mfa.listFactors();
    if(error) throw error;
 
    const factors = data.totp || [];
-
-   const unverified =
-    factors.find(x=>x.status === "unverified");
-
-   const verified =
-    factors.find(x=>x.status === "verified");
-
+   const unverified = factors.find(x=>x.status === "unverified");
+   const verified = factors.find(x=>x.status === "verified");
    const factor = unverified || verified;
 
    if(!factor){
-
-    throw new Error(
-     "找不到 TOTP 驗證器。請先按「建立／檢查 TOTP 驗證器」。"
-    );
-
+    throw new Error("找不到 TOTP 驗證器。請先按「建立／檢查 TOTP 驗證器」。");
    }
 
    currentFactorId = factor.id;
-
   }
 
   const {data:challenge,error:challengeError} =
-   await supabaseClient.auth.mfa.challenge({
-    factorId:currentFactorId
-   });
+   await supabaseClient.auth.mfa.challenge({factorId:currentFactorId});
 
   if(challengeError) throw challengeError;
 
@@ -1638,160 +935,105 @@ $("verify").onclick = async () => {
   $("totp").value = "";
 
   if(aal.currentLevel === "aal2"){
-
-   say(
-    "mfaStatus",
-    "TOTP 驗證成功！目前安全等級：aal2。"
-   );
-
+   say("mfaStatus","TOTP 驗證成功！目前安全等級：aal2。");
    await loadRows();
-
   }else{
-
-   say(
-    "mfaStatus",
+   say("mfaStatus",
     "驗證請求已完成，但目前安全等級仍為："+aal.currentLevel+
     "。請重新整理登入狀態後再確認。"
    );
-
   }
-
  }catch(e){
-
   say("mfaStatus",e.message);
-
  }
-
 };
 
-
-/* =========================
-   十、載入候選人資料
-   分批讀取全部資料
-========================= */
-
+/* 十、載入候選人資料 */
 async function loadRows(){
-
  await requireAAL2();
 
  let allRows = [];
  let from = 0;
  let hasMore = true;
 
- say(
-  "dataStatus",
-  "正在分批載入候選人資料，請稍候……"
- );
+ say("dataStatus","正在分批載入候選人資料，請稍候……");
 
  while(hasMore){
-
   const to = from + PAGE_SIZE - 1;
 
-  const {data,error} =
-   await supabaseClient
-    .from("candidates")
-    .select("id,data,is_published,created_at,updated_at")
-    .order("created_at",{ascending:true})
-    .order("id",{ascending:true})
-    .range(from,to);
+  const {data,error} = await supabaseClient
+   .from("candidates")
+   .select("id,data,published_data,is_published,created_at,updated_at")
+   .order("created_at",{ascending:true})
+   .order("id",{ascending:true})
+   .range(from,to);
 
   if(error) throw error;
 
   const batch = data || [];
-
   allRows = allRows.concat(batch);
 
-  say(
-   "dataStatus",
-   "正在載入候選人資料："+allRows.length+" 筆……"
-  );
+  say("dataStatus","正在載入候選人資料："+allRows.length+" 筆……");
 
   if(batch.length < PAGE_SIZE){
    hasMore = false;
   }else{
    from += PAGE_SIZE;
   }
-
  }
 
  rows = allRows;
 
- /* 載入資料後，自動建立篩選選項 */
  renderAdvancedFilters();
-
  renderRows();
 
- say(
-  "dataStatus",
-  "已載入 "+rows.length+
-  " 筆資料。管理操作已通過 AAL2 檢查。"
- );
+ const pendingCount = rows.filter(hasPendingChanges).length;
 
+ say("dataStatus",
+  "已載入 "+rows.length+
+  " 筆資料。管理操作已通過 AAL2 檢查。"+
+  "\n目前有 "+pendingCount+" 筆已發布候選人存在尚未發布的修改。"
+ );
 }
 
-
-/* =========================
-   十一、候選人資料列表
-========================= */
-
+/* 十一、候選人資料列表 */
 function getStatusTagHtml(data){
  const flags = getCandidateFlags(data);
  const labels = [];
+
  if(flags.has("not_registered")) labels.push('<span class="record-tag warning">不得登記</span>');
  if(flags.has("uncontested")) labels.push('<span class="record-tag gold">同額競選</span>');
  if(flags.has("incumbent")) labels.push('<span class="record-tag blue">現任者</span>');
+
  return labels.join("");
 }
 
 function renderRows(){
-
  const q = $("search").value.trim().toLowerCase();
  const f = $("filter").value;
 
  const list = rows.filter(r=>{
-
   const d = r.data || {};
+  const pending = hasPendingChanges(r);
 
   const hay = [
-   d.name,
-   d.region,
-   d.party,
-   d.position,
-   d.role,
-   d.level,
-   d.district
+   d.name,d.region,d.party,d.position,d.role,d.level,d.district
   ].join(" ").toLowerCase();
 
+  const matchesSearch = !q || hay.includes(q);
 
-  /* 原本的姓名／地區／政黨搜尋 */
-
-  const matchesSearch =
-   !q || hay.includes(q);
-
-
-  /* 原本的草稿／已發布篩選 */
-
+  /* 有待發布修改的已發布資料，也會列入草稿／待發布修改篩選 */
   const matchesStatus =
    f === "all" ||
-   (f === "draft" && !r.is_published) ||
+   (f === "draft" && (!r.is_published || pending)) ||
    (f === "published" && r.is_published);
 
-
-  /* 層級篩選 */
-
   const levelSelected = selectedFilters.level;
-
   const matchesLevel =
    levelSelected.size === 0 ||
    levelSelected.has(getFilterValue(d.level));
 
-
-  /* 職位篩選
-     同時比對 role 與 position
-  */
-
   const positionSelected = selectedFilters.position;
-
   const candidatePositions = [
    getFilterValue(d.role),
    getFilterValue(d.position)
@@ -1801,39 +1043,38 @@ function renderRows(){
    positionSelected.size === 0 ||
    candidatePositions.some(value=>positionSelected.has(value));
 
-
-  /* 地區篩選 */
-
   const regionSelected = selectedFilters.region;
-
   const matchesRegion =
    regionSelected.size === 0 ||
    regionSelected.has(getFilterValue(d.region));
 
-
-  /* 所有不同條件必須同時符合 */
-
-  return (
-   matchesSearch &&
-   matchesStatus &&
-   matchesLevel &&
-   matchesPosition &&
-   matchesRegion
-  );
-
+  return matchesSearch &&
+         matchesStatus &&
+         matchesLevel &&
+         matchesPosition &&
+         matchesRegion;
  });
 
-
  $("rows").innerHTML = list.map(r=>{
-
   const d = r.data || {};
+  const pending = hasPendingChanges(r);
 
   const drawNumber = String(d.draw_number ?? "").trim();
   const notes = getCandidateNotes(d);
+
   const noteHtml = notes.length
    ? `<details class="notes-preview"><summary>備註 ${notes.length} 條</summary><ul>${notes.map(note=>`<li>${esc(note)}</li>`).join("")}</ul></details>`
    : "";
+
   const flagsHtml = getStatusTagHtml(d);
+
+  let statusText = "草稿";
+
+  if(r.is_published && pending){
+   statusText = "已發布（有待發布修改）";
+  }else if(r.is_published){
+   statusText = "已發布";
+  }
 
   return `
    <tr>
@@ -1849,132 +1090,83 @@ function renderRows(){
      ${esc(d.district)}
     </td>
     <td>${esc(d.party)}</td>
-    <td>
-     <span class="pill">
-      ${r.is_published ? "已發布" : "草稿"}
-     </span>
-    </td>
+    <td><span class="pill">${statusText}</span></td>
     <td>
      <button data-edit="${esc(r.id)}">編輯</button>
      <button data-pub="${esc(r.id)}">
-      ${r.is_published ? "重新發布" : "發布"}
+      ${r.is_published ? (pending ? "發布修改" : "重新發布") : "發布"}
      </button>
     </td>
    </tr>
   `;
-
  }).join("");
-
-
- /* 更新篩選結果統計 */
 
  $("filteredCount").textContent = list.length;
  $("totalCount").textContent = rows.length;
 
-
- /* 綁定編輯按鈕 */
-
  $("rows").querySelectorAll("[data-edit]").forEach(b=>{
-
   b.onclick = ()=>edit(b.dataset.edit);
-
  });
 
-
- /* 綁定發布按鈕 */
-
  $("rows").querySelectorAll("[data-pub]").forEach(b=>{
-
   b.onclick = ()=>publishOne(b.dataset.pub);
-
  });
 
 }
 
-
 $("search").oninput = renderRows;
 $("filter").onchange = renderRows;
 
-
-/* =========================
-   十二、重新載入資料
-========================= */
-
+/* 十二、重新載入資料 */
 $("refresh").onclick = async () => {
-
  const button = $("refresh");
 
  try{
-
   button.disabled = true;
-
   await loadRows();
-
  }catch(e){
-
   say("dataStatus","載入失敗："+e.message);
-
  }finally{
-
   button.disabled = false;
-
  }
-
 };
 
-
-/* =========================
-   十三、編輯候選人
-========================= */
-
+/* 十三、編輯候選人 */
 function edit(id){
-
  const r = rows.find(x=>x.id === id);
-
  if(!r) return;
 
  editingId = id;
 
  $("editorTitle").textContent = "編輯候選人資料";
-
- $("recordJson").value =
-  JSON.stringify(r.data,null,2);
+ $("recordJson").value = JSON.stringify(r.data,null,2);
 
  loadStructuredEditorFields(r.data);
 
  $("deleteRecord").classList.remove("hidden");
-
  $("editorPanel").classList.remove("hidden");
  $("editorPanel").scrollIntoView({behavior:"smooth",block:"start"});
-
 }
 
-
-/* =========================
-   十四、新增候選人
-========================= */
-
+/* 十四、新增候選人 */
 $("newRecord").onclick = () => {
-
  editingId = null;
 
  $("editorTitle").textContent = "新增候選人";
-
- $("recordJson").value =
-  JSON.stringify({
-   level:"",
-   region:"",
-   role:"",
-   position:"",
-   district:"",
-   date:"",
-   name:"",
-   party:"",
-   note:"",
-   draw_number:"",
-   status_flags:[],
-   notes:[]
-  },null,2);
+ $("recordJson").value = JSON.stringify({
+  level:"",
+  region:"",
+  role:"",
+  position:"",
+  district:"",
+  date:"",
+  name:"",
+  party:"",
+  note:"",
+  draw_number:"",
+  status_flags:[],
+  notes:[]
+ },null,2);
 
  loadStructuredEditorFields({
   draw_number:"",
@@ -1983,26 +1175,19 @@ $("newRecord").onclick = () => {
  });
 
  $("deleteRecord").classList.add("hidden");
-
  $("editorPanel").classList.remove("hidden");
  $("editorPanel").scrollIntoView({behavior:"smooth",block:"start"});
-
 };
-
 
 $("cancelEdit").onclick = () => {
  $("editorPanel").classList.add("hidden");
 };
 
-
-/* =========================
-   十五、儲存候選人
-========================= */
-
+/* 十五、儲存候選人 */
 $("saveRecord").onclick = async () => {
+ const button = $("saveRecord");
 
  try{
-
   await requireAAL2();
 
   const obj = JSON.parse($("recordJson").value);
@@ -2012,42 +1197,39 @@ $("saveRecord").onclick = async () => {
    "level","region","role","position","district",
    "date","name","party","note"
   ]){
-
-   if(!(k in obj)){
-    throw new Error("缺少欄位："+k);
-   }
-
+   if(!(k in obj)) throw new Error("缺少欄位："+k);
   }
 
   let result;
 
   if(editingId){
-
    const existing = rows.find(x=>x.id === editingId);
-   if(existing?.is_published){
-    const confirmed = confirm(
-     "這筆候選人目前已發布。儲存後會依照原系統規則轉為草稿，公開前台暫時不會顯示更新內容。\n\n儲存後請重新檢查資料，再按「發布」讓更新內容重新公開。\n\n確定儲存嗎？"
-    );
-    if(!confirmed) return;
-   }
+
+   /*
+    * 重要修改：
+    * 編輯已發布候選人時，只更新 data。
+    * 不修改 is_published。
+    * 不清空 published_data。
+    *
+    * 因此前台會繼續讀取舊的 published_data，
+    * 直到管理員正式按下發布。
+    */
 
    result = await supabaseClient
     .from("candidates")
     .update({
-     data:obj,
-     is_published:false,
-     published_data:null
+     data:obj
     })
     .eq("id",editingId);
 
   }else{
-
    result = await supabaseClient
     .from("candidates")
     .insert({
-     data:obj
+     data:obj,
+     is_published:false,
+     published_data:null
     });
-
   }
 
   if(result.error) throw result.error;
@@ -2056,124 +1238,109 @@ $("saveRecord").onclick = async () => {
 
   await loadRows();
 
-  say("editStatus","已儲存為草稿。");
+  say("editStatus",
+   editingId
+    ? "修改已儲存。前台仍維持原本已發布的資料；按下發布後才會更新。"
+    : "已新增為草稿，尚未發布至前台。"
+  );
 
  }catch(e){
-
   say("editStatus",e.message);
-
+ }finally{
+  button.disabled = false;
  }
-
 };
 
-
-/* =========================
-   十六、刪除候選人
-========================= */
-
+/* 十六、刪除候選人 */
 $("deleteRecord").onclick = async () => {
-
  if(!editingId || !confirm("確定永久刪除此筆候選人資料？")){
   return;
  }
 
  try{
-
   await requireAAL2();
 
-  const {error} =
-   await supabaseClient
-    .from("candidates")
-    .delete()
-    .eq("id",editingId);
+  const {error} = await supabaseClient
+   .from("candidates")
+   .delete()
+   .eq("id",editingId);
 
   if(error) throw error;
 
   $("editorPanel").classList.add("hidden");
-
   await loadRows();
 
  }catch(e){
-
   say("editStatus",e.message);
-
  }
-
 };
 
-
-/* =========================
-   十七、發布單筆候選人
-========================= */
-
+/* 十七、發布單筆候選人 */
 async function publishOne(id){
-
  try{
-
   await requireAAL2();
 
-  const {error} =
-   await supabaseClient.rpc(
-    "publish_candidate",
-    {candidate_id:id}
-   );
+  const {error} = await supabaseClient.rpc(
+   "publish_candidate",
+   {candidate_id:id}
+  );
 
   if(error) throw error;
 
   await loadRows();
 
+  say("dataStatus","單筆候選人資料已發布，前台現在會顯示最新版本。");
+
  }catch(e){
-
   say("dataStatus",e.message);
-
  }
-
 }
 
-
-/* =========================
-   十八、全部發布草稿
-========================= */
-
+/* 十八、全部發布草稿及待發布修改 */
 $("publishAll").onclick = async () => {
+ const pendingCount = rows.filter(r=>!r.is_published || hasPendingChanges(r)).length;
 
- if(!confirm("確定將所有草稿發布至公開網站？")){
+ if(pendingCount === 0){
+  alert("目前沒有尚未發布的草稿或修改。");
   return;
  }
 
+ if(!confirm(
+  "確定要一次發布所有草稿及待發布修改？\n\n"+
+  "預計更新 "+pendingCount+" 筆候選人資料。\n\n"+
+  "發布後，前台將一次切換至最新資料。"
+ )){
+  return;
+ }
+
+ const button = $("publishAll");
+
  try{
+  button.disabled = true;
 
   await requireAAL2();
 
-  const {data,error} =
-   await supabaseClient.rpc(
-    "publish_all_candidate_drafts"
-   );
+  const {data,error} = await supabaseClient.rpc(
+   "publish_all_candidate_drafts"
+  );
 
   if(error) throw error;
 
   await loadRows();
 
-  say(
-   "dataStatus",
-   "已發布草稿。RPC 回傳："+JSON.stringify(data)
+  say("dataStatus",
+   "已完成批次發布。\nRPC 回傳："+JSON.stringify(data)
   );
 
  }catch(e){
-
-  say("dataStatus",e.message);
-
+  say("dataStatus","發布失敗："+e.message);
+ }finally{
+  button.disabled = false;
  }
-
 };
 
-
-/* =========================
-   十九、匯入 1,693 筆初始資料
-========================= */
-
+/* 十九、匯入 1,693 筆初始資料 */
 $("importBtn").onclick = async () => {
-
  if(!confirm(
   "將匯入 1,693 筆初始資料，全部設為草稿。若已匯入過，請勿重複執行。確定繼續？"
  )){
@@ -2181,64 +1348,45 @@ $("importBtn").onclick = async () => {
  }
 
  try{
-
   await requireAAL2();
 
   const res = await fetch("../data/initial-candidates.json");
 
   if(!res.ok){
-
-   throw new Error(
-    "無法讀取 data/initial-candidates.json。請確認網站檔案結構。"
-   );
-
+   throw new Error("無法讀取 data/initial-candidates.json。請確認網站檔案結構。");
   }
 
   const items = await res.json();
-
   let inserted = 0;
 
   for(let i=0;i<items.length;i+=100){
-
    const batch = items.slice(i,i+100).map(data=>({
     data,
     is_published:false,
     published_data:null
    }));
 
-   const {error} =
-    await supabaseClient
-     .from("candidates")
-     .insert(batch);
+   const {error} = await supabaseClient
+    .from("candidates")
+    .insert(batch);
 
    if(error) throw error;
 
    inserted += batch.length;
 
-   say(
-    "dataStatus",
-    "匯入中："+inserted+"/"+items.length+"（全部為草稿）"
-   );
-
+   say("dataStatus","匯入中："+inserted+"/"+items.length+"（全部為草稿）");
   }
 
   await loadRows();
 
-  say(
-   "dataStatus",
-   "匯入完成："+inserted+" 筆，全部為草稿。"
-  );
+  say("dataStatus","匯入完成："+inserted+" 筆，全部為草稿。");
 
  }catch(e){
-
-  say(
-   "dataStatus",
+  say("dataStatus",
    "匯入失敗："+e.message+
    "\n若已部分匯入，請先檢查資料庫，避免直接重複匯入。"
   );
-
  }
-
 };
 
 })();
