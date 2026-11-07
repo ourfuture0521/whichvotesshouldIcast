@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -230,9 +231,9 @@ body{
   outline-offset:3px;
 }
 
-/* 候選人姓名：20px、粗體 */
+/* 候選人姓名：18.5px */
 .candidate-name{
-  font-size:20px;
+  font-size:18.5px;
   font-weight:700;
   line-height:1.4;
   overflow-wrap:anywhere;
@@ -242,9 +243,9 @@ body{
   gap:7px;
 }
 
-/* 編號：字體與黨籍相同 */
+/* 號次：沿用舊版黨籍字體大小 */
 .candidate-draw-number-row{
-  font-size:20px;
+  font-size:14px;
   line-height:1.5;
   font-weight:600;
   color:#555;
@@ -262,7 +263,7 @@ body{
   padding:2px 7px;
   border:1px solid transparent;
   border-radius:2px;
-  font-size:20px;
+  font-size:13px;
   line-height:1.25;
   font-weight:700;
   white-space:nowrap;
@@ -300,20 +301,20 @@ body{
   color:#888;
 }
 
-/* 黨籍：20px，與編號相同 */
+/* 黨籍：沿用舊版14px */
 .candidate-party{
-  font-size:20px;
+  font-size:14px;
   line-height:1.5;
   color:#555;
   overflow-wrap:anywhere;
 }
 .candidate-meta{
-  font-size:14px;
+  font-size:12px;
   color:#777;
   line-height:1.6;
 }
 .candidate-note{
-  font-size:15px;
+  font-size:13px;
   color:#555;
   line-height:1.6;
 }
@@ -848,7 +849,7 @@ function renderResults(){
               </div>
 
               ${drawNumber
-                ?`<div class="candidate-draw-number-row">編號：${escapeHTML(drawNumber)}</div>`
+                ?`<div class="candidate-draw-number-row">號次：${escapeHTML(drawNumber)}</div>`
                 :""}
 
               <div class="candidate-party">
@@ -940,10 +941,9 @@ function renderCandidateDetail(candidateId){
     candidate.draw_number!==undefined&&
     String(candidate.draw_number).trim()!==""
       ?String(candidate.draw_number).trim()
-      :"未編號";
+      :"";
 
   const fields=[
-    ["編號",drawNumber],
     ["推薦政黨",candidate.party||"未提供政黨"],
     ["參選職位",candidate.position||"未提供"],
     ["選舉區",candidate.district||"未提供"],
@@ -982,6 +982,10 @@ function renderCandidateDetail(candidateId){
         ${escapeHTML(candidate.name||"候選人資訊")}
         ${getCandidateStatusTags(candidate)}
       </h3>
+
+      ${drawNumber
+        ?`<div class="candidate-draw-number-row">號次：${escapeHTML(drawNumber)}</div>`
+        :""}
 
       <div class="detail-list">
         ${fields.map(([label,value])=>`
@@ -1142,6 +1146,5 @@ async function startApp(){
 
 startApp();
 </script>
-
 </body>
 </html>
