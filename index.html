@@ -513,6 +513,19 @@ body{
   font-size:17px;
 }
 .header-search button:hover{background:#e0e0e0}
+.header-nav{display:contents}
+.header-dropdown{position:relative;display:flex;align-items:stretch;justify-content:center;min-width:0}
+.header-dropdown-toggle{width:100%;min-height:76px;padding:10px 8px;border:0;border-right:1px solid #333;background:transparent;color:#333;font:inherit;font-size:16px;font-weight:600;letter-spacing:1px;cursor:pointer;white-space:nowrap}
+.header-dropdown-toggle:hover{background:#e0e0e0}
+.header-dropdown-menu{display:none;position:absolute;z-index:30;top:100%;left:0;min-width:180px;background:#fff;border:1px solid #333;box-shadow:0 4px 10px rgba(0,0,0,.12)}
+.header-dropdown.open .header-dropdown-menu,.header-dropdown:focus-within .header-dropdown-menu{display:block}
+.header-dropdown-menu a{display:block;padding:11px 14px;color:#333;text-decoration:none;font-size:14px;white-space:normal;border-bottom:1px solid #ddd}
+.header-dropdown-menu a:last-child{border-bottom:0}
+.header-dropdown-menu a:hover{background:#e0e0e0}
+.effect-glow{text-shadow:0 0 7px currentColor,0 0 14px currentColor}
+.effect-rainbow{background:linear-gradient(90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa);-webkit-background-clip:text;background-clip:text;color:transparent}
+.effect-pulse{animation:contentPulse 1.3s ease-in-out infinite alternate}
+@keyframes contentPulse{from{opacity:1}to{opacity:.45}}
 
 .ticker-wrap{
   width:80%;
@@ -554,6 +567,7 @@ body{
   letter-spacing:2px;
 }
 .ticker-wrap:hover .ticker-text{animation-play-state:paused}
+.ticker-text p,.ticker-text div{display:inline;margin:0}
 @keyframes tickerMove{
   from{transform:translateX(0)}
   to{transform:translateX(-100%)}
@@ -589,6 +603,8 @@ body{
   line-height:2;
   overflow-wrap:anywhere;
 }
+.footer-text a{color:inherit;text-decoration:underline}
+.footer-text p{margin:0 0 8px}
 .footer-bottom{
   margin-top:22px;
   padding-top:13px;
@@ -612,6 +628,7 @@ body{
     border-bottom:1px solid #333;
     font-size:14px;
   }
+  .header-dropdown-toggle{min-height:58px;font-size:14px}
   .header-item:nth-child(3){border-right:0}
   .header-item:nth-child(n+4){border-bottom:0}
   .header-search{grid-column:span 3;border-right:0}
@@ -627,6 +644,7 @@ body{
     padding:8px 5px;
     font-size:13px;
   }
+  .header-dropdown-toggle{min-height:52px;padding:8px 5px;font-size:13px}
   .header-item:nth-child(3){border-right:1px solid #333}
   .header-item:nth-child(2n){border-right:0}
   .header-item:nth-child(n+4){border-bottom:1px solid #333}
@@ -644,20 +662,6 @@ body{
   .footer-inner{grid-template-columns:1fr;gap:20px}
 }
 
-
-/* 後台可管理的 Header／跑馬燈／資訊欄 */
-.site-header{display:flex;flex-wrap:wrap;align-items:stretch;gap:0}
-.site-brand{display:flex;align-items:center;justify-content:center;min-height:76px;padding:10px 16px;border-right:1px solid #333;font-size:20px;font-weight:700;white-space:normal;overflow-wrap:anywhere}
-.site-nav{display:flex;flex:1 1 300px;min-width:0;flex-wrap:wrap}
-.site-nav .header-item{flex:1 1 110px;min-height:76px}
-.site-header .header-search{flex:0 1 270px;min-width:220px}
-.ticker-text{white-space:nowrap}
-#footerDynamicContent{display:block}
-#footerDynamicContent>*{margin-top:0;margin-bottom:12px}
-#footerDynamicContent a{color:inherit;text-decoration:underline}
-@media(max-width:900px){.site-brand{flex:1 1 100%;border-right:0;border-bottom:1px solid #333}.site-nav{flex:1 1 100%}.site-header .header-search{flex:1 1 100%;min-width:0;border-top:1px solid #333}}
-@media(max-width:600px){.site-nav .header-item{flex:1 1 45%;min-height:52px}.site-brand{min-height:58px}.site-header .header-search{min-height:58px}}
-
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -666,13 +670,8 @@ body{
 <body>
 
 <header class="site-header" id="top">
-  <div class="site-brand" id="siteHeaderTitle">地方選舉候選人資訊</div>
-  <nav class="site-nav" id="siteHeaderLinks" aria-label="主要導覽">
-    <a class="header-item" href="#top">首頁</a>
-    <a class="header-item" href="#mainContent">選舉資訊</a>
-    <a class="header-item" href="#mainContent">候選人查詢</a>
-    <a class="header-item" href="#mainContent">選舉制度</a>
-    <a class="header-item" href="#footerInfo">關於本站</a>
+  <nav class="header-nav" id="headerNav" aria-label="網站導覽">
+    <a class="header-item" href="#top">首頁</a><a class="header-item" href="#mainContent">選舉資訊</a><a class="header-item" href="#mainContent">候選人查詢</a><a class="header-item" href="#mainContent">選舉制度</a><a class="header-item" href="#footerInfo">關於本站</a>
   </nav>
   <form class="header-item header-search" id="headerSearchForm" role="search">
     <input id="headerSearchInput" type="search" placeholder="搜尋候選人" aria-label="搜尋候選人">
@@ -682,9 +681,7 @@ body{
 
 <div class="ticker-wrap" aria-label="網站公告跑馬燈">
   <span class="ticker-label">LATEST</span>
-  <div class="ticker-track">
-    <span class="ticker-text" id="publishedMarqueeContent">網站公告將顯示於此。</span>
-  </div>
+  <div class="ticker-track"><span class="ticker-text" id="publishedMarquee">ABCDEFGHIJKLMNOPQRSTUVWXYZ　・　ABCDEFGHIJKLMNOPQRSTUVWXYZ　・　ABCDEFGHIJKLMNOPQRSTUVWXYZ</span></div>
 </div>
 
 <div class="main-wrapper" id="mainContent">
@@ -728,26 +725,18 @@ body{
 
 
 <footer class="site-footer" id="footerInfo">
-  <div class="footer-inner" id="footerDynamicContent">
+  <div class="footer-inner">
     <section class="footer-section">
-      <h2 class="footer-title">關於本站</h2>
-      <p class="footer-text">
-        這裡是網站介紹測試文字。未來將放置本站成立目的、服務內容與使用方式等資訊。
-      </p>
+      <h2 class="footer-title" id="footerTitle1">關於本站</h2>
+      <div class="footer-text" id="footerContent1">這裡是網站介紹測試文字。未來將放置本站成立目的、服務內容與使用方式等資訊。</div>
     </section>
     <section class="footer-section">
-      <h2 class="footer-title">資料說明</h2>
-      <p class="footer-text">
-        候選人資料依登記日期排序。<br>
-        資料內容以公開資訊為基礎，實際資訊仍請以主管機關公告為準。
-      </p>
+      <h2 class="footer-title" id="footerTitle2">資料說明</h2>
+      <div class="footer-text" id="footerContent2">候選人資料依登記日期排序。<br>資料內容以公開資訊為基礎，實際資訊仍請以主管機關公告為準。</div>
     </section>
     <section class="footer-section">
-      <h2 class="footer-title">聯絡資訊</h2>
-      <p class="footer-text">
-        聯絡方式測試文字<br>
-        意見回饋與資料更正管道將於此處公布。
-      </p>
+      <h2 class="footer-title" id="footerTitle3">聯絡資訊</h2>
+      <div class="footer-text" id="footerContent3">聯絡方式測試文字<br>意見回饋與資料更正管道將於此處公布。</div>
     </section>
   </div>
   <div class="footer-bottom">
@@ -772,6 +761,50 @@ if(headerSearchForm){
 const SUPABASE_URL = "https://mvmkdhdhfpomgnsukxsh.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_rToUq4v8aQa7N1cotVj4zQ_H0mdRwRF";
 
+function sanitizePublishedHtml(input){
+  const doc=new DOMParser().parseFromString(String(input||""),"text/html");
+  const tags=new Set(["P","BR","DIV","SPAN","B","STRONG","I","EM","U","S","UL","OL","LI","A","H2","H3","H4","BLOCKQUOTE","FONT"]);
+  const styles=new Set(["color","background-color","font-family","font-size","font-weight","font-style","text-decoration","text-align","text-shadow"]);
+  const classes=new Set(["effect-glow","effect-pulse","effect-rainbow"]);
+  [...doc.body.querySelectorAll("*")].forEach(el=>{
+    if(!tags.has(el.tagName)){if(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","SVG","MATH","TEMPLATE"].includes(el.tagName))el.remove();else el.replaceWith(...el.childNodes);return;}
+    [...el.attributes].forEach(a=>{const n=a.name.toLowerCase();if(n==="style"){const clean=[];a.value.split(";").forEach(rule=>{const i=rule.indexOf(":");if(i<1)return;const p=rule.slice(0,i).trim().toLowerCase(),v=rule.slice(i+1).trim();if(styles.has(p)&&!/url\s*\(|expression|javascript/i.test(v))clean.push(p+":"+v);});if(clean.length)el.setAttribute("style",clean.join(";"));else el.removeAttribute("style");}else if(n==="class"){const c=a.value.split(/\s+/).filter(x=>classes.has(x));if(c.length)el.setAttribute("class",c.join(" "));else el.removeAttribute("class");}else if(n==="href"&&el.tagName==="A"){if(!/^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(a.value.trim()))el.removeAttribute("href");}else if(n==="target"&&el.tagName==="A"){if(!["_blank","_self"].includes(a.value))el.removeAttribute("target");}else if(n==="rel"&&el.tagName==="A"){}else if(el.tagName==="FONT"&&["face","size","color"].includes(n)){}else el.removeAttribute(n);});
+    if(el.tagName==="A"&&el.getAttribute("target")==="_blank")el.setAttribute("rel","noopener noreferrer");
+  });return doc.body.innerHTML;
+}
+function safePublishedUrl(value){
+  const url=String(value||"#").trim();
+  return /^(https?:\/\/|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(url) ? url : "#";
+}
+function renderPublishedHeader(payload){
+  if(!payload||!Array.isArray(payload.items))return;
+  const nav=document.getElementById("headerNav");if(!nav)return;nav.replaceChildren();
+  const items=payload.items.slice(0,5);
+  items.forEach(item=>{if(!item||!item.label)return;
+    if(item.type==="dropdown"){
+      const wrap=document.createElement("div");wrap.className="header-dropdown";
+      const toggle=document.createElement("button");toggle.type="button";toggle.className="header-dropdown-toggle";toggle.textContent=item.label+" ▾";toggle.setAttribute("aria-expanded","false");
+      const menu=document.createElement("div");menu.className="header-dropdown-menu";
+      (item.children||[]).forEach(child=>{if(!child.label)return;const a=document.createElement("a");a.textContent=child.label;a.href=safePublishedUrl(child.url);if(child.newTab){a.target="_blank";a.rel="noopener noreferrer";}menu.append(a);});
+      toggle.addEventListener("click",()=>{const open=wrap.classList.toggle("open");toggle.setAttribute("aria-expanded",String(open));});wrap.append(toggle,menu);nav.append(wrap);
+    }else{const a=document.createElement("a");a.className="header-item";a.textContent=item.label;a.href=safePublishedUrl(item.url);if(item.newTab){a.target="_blank";a.rel="noopener noreferrer";}nav.append(a);}
+  });
+  if(payload.background)document.querySelector(".site-header").style.background=payload.background;
+}
+async function loadPublishedSiteContent(){
+  try{
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    const {data,error}=await client.from("site_content_public").select("content_key,published_data");
+    if(error)throw error;
+    const content={};(data||[]).forEach(row=>content[row.content_key]=row.published_data);
+    if(content.header)renderPublishedHeader(content.header);
+    if(content.marquee!==undefined){const ticker=document.getElementById("publishedMarquee");if(ticker){ticker.innerHTML=sanitizePublishedHtml(content.marquee);}}
+    if(content.footer_info&&Array.isArray(content.footer_info.columns)){
+      content.footer_info.columns.slice(0,3).forEach((col,index)=>{const n=index+1;const title=document.getElementById("footerTitle"+n),body=document.getElementById("footerContent"+n);if(title)title.textContent=col.title||"";if(body)body.innerHTML=sanitizePublishedHtml(col.html||"");});
+    }
+  }catch(error){console.warn("網站公開內容載入失敗，先顯示預設內容：",error.message);}
+}
+
 const regionData = {
   "直轄市":[
     "臺北市","新北市","桃園市","臺中市","臺南市","高雄市"
@@ -793,7 +826,6 @@ let selectedRole="";
 let selectedRegion="";
 
 const PAGE_SIZE=1000;
-let publicSupabaseClient=null;
 const resultsContent=document.getElementById("resultsContent");
 
 // ==========================================
@@ -884,7 +916,6 @@ async function loadPublishedCandidates(){
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
-  publicSupabaseClient=client;
 
   const all=[];
   let from=0;
@@ -1358,72 +1389,6 @@ document.querySelectorAll(".role-button").forEach(button=>{
     renderResults();
   });
 });
-
-// ==========================================
-// 公開網站內容：只讀取已發布版本
-// ==========================================
-function sanitizePublishedHtml(input){
-  const doc=new DOMParser().parseFromString(String(input||""),"text/html");
-  const allowed=new Set(["P","BR","DIV","SPAN","B","STRONG","I","EM","U","S","UL","OL","LI","A","H2","H3","H4","BLOCKQUOTE"]);
-  const styles=new Set(["color","background-color","font-family","font-size","font-weight","font-style","text-decoration","text-align","text-shadow"]);
-  const classes=new Set(["effect-glow","effect-pulse","effect-rainbow"]);
-  [...doc.body.querySelectorAll("*")].forEach(el=>{
-    if(!allowed.has(el.tagName)){
-      if(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","SVG","MATH","TEMPLATE"].includes(el.tagName))el.remove();
-      else el.replaceWith(...el.childNodes);
-      return;
-    }
-    [...el.attributes].forEach(attr=>{
-      const n=attr.name.toLowerCase();
-      if(n==="style"){
-        const safe=[];
-        attr.value.split(";").forEach(rule=>{const i=rule.indexOf(":");if(i<1)return;const prop=rule.slice(0,i).trim().toLowerCase(),value=rule.slice(i+1).trim();if(styles.has(prop)&&!/url\s*\(|expression|javascript/i.test(value))safe.push(prop+":"+value);});
-        if(safe.length)el.setAttribute("style",safe.join(";"));else el.removeAttribute("style");
-      }else if(n==="class"){
-        const keep=attr.value.split(/\s+/).filter(x=>classes.has(x));if(keep.length)el.setAttribute("class",keep.join(" "));else el.removeAttribute("class");
-      }else if(n==="href"&&el.tagName==="A"){
-        if(!/^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(attr.value.trim()))el.removeAttribute("href");
-      }else if(n==="target"&&el.tagName==="A"){
-        if(!["_blank","_self"].includes(attr.value))el.removeAttribute("target");
-      }else if(n==="rel"&&el.tagName==="A"){}else el.removeAttribute(n);
-    });
-    if(el.tagName==="A"&&el.getAttribute("target")==="_blank")el.setAttribute("rel","noopener noreferrer");
-  });
-  return doc.body.innerHTML;
-}
-
-async function loadPublishedSiteContent(){
-  try{
-    if(!publicSupabaseClient)return;
-    const {data,error}=await publicSupabaseClient.rpc("get_published_site_content");
-    if(error)throw error;
-    const content=data||{};
-    if(content.header){
-      const h=content.header;
-      const title=document.getElementById("siteHeaderTitle");
-      if(title&&h.title){title.textContent=h.title;title.style.fontSize=(Number(h.titleSize)||22)+"px";}
-      const nav=document.getElementById("siteHeaderLinks");
-      if(nav&&Array.isArray(h.links)){
-        nav.replaceChildren();
-        h.links.forEach(item=>{
-          if(!item||!item.label)return;
-          const a=document.createElement("a");a.className="header-item";a.textContent=String(item.label);
-          const url=String(item.url||"#");a.href=/^(javascript:|data:|vbscript:)/i.test(url)?"#":url;
-          a.target=item.newTab?"_blank":"_self";if(a.target==="_blank")a.rel="noopener noreferrer";nav.append(a);
-        });
-      }
-      const header=document.getElementById("top");if(header&&/^#[0-9a-f]{6}$/i.test(h.background||""))header.style.background=h.background;
-    }
-    if(typeof content.marquee==="string"&&content.marquee.trim()){
-      const ticker=document.getElementById("publishedMarqueeContent");if(ticker)ticker.innerHTML=sanitizePublishedHtml(content.marquee);
-    }
-    if(typeof content.footer_info==="string"&&content.footer_info.trim()){
-      const footer=document.getElementById("footerDynamicContent");if(footer)footer.innerHTML=sanitizePublishedHtml(content.footer_info);
-    }
-  }catch(error){
-    console.warn("網站自訂內容載入失敗，先顯示預設內容：",error);
-  }
-}
 
 // ==========================================
 // 十一、啟動網站
