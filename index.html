@@ -324,9 +324,9 @@ body{
   line-height:1.8;
 }
 
-.candidate-profile-hero{display:grid;grid-template-columns:minmax(180px,34%) minmax(0,1fr);gap:28px;align-items:start;margin:12px 0 28px}
-.candidate-profile-photo{width:100%;max-width:360px;aspect-ratio:4/5;object-fit:cover;border:1px solid #aaa;background:#eee}
-.candidate-profile-placeholder{width:100%;max-width:360px;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;border:1px dashed #aaa;background:#f2f2f2;color:#888}
+.candidate-profile-hero{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start;margin:12px 0 28px}
+.candidate-profile-photo{display:block;width:240px;max-width:100%;height:300px;object-fit:cover;border:1px solid #aaa;background:#eee}
+.candidate-profile-placeholder{width:240px;max-width:100%;height:300px;aspect-ratio:auto;display:flex;align-items:center;justify-content:center;border:1px dashed #aaa;background:#f2f2f2;color:#888}
 .candidate-profile-facts{display:grid;gap:16px}
 .candidate-profile-fact{padding:12px 0;border-bottom:1px solid #ddd;line-height:1.8}
 .candidate-profile-fact strong{display:block;margin-bottom:3px}
@@ -336,7 +336,7 @@ body{
 .candidate-profile-section{padding:20px 0;border-top:1px dashed #777;line-height:1.9;scroll-margin-top:20px}
 .candidate-profile-section h4{margin:0 0 10px;font-size:20px}
 .candidate-profile-section .profile-copy{white-space:pre-wrap;overflow-wrap:anywhere}
-@media(max-width:650px){.candidate-profile-hero{grid-template-columns:1fr}.candidate-profile-photo,.candidate-profile-placeholder{max-width:260px}.candidate-profile-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.candidate-profile-hero{grid-template-columns:1fr;gap:16px}.candidate-profile-photo,.candidate-profile-placeholder{width:190px;height:238px;max-width:100%}.candidate-profile-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .candidate-detail{padding:24px 0 10px}
 .detail-back{
   margin:0 0 24px;
@@ -1259,14 +1259,14 @@ function renderCandidateDetail(candidateId){
       :"";
 
   const profile=candidate.profile||{};
-  const fields=[["推薦政黨",candidate.party||"未提供政黨"],["參選職位",candidate.position||"未提供"],["選舉區",candidate.district||"未提供"],["登記日期",candidate.date||"未提供"]];
+  const fields=[["推薦政黨",candidate.party||"未提供政黨"],["參選職位",candidate.position||"未提供"],["參選地區",candidate.region||"未提供"],["選舉區",candidate.district||"未提供"],["登記日期",candidate.date||"未提供"]];
   const sections=[
     ["crime-history","犯罪史／司法紀錄",profile.crime_history],["attendance","出席率",profile.attendance],
     ["interpellations","質詢率／質詢紀錄",profile.interpellations],["projects","專案",profile.projects],
     ["policy","政見（更新中）",profile.policy],["experience","經歷",profile.experience],
     ["education","學歷",profile.education],["extra","其他補充",profile.extra]
   ];
-  const visibleSections=sections.filter(([, ,content])=>String(content||"").trim());
+  const visibleSections=sections;
   resultsContent.innerHTML=`
     <div class="candidate-detail">
       <button class="detail-back" id="detailBack" type="button">← 返回候選人名單</button>
@@ -1282,7 +1282,7 @@ function renderCandidateDetail(candidateId){
         <nav class="candidate-profile-nav">
           ${visibleSections.filter(([id])=>["crime-history","attendance","interpellations","projects"].includes(id)).map(([id,label])=>`<a href="#profile-${id}">${escapeHTML(label)}</a>`).join("")}
         </nav>
-        ${visibleSections.map(([id,label,content])=>`<section class="candidate-profile-section" id="profile-${id}"><h4>${escapeHTML(label)}</h4><div class="profile-copy">${escapeHTML(content)}</div></section>`).join("")}
+        ${visibleSections.map(([id,label,content])=>`<section class="candidate-profile-section" id="profile-${id}"><h4>${escapeHTML(label)}</h4><div class="profile-copy">${String(content||"").trim()?escapeHTML(content):"尚未提供資料"}</div></section>`).join("")}
       `:`<div class="detail-list">${fields.map(([label,value])=>`<div class="detail-row"><div class="detail-label">${escapeHTML(label)}</div><div class="detail-value">${escapeHTML(value)}</div></div>`).join("")}<p class="data-note">此候選人尚未提供更多個人專頁內容。</p></div>`}
     </div>
   `;
