@@ -204,17 +204,18 @@ body.dashboard-mode #loginTitle{display:none}
 #candidateInfoPage>.dashboard-page-title{margin-bottom:16px}
 #candidateInfoPage #dataPanel{margin-bottom:18px}
 #candidateInfoPage #editorPanel{max-width:1450px;margin:0 auto 18px}
-.candidate-profile-name-link{padding:0;border:0;background:transparent;color:#222;text-decoration:underline;text-underline-offset:3px;font:inherit;font-weight:700;cursor:pointer;text-align:left}.candidate-profile-name-link:hover{color:#555}\n.profile-editor-grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:20px;align-items:start}
+.candidate-profile-name-link{padding:0;border:0;background:transparent;color:#222;text-decoration:underline;text-underline-offset:3px;font:inherit;font-weight:700;cursor:pointer;text-align:left}.candidate-profile-name-link:hover{color:#555}
+.profile-editor-grid{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px;align-items:start}
 .profile-photo-editor{padding:12px;border:1px solid #ccc;background:#fafafa}
-.profile-photo-preview{width:100%;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px dashed #aaa;background:#eee;color:#888;text-align:center;margin-bottom:10px}
-.profile-photo-preview img{width:100%;height:100%;object-fit:cover}
-.profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
-.profile-fields label{grid-column:1/-1;font-weight:600;margin-top:5px}
+.profile-photo-preview{width:166px;max-width:100%;height:208px;aspect-ratio:auto;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px dashed #aaa;background:#eee;color:#888;text-align:center;margin-bottom:10px}
+.profile-photo-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-content:start}
+.profile-fields label{grid-column:1/-1;font-weight:600;margin-top:5px}.profile-edit-nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:8px}.profile-edit-nav a{display:flex;min-height:42px;align-items:center;justify-content:center;padding:8px;border:1px solid #333;color:#222;text-decoration:none;text-align:center;font-size:13px}.profile-edit-nav a:hover{background:#eee}.profile-fields textarea{scroll-margin-top:24px}@media(max-width:700px){.profile-edit-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .profile-fields textarea{grid-column:1/-1;width:100%;min-height:70px;padding:9px;border:1px solid #bbb;font:inherit;resize:vertical}
 .profile-photo-editor input[type=file]{width:100%;font-size:12px;margin:8px 0}
 .profile-photo-editor button{width:100%;margin:5px 0}
 .profile-photo-editor small{display:block;color:#777;line-height:1.6}
-@media(max-width:700px){.profile-editor-grid{grid-template-columns:1fr}.profile-photo-editor{max-width:300px}.profile-fields{grid-template-columns:1fr}}
+@media(max-width:700px){.profile-editor-grid{grid-template-columns:1fr}.profile-photo-editor{max-width:190px}.profile-fields{grid-template-columns:1fr}}
 @media(max-width:850px){
  .dashboard-layout{grid-template-columns:205px minmax(0,1fr)}
  .dashboard-content{padding:16px}
@@ -578,12 +579,18 @@ body.dashboard-mode #loginTitle{display:none}
  <div class="profile-editor-grid">
   <div class="profile-photo-editor"><div class="profile-photo-preview" id="profilePhotoPreview">尚未上傳照片</div><label for="profilePhotoFile">上傳候選人照片</label><input id="profilePhotoFile" type="file" accept="image/png,image/jpeg,image/webp"><button type="button" id="uploadProfilePhoto">上傳／更新照片</button><small id="profilePhotoStatus">建議使用 JPG、PNG 或 WebP 圖片，最大 5 MB。</small></div>
   <div class="profile-fields">
+   <nav class="profile-edit-nav" aria-label="個人專頁編輯區域">
+    <a href="#profileCrime">犯罪史</a>
+    <a href="#profileAttendance">出席率</a>
+    <a href="#profileInterpellations">質詢率</a>
+    <a href="#profileProjects">專案</a>
+   </nav>
    <label for="profileExperience">經歷</label><textarea id="profileExperience" rows="3" placeholder="可輸入服務經歷、工作經歷等"></textarea>
    <label for="profileEducation">學歷</label><textarea id="profileEducation" rows="2" placeholder="可輸入學歷"></textarea>
-   <label for="profileCrime">犯罪史／司法紀錄</label><textarea id="profileCrime" rows="3" placeholder="請填寫可查證的公開資料；無資料可留白"></textarea>
-   <label for="profileAttendance">出席率</label><textarea id="profileAttendance" rows="3" placeholder="可輸入出席率、統計期間及資料來源"></textarea>
-   <label for="profileInterpellations">質詢率／質詢紀錄</label><textarea id="profileInterpellations" rows="3" placeholder="可輸入質詢統計、紀錄及資料來源"></textarea>
-   <label for="profileProjects">專案</label><textarea id="profileProjects" rows="3" placeholder="可輸入重要提案、專案及成果"></textarea>
+   <label id="edit-profileCrime" for="profileCrime">犯罪史／司法紀錄</label><textarea id="profileCrime" rows="3" placeholder="請填寫可查證的公開資料；無資料可留白"></textarea>
+   <label id="edit-profileAttendance" for="profileAttendance">出席率</label><textarea id="profileAttendance" rows="3" placeholder="可輸入出席率、統計期間及資料來源"></textarea>
+   <label id="edit-profileInterpellations" for="profileInterpellations">質詢率／質詢紀錄</label><textarea id="profileInterpellations" rows="3" placeholder="可輸入質詢統計、紀錄及資料來源"></textarea>
+   <label id="edit-profileProjects" for="profileProjects">專案</label><textarea id="profileProjects" rows="3" placeholder="可輸入重要提案、專案及成果"></textarea>
    <label for="profilePolicy">政見／政見條列</label><textarea id="profilePolicy" rows="6" placeholder="可逐條輸入政見，建議每一項分行"></textarea>
    <label for="profileExtra">其他補充</label><textarea id="profileExtra" rows="3" placeholder="其他希望呈現的個人專頁內容"></textarea>
   </div>
