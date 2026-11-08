@@ -324,6 +324,19 @@ body{
   line-height:1.8;
 }
 
+.candidate-profile-hero{display:grid;grid-template-columns:minmax(180px,34%) minmax(0,1fr);gap:28px;align-items:start;margin:12px 0 28px}
+.candidate-profile-photo{width:100%;max-width:360px;aspect-ratio:4/5;object-fit:cover;border:1px solid #aaa;background:#eee}
+.candidate-profile-placeholder{width:100%;max-width:360px;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;border:1px dashed #aaa;background:#f2f2f2;color:#888}
+.candidate-profile-facts{display:grid;gap:16px}
+.candidate-profile-fact{padding:12px 0;border-bottom:1px solid #ddd;line-height:1.8}
+.candidate-profile-fact strong{display:block;margin-bottom:3px}
+.candidate-profile-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0}
+.candidate-profile-nav a{display:flex;align-items:center;justify-content:center;min-height:74px;padding:12px;border:1px solid #333;color:inherit;text-decoration:none;text-align:center;font-weight:700}
+.candidate-profile-nav a:hover{background:#eee}
+.candidate-profile-section{padding:20px 0;border-top:1px dashed #777;line-height:1.9;scroll-margin-top:20px}
+.candidate-profile-section h4{margin:0 0 10px;font-size:20px}
+.candidate-profile-section .profile-copy{white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:650px){.candidate-profile-hero{grid-template-columns:1fr}.candidate-profile-photo,.candidate-profile-placeholder{max-width:260px}.candidate-profile-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .candidate-detail{padding:24px 0 10px}
 .detail-back{
   margin:0 0 24px;
@@ -798,7 +811,7 @@ async function loadPublishedSiteContent(){
     if(error)throw error;
     const content={};(data||[]).forEach(row=>content[row.content_key]=row.published_data);
     if(content.header)renderPublishedHeader(content.header);
-    if(content.marquee!==undefined){const ticker=document.getElementById("publishedMarquee");if(ticker){ticker.innerHTML=sanitizePublishedHtml(content.marquee);}}
+    if(content.marquee!==undefined){const ticker=document.getElementById("publishedMarquee");if(ticker){const m=content.marquee;if(m&&typeof m==="object"&&!Array.isArray(m)){ticker.innerHTML=sanitizePublishedHtml(m.html||"");if(/^#[0-9a-f]{6}$/i.test(m.background||""))ticker.style.background=m.background;}else{ticker.innerHTML=sanitizePublishedHtml(m);}}}
     if(content.footer_info&&Array.isArray(content.footer_info.columns)){
       content.footer_info.columns.slice(0,3).forEach((col,index)=>{const n=index+1;const title=document.getElementById("footerTitle"+n),body=document.getElementById("footerContent"+n);if(title)title.textContent=col.title||"";if(body)body.innerHTML=sanitizePublishedHtml(col.html||"");});
     }
@@ -1245,58 +1258,32 @@ function renderCandidateDetail(candidateId){
       ?String(candidate.draw_number).trim()
       :"";
 
-  const fields=[
-    ["推薦政黨",candidate.party||"未提供政黨"],
-    ["參選職位",candidate.position||"未提供"],
-    ["選舉區",candidate.district||"未提供"],
-    ["登記日期",candidate.date||"未提供"],
-    [
-      "狀態標記",
-      (Array.isArray(candidate.status_flags)?candidate.status_flags:[])
-        .map(flag=>({
-          not_registered:"不得登記",
-          uncontested:"同額競選",
-          incumbent:"現任者"
-        }[flag]||flag))
-        .join("、")||"無"
-    ],
-    [
-      "備註",
-      [
-        ...(Array.isArray(candidate.notes)?candidate.notes:[]),
-        candidate.note||""
-      ].filter(Boolean).join("、")||"無"
-    ]
+  const profile=candidate.profile||{};
+  const fields=[["推薦政黨",candidate.party||"未提供政黨"],["參選職位",candidate.position||"未提供"],["選舉區",candidate.district||"未提供"],["登記日期",candidate.date||"未提供"]];
+  const sections=[
+    ["crime-history","犯罪史／司法紀錄",profile.crime_history],["attendance","出席率",profile.attendance],
+    ["interpellations","質詢率／質詢紀錄",profile.interpellations],["projects","專案",profile.projects],
+    ["policy","政見（更新中）",profile.policy],["experience","經歷",profile.experience],
+    ["education","學歷",profile.education],["extra","其他補充",profile.extra]
   ];
-
+  const visibleSections=sections.filter(([, ,content])=>String(content||"").trim());
   resultsContent.innerHTML=`
     <div class="candidate-detail">
-
-      <button
-        class="detail-back"
-        id="detailBack"
-        type="button"
-      >
-        ← 返回候選人名單
-      </button>
-
-      <h3 class="detail-name">
-        ${escapeHTML(candidate.name||"候選人資訊")}
-        ${getCandidateStatusTags(candidate)}
-      </h3>
-
-      ${drawNumber
-        ?`<div class="candidate-draw-number-row">號次：${escapeHTML(drawNumber)}</div>`
-        :""}
-
-      <div class="detail-list">
-        ${fields.map(([label,value])=>`
-          <div class="detail-row">
-            <div class="detail-label">${escapeHTML(label)}</div>
-            <div class="detail-value">${escapeHTML(value)}</div>
-          </div>
-        `).join("")}
+      <button class="detail-back" id="detailBack" type="button">← 返回候選人名單</button>
+      <div class="candidate-profile-hero">
+        ${profile.image_url?`<img class="candidate-profile-photo" src="${escapeHTML(profile.image_url)}" alt="${escapeHTML(candidate.name||"候選人")}照片">`:`<div class="candidate-profile-placeholder">候選人照片尚未提供</div>`}
+        <div>
+          <h3 class="detail-name">${escapeHTML(candidate.name||"候選人資訊")}${getCandidateStatusTags(candidate)}</h3>
+          ${drawNumber?`<div class="candidate-draw-number-row">號次：${escapeHTML(drawNumber)}</div>`:""}
+          <div class="candidate-profile-facts">${fields.map(([label,value])=>`<div class="candidate-profile-fact"><strong>${escapeHTML(label)}</strong>${escapeHTML(value)}</div>`).join("")}</div>
+        </div>
       </div>
+      ${visibleSections.length?`
+        <nav class="candidate-profile-nav">
+          ${visibleSections.filter(([id])=>["crime-history","attendance","interpellations","projects"].includes(id)).map(([id,label])=>`<a href="#profile-${id}">${escapeHTML(label)}</a>`).join("")}
+        </nav>
+        ${visibleSections.map(([id,label,content])=>`<section class="candidate-profile-section" id="profile-${id}"><h4>${escapeHTML(label)}</h4><div class="profile-copy">${escapeHTML(content)}</div></section>`).join("")}
+      `:`<div class="detail-list">${fields.map(([label,value])=>`<div class="detail-row"><div class="detail-label">${escapeHTML(label)}</div><div class="detail-value">${escapeHTML(value)}</div></div>`).join("")}<p class="data-note">此候選人尚未提供更多個人專頁內容。</p></div>`}
     </div>
   `;
 
