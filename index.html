@@ -31,7 +31,7 @@ body{
 }
 
 .main-wrapper{
-  width:100%;
+  width:80%;
   max-width:1600px;
   min-height:700px;
   margin:0 auto;
@@ -516,6 +516,7 @@ body{
 
 .ticker-wrap{
   width:80%;
+  max-width:1600px;
   height:34px;
   margin:0 auto 20px;
   overflow:hidden;
@@ -599,6 +600,9 @@ body{
 }
 
 @media(max-width:900px){
+  .main-wrapper{
+  width:90%;
+}
   .site-header{
     padding:0;
     grid-template-columns:repeat(3,minmax(0,1fr));
@@ -614,6 +618,9 @@ body{
   .ticker-wrap{width:90%}
 }
 @media(max-width:600px){
+  .main-wrapper{
+  width:100%;
+}
   .site-header{grid-template-columns:repeat(2,minmax(0,1fr))}
   .header-item{
     min-height:52px;
