@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -450,13 +449,221 @@ body{
   .intro-title{font-size:19px}
   .region-grid{grid-template-columns:1fr}
 }
+
+/* ==========================================
+   首頁 Header、跑馬燈與底部資訊欄
+   ========================================== */
+.site-header{
+  width:100%;
+  min-height:76px;
+  margin:0 0 0;
+  padding:0 22px;
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  align-items:stretch;
+  border:1px solid #333;
+  background:#fff;
+}
+.header-item{
+  min-width:0;
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 8px;
+  border-right:1px solid #333;
+  color:#333;
+  font-size:16px;
+  font-weight:600;
+  letter-spacing:1px;
+  text-align:center;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.header-item:last-child{border-right:0}
+.header-item:not(.header-search):hover{
+  background:#e0e0e0;
+}
+.header-search{
+  gap:5px;
+  padding:10px 8px;
+}
+.header-search input{
+  width:100%;
+  min-width:0;
+  height:36px;
+  padding:0 8px;
+  border:1px solid #777;
+  border-radius:0;
+  outline:none;
+  font:inherit;
+  font-size:13px;
+  letter-spacing:0;
+}
+.header-search input:focus{border:2px solid #333}
+.header-search button{
+  flex:0 0 34px;
+  width:34px;
+  height:36px;
+  border:1px solid #333;
+  border-radius:0;
+  background:#fff;
+  color:#333;
+  cursor:pointer;
+  font-size:17px;
+}
+.header-search button:hover{background:#e0e0e0}
+
+.ticker-wrap{
+  width:80%;
+  height:34px;
+  margin:0 auto 20px;
+  overflow:hidden;
+  border:1px solid #333;
+  border-top:0;
+  background:#f4f4f4;
+  display:flex;
+  align-items:center;
+}
+.ticker-label{
+  flex:0 0 auto;
+  height:100%;
+  padding:0 13px;
+  display:flex;
+  align-items:center;
+  border-right:1px solid #333;
+  background:#e0e0e0;
+  color:#333;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+.ticker-track{
+  min-width:0;
+  flex:1;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.ticker-text{
+  display:inline-block;
+  padding-left:100%;
+  animation:tickerMove 28s linear infinite;
+  color:#444;
+  font-size:13px;
+  letter-spacing:2px;
+}
+.ticker-wrap:hover .ticker-text{animation-play-state:paused}
+@keyframes tickerMove{
+  from{transform:translateX(0)}
+  to{transform:translateX(-100%)}
+}
+
+.site-footer{
+  width:100%;
+  max-width:1600px;
+  margin:30px auto 0;
+  padding:26px 30px;
+  border:1px solid #333;
+  background:#f5f5f5;
+  color:#444;
+}
+.footer-inner{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:28px;
+}
+.footer-section{min-width:0}
+.footer-title{
+  margin:0 0 12px;
+  padding-bottom:9px;
+  border-bottom:1px solid #aaa;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+.footer-text{
+  margin:0;
+  color:#666;
+  font-size:13px;
+  line-height:2;
+  overflow-wrap:anywhere;
+}
+.footer-bottom{
+  margin-top:22px;
+  padding-top:13px;
+  border-top:1px solid #ccc;
+  color:#888;
+  font-size:11px;
+  line-height:1.8;
+  text-align:center;
+}
+
+@media(max-width:900px){
+  .site-header{
+    padding:0;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .header-item{
+    min-height:58px;
+    border-bottom:1px solid #333;
+    font-size:14px;
+  }
+  .header-item:nth-child(3){border-right:0}
+  .header-item:nth-child(n+4){border-bottom:0}
+  .header-search{grid-column:span 3;border-right:0}
+  .ticker-wrap{width:90%}
+}
+@media(max-width:600px){
+  .site-header{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .header-item{
+    min-height:52px;
+    padding:8px 5px;
+    font-size:13px;
+  }
+  .header-item:nth-child(3){border-right:1px solid #333}
+  .header-item:nth-child(2n){border-right:0}
+  .header-item:nth-child(n+4){border-bottom:1px solid #333}
+  .header-search{
+    grid-column:span 2;
+    border-bottom:0!important;
+  }
+  .ticker-wrap{
+    width:100%;
+    margin-bottom:14px;
+  }
+  .ticker-label{padding:0 8px;font-size:11px}
+  .ticker-text{font-size:11px}
+  .site-footer{padding:22px 18px}
+  .footer-inner{grid-template-columns:1fr;gap:20px}
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-<div class="main-wrapper">
+
+<header class="site-header" id="top">
+  <a class="header-item" href="#top">首頁</a>
+  <a class="header-item" href="#mainContent">選舉資訊</a>
+  <a class="header-item" href="#mainContent">候選人查詢</a>
+  <a class="header-item" href="#mainContent">選舉制度</a>
+  <a class="header-item" href="#footerInfo">關於本站</a>
+  <form class="header-item header-search" id="headerSearchForm" role="search">
+    <input id="headerSearchInput" type="search" placeholder="搜尋候選人" aria-label="搜尋候選人">
+    <button type="submit" aria-label="搜尋">⌕</button>
+  </form>
+</header>
+
+<div class="ticker-wrap" aria-label="網站公告跑馬燈">
+  <span class="ticker-label">LATEST</span>
+  <div class="ticker-track">
+    <span class="ticker-text">ABCDEFGHIJKLMNOPQRSTUVWXYZ　・　ABCDEFGHIJKLMNOPQRSTUVWXYZ　・　ABCDEFGHIJKLMNOPQRSTUVWXYZ</span>
+  </div>
+</div>
+
+<div class="main-wrapper" id="mainContent">
 
   <section class="intro-area">
     <h1 class="intro-title">我想快速了解……</h1>
@@ -495,7 +702,45 @@ body{
 
 </div>
 
+
+<footer class="site-footer" id="footerInfo">
+  <div class="footer-inner">
+    <section class="footer-section">
+      <h2 class="footer-title">關於本站</h2>
+      <p class="footer-text">
+        這裡是網站介紹測試文字。未來將放置本站成立目的、服務內容與使用方式等資訊。
+      </p>
+    </section>
+    <section class="footer-section">
+      <h2 class="footer-title">資料說明</h2>
+      <p class="footer-text">
+        候選人資料依登記日期排序。<br>
+        資料內容以公開資訊為基礎，實際資訊仍請以主管機關公告為準。
+      </p>
+    </section>
+    <section class="footer-section">
+      <h2 class="footer-title">聯絡資訊</h2>
+      <p class="footer-text">
+        聯絡方式測試文字<br>
+        意見回饋與資料更正管道將於此處公布。
+      </p>
+    </section>
+  </div>
+  <div class="footer-bottom">
+    © 2026 地方選舉候選人資訊｜頁尾資訊測試文字
+  </div>
+</footer>
+
 <script>
+
+// Header 搜尋欄目前先完成介面；搜尋功能可在下一階段接上候選人資料。
+const headerSearchForm=document.getElementById("headerSearchForm");
+if(headerSearchForm){
+  headerSearchForm.addEventListener("submit",event=>{
+    event.preventDefault();
+  });
+}
+
 // ==========================================
 // 一、Supabase 設定
 // ==========================================
