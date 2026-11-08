@@ -81,14 +81,41 @@ th{background:#eee}
 .content-preview-wrap{margin:14px 0 18px;padding:14px;border:1px solid #bbb;background:#f7f7f7}
 .content-preview-label{font-size:12px;color:#666;margin-bottom:9px;letter-spacing:.5px}
 .content-preview{min-height:70px;padding:16px;background:#fff;border:1px solid #ddd;overflow-wrap:anywhere}
-.header-preview{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:#222;color:#fff}
+.header-preview{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:#fff;color:#333}
 .header-preview-title{font-size:21px;font-weight:700}
 .header-preview-links{display:flex;gap:16px;flex-wrap:wrap}
-.header-preview-links a{color:#fff;text-decoration:none}
+.header-preview-links a{color:#333;text-decoration:none}
+ .header-preview-search{margin-left:auto;padding:7px 10px;border:1px solid #aaa;color:#555;font-size:12px;white-space:nowrap}
+.header-preview-dropdown{position:relative;display:inline-block}
+.header-preview-dropdown summary{cursor:pointer;list-style:none}
+.header-preview-dropdown summary::-webkit-details-marker{display:none}
+.header-preview-dropdown-menu{position:absolute;z-index:5;top:100%;left:0;min-width:150px;padding:7px;background:#fff;border:1px solid #777;display:grid;gap:7px}
+.header-preview-dropdown:not([open]) .header-preview-dropdown-menu{display:none}
+.header-preview-dropdown-menu a{white-space:nowrap}
+.header-item-editor{margin:10px 0;padding:12px;border:1px solid #ccc;background:#fafafa}
+.header-item-fields{display:grid;grid-template-columns:minmax(100px,1fr) minmax(110px,1fr) minmax(140px,2fr) auto;gap:8px;align-items:end}
+.header-item-fields label{margin:0;font-size:12px}
+.header-item-fields input,.header-item-fields select{min-width:0}
+.header-children{margin:10px 0 0 18px;padding:10px;border-left:3px solid #bbb;background:#fff}
+.header-child-row{display:grid;grid-template-columns:minmax(100px,1fr) minmax(140px,2fr) auto auto;gap:7px;align-items:center;margin:7px 0}
+.header-child-row input{min-width:0}
+.info-column-editors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.info-column-editor{min-width:0;border:1px solid #ccc;padding:12px;background:#fafafa}
+.info-column-editor .rich-editor{min-height:160px}
+.info-preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.info-preview-column{min-width:0;padding:12px;border-right:1px solid #ccc}
+.info-preview-column:last-child{border-right:0}
+.info-preview-column h3{margin:0 0 9px;padding-bottom:8px;border-bottom:1px solid #aaa;font-size:15px}
+.info-preview-column .info-preview-content{font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+.marquee-preview{height:58px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;background:#222;color:#fff}
+.marquee-preview-track{display:inline-block;min-width:max-content;padding-left:100%;animation:adminTickerMove 20s linear infinite}
+@keyframes adminTickerMove{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media(max-width:900px){.info-column-editors{grid-template-columns:1fr}.info-preview-grid{grid-template-columns:1fr}.info-preview-column{border-right:0;border-bottom:1px solid #ccc}.header-item-fields{grid-template-columns:1fr 1fr}.header-child-row{grid-template-columns:1fr}}
 .content-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:9px;border:1px solid #ccc;background:#f4f4f4}
 .content-toolbar button{margin:0;padding:7px 10px;font-size:13px}
 .content-toolbar select{width:auto;min-width:110px;padding:6px;font-size:13px}
 .content-toolbar input[type=color]{width:38px;height:34px;padding:2px;border:1px solid #aaa;background:#fff}
+.content-toolbar label{display:flex;align-items:center;gap:5px;margin:0;white-space:nowrap}
 .rich-editor{min-height:190px;padding:14px;border:1px solid #999;background:#fff;line-height:1.8;overflow-wrap:anywhere}
 .rich-editor:focus{outline:2px solid #888;outline-offset:1px}
 .rich-editor:empty:before{content:attr(data-placeholder);color:#999}
@@ -320,23 +347,18 @@ body.dashboard-mode #loginTitle{display:none}
    <section class="dashboard-page hidden" id="headerPage">
     <div class="content-editor-panel">
      <h2>Header 編輯</h2>
-     <p class="small">編輯前臺頁首標題與導覽連結。可使用站內相對路徑或完整網址；儲存草稿不會立即更動前臺。</p>
+     <p class="small">固定管理前臺五個導覽標題。每個標題可設定文字超連結或下拉式選單；下拉選單可新增多個子項目。右側搜尋欄維持前臺原有功能。</p>
      <div class="content-preview-wrap">
       <div class="content-preview-label">前臺 Header 即時預覽</div>
       <div class="content-preview header-preview" id="headerPreview">
-       <div class="header-preview-title" id="headerPreviewTitle">地方選舉候選人資訊</div>
-       <nav class="header-preview-links" id="headerPreviewLinks"></nav>
+       <nav class="header-preview-links" id="headerPreviewLinks"></nav><div class="header-preview-search">搜尋候選人　⌕</div>
       </div>
      </div>
-     <label for="headerTitleInput">網站標題文字</label>
-     <input id="headerTitleInput" type="text" maxlength="100" placeholder="輸入網站標題">
      <div class="field-grid" style="margin-top:10px">
-      <div><label for="headerTitleSize">標題字體大小</label><select id="headerTitleSize"><option value="18">18 px</option><option value="20">20 px</option><option value="22" selected>22 px</option><option value="24">24 px</option><option value="28">28 px</option><option value="32">32 px</option></select></div>
-      <div><label for="headerBackground">Header 背景色</label><input id="headerBackground" type="color" value="#222222"></div>
+      <div><label for="headerBackground">Header 背景色</label><input id="headerBackground" type="color" value="#ffffff"></div>
      </div>
-     <h3 style="font-size:16px;margin:20px 0 8px">導覽連結</h3>
+     <h3 style="font-size:16px;margin:20px 0 8px">五個導覽標題</h3>
      <div id="headerLinksEditor"></div>
-     <button type="button" id="addHeaderLink">＋新增導覽連結</button>
      <div class="content-actions"><button type="button" class="primary" id="saveHeaderDraft">儲存 Header 草稿</button><button type="button" id="publishHeader">發布至前臺</button></div>
      <div class="content-status" id="headerStatus">尚未載入 Header 設定。</div>
     </div>
@@ -345,7 +367,7 @@ body.dashboard-mode #loginTitle{display:none}
     <div class="content-editor-panel">
      <h2>跑馬燈編輯</h2>
      <p class="small">先在上方確認前臺呈現效果，再於下方編輯文字。可使用常見系統字體，不需另外付費購買字體。</p>
-     <div class="content-preview-wrap"><div class="content-preview-label">前臺跑馬燈即時預覽</div><div class="content-preview" id="marqueePreview" style="overflow:hidden;white-space:normal;background:#222;color:#fff">請在下方輸入跑馬燈內容</div></div>
+     <div class="content-preview-wrap"><div class="content-preview-label">前臺跑馬燈即時預覽</div><div class="content-preview marquee-preview" id="marqueePreview"><span class="marquee-preview-track">請在下方輸入跑馬燈內容</span></div></div>
      <div class="content-toolbar" data-toolbar="marqueeEditor">
       <select data-font><option value="Arial, sans-serif">Arial</option><option value="'Microsoft JhengHei', sans-serif">微軟正黑體</option><option value="'Noto Sans TC', sans-serif">Noto Sans TC</option><option value="serif">明體／襯線</option><option value="monospace">等寬字體</option></select>
       <select data-size><option value="14px">14 px</option><option value="16px" selected>16 px</option><option value="18px">18 px</option><option value="20px">20 px</option><option value="24px">24 px</option><option value="28px">28 px</option><option value="32px">32 px</option></select>
@@ -549,19 +571,26 @@ body.dashboard-mode #loginTitle{display:none}
    <section class="dashboard-page hidden" id="footerInfoPage">
     <div class="content-editor-panel">
      <h2>資訊欄編輯</h2>
-     <p class="small">編輯前臺資訊欄內容，可加入一般文字、超連結、字體格式、顏色及特效。</p>
-     <div class="content-preview-wrap"><div class="content-preview-label">前臺資訊欄即時預覽</div><div class="content-preview" id="footerInfoPreview">請在下方輸入資訊欄內容</div></div>
-     <div class="content-toolbar" data-toolbar="footerInfoEditor">
-      <select data-font><option value="Arial, sans-serif">Arial</option><option value="'Microsoft JhengHei', sans-serif">微軟正黑體</option><option value="'Noto Sans TC', sans-serif">Noto Sans TC</option><option value="serif">明體／襯線</option><option value="monospace">等寬字體</option></select>
-      <select data-size><option value="14px">14 px</option><option value="16px" selected>16 px</option><option value="18px">18 px</option><option value="20px">20 px</option><option value="24px">24 px</option><option value="28px">28 px</option><option value="32px">32 px</option></select>
-      <button type="button" data-command="bold"><b>B</b></button><button type="button" data-command="italic"><i>I</i></button><button type="button" data-command="underline"><u>U</u></button>
-      <button type="button" data-command="insertUnorderedList">項目符號</button><button type="button" data-command="justifyLeft">靠左</button><button type="button" data-command="justifyCenter">置中</button>
-      <label style="display:flex;align-items:center;gap:5px;margin:0">文字色<input type="color" data-color="foreColor" value="#222222"></label>
-      <label style="display:flex;align-items:center;gap:5px;margin:0">底色<input type="color" data-color="hiliteColor" value="#ffff00"></label>
-      <button type="button" data-command="createLink">加入連結</button><button type="button" data-command="removeFormat">清除格式</button>
-      <select data-effect><option value="">文字特效</option><option value="effect-glow">發光</option><option value="effect-pulse">閃爍</option><option value="effect-rainbow">彩虹漸層</option></select>
+     <p class="small">資訊欄固定為直式三區（桌面版橫向三欄、窄螢幕自動直向排列）。每區可獨立編輯標題與內容，支援超連結、免費系統字體、字級、粗體、斜體、底線、文字色、底色及文字特效。</p>
+     <div class="content-preview-wrap">
+      <div class="content-preview-label">前臺資訊欄三區即時預覽</div>
+      <div class="info-preview-grid" id="footerInfoPreview">
+       <section class="info-preview-column"><h3>關於本站</h3><div class="info-preview-content">請編輯第一區內容</div></section>
+       <section class="info-preview-column"><h3>資料說明</h3><div class="info-preview-content">請編輯第二區內容</div></section>
+       <section class="info-preview-column"><h3>聯絡資訊</h3><div class="info-preview-content">請編輯第三區內容</div></section>
+      </div>
      </div>
-     <div id="footerInfoEditor" class="rich-editor" contenteditable="true" data-placeholder="請輸入前臺資訊欄內容……"></div>
+     <div class="info-column-editors">
+      <div class="info-column-editor"><h3>第一區</h3><label for="footerTitle1">區塊標題</label><input id="footerTitle1" maxlength="80"><div class="content-toolbar" data-toolbar="footerInfoEditor1">
+       <select data-font><option value="Arial, sans-serif">Arial</option><option value="'Microsoft JhengHei', sans-serif">微軟正黑體</option><option value="'Noto Sans TC', sans-serif">Noto Sans TC</option><option value="serif">明體／襯線</option><option value="monospace">等寬字體</option></select><select data-size><option value="14px">14 px</option><option value="16px" selected>16 px</option><option value="18px">18 px</option><option value="20px">20 px</option><option value="24px">24 px</option><option value="28px">28 px</option><option value="32px">32 px</option></select><button type="button" data-command="bold"><b>B</b></button><button type="button" data-command="italic"><i>I</i></button><button type="button" data-command="underline"><u>U</u></button><label>文字色<input type="color" data-color="foreColor" value="#222222"></label><label>底色<input type="color" data-color="hiliteColor" value="#ffff00"></label><button type="button" data-command="createLink">加入連結</button><button type="button" data-command="removeFormat">清除格式</button><select data-effect><option value="">文字特效</option><option value="effect-glow">發光</option><option value="effect-pulse">閃爍</option><option value="effect-rainbow">彩虹漸層</option></select>
+      </div><div id="footerInfoEditor1" class="rich-editor" contenteditable="true" data-placeholder="輸入第一區資訊……"></div></div>
+      <div class="info-column-editor"><h3>第二區</h3><label for="footerTitle2">區塊標題</label><input id="footerTitle2" maxlength="80"><div class="content-toolbar" data-toolbar="footerInfoEditor2">
+       <select data-font><option value="Arial, sans-serif">Arial</option><option value="'Microsoft JhengHei', sans-serif">微軟正黑體</option><option value="'Noto Sans TC', sans-serif">Noto Sans TC</option><option value="serif">明體／襯線</option><option value="monospace">等寬字體</option></select><select data-size><option value="14px">14 px</option><option value="16px" selected>16 px</option><option value="18px">18 px</option><option value="20px">20 px</option><option value="24px">24 px</option><option value="28px">28 px</option><option value="32px">32 px</option></select><button type="button" data-command="bold"><b>B</b></button><button type="button" data-command="italic"><i>I</i></button><button type="button" data-command="underline"><u>U</u></button><label>文字色<input type="color" data-color="foreColor" value="#222222"></label><label>底色<input type="color" data-color="hiliteColor" value="#ffff00"></label><button type="button" data-command="createLink">加入連結</button><button type="button" data-command="removeFormat">清除格式</button><select data-effect><option value="">文字特效</option><option value="effect-glow">發光</option><option value="effect-pulse">閃爍</option><option value="effect-rainbow">彩虹漸層</option></select>
+      </div><div id="footerInfoEditor2" class="rich-editor" contenteditable="true" data-placeholder="輸入第二區資訊……"></div></div>
+      <div class="info-column-editor"><h3>第三區</h3><label for="footerTitle3">區塊標題</label><input id="footerTitle3" maxlength="80"><div class="content-toolbar" data-toolbar="footerInfoEditor3">
+       <select data-font><option value="Arial, sans-serif">Arial</option><option value="'Microsoft JhengHei', sans-serif">微軟正黑體</option><option value="'Noto Sans TC', sans-serif">Noto Sans TC</option><option value="serif">明體／襯線</option><option value="monospace">等寬字體</option></select><select data-size><option value="14px">14 px</option><option value="16px" selected>16 px</option><option value="18px">18 px</option><option value="20px">20 px</option><option value="24px">24 px</option><option value="28px">28 px</option><option value="32px">32 px</option></select><button type="button" data-command="bold"><b>B</b></button><button type="button" data-command="italic"><i>I</i></button><button type="button" data-command="underline"><u>U</u></button><label>文字色<input type="color" data-color="foreColor" value="#222222"></label><label>底色<input type="color" data-color="hiliteColor" value="#ffff00"></label><button type="button" data-command="createLink">加入連結</button><button type="button" data-command="removeFormat">清除格式</button><select data-effect><option value="">文字特效</option><option value="effect-glow">發光</option><option value="effect-pulse">閃爍</option><option value="effect-rainbow">彩虹漸層</option></select>
+      </div><div id="footerInfoEditor3" class="rich-editor" contenteditable="true" data-placeholder="輸入第三區資訊……"></div></div>
+     </div>
      <div class="content-actions"><button type="button" class="primary" id="saveFooterDraft">儲存資訊欄草稿</button><button type="button" id="publishFooter">發布至前臺</button></div>
      <div class="content-status" id="footerStatus">尚未載入資訊欄設定。</div>
     </div>
@@ -673,189 +702,93 @@ async function requireAAL2(){
 
 /* 公民投什麼：Header／跑馬燈／資訊欄內容管理 */
 const siteContentCache = {header:null,marquee:null,footer_info:null};
-const defaultHeader = {title:"地方選舉候選人資訊",titleSize:22,background:"#222222",links:[]};
-
+const defaultHeader = {background:"#ffffff",items:[
+ {label:"首頁",type:"link",url:"#top",newTab:false,children:[]},
+ {label:"選舉資訊",type:"link",url:"#mainContent",newTab:false,children:[]},
+ {label:"候選人查詢",type:"link",url:"#mainContent",newTab:false,children:[]},
+ {label:"選舉制度",type:"link",url:"#mainContent",newTab:false,children:[]},
+ {label:"關於本站",type:"link",url:"#footerInfo",newTab:false,children:[]}
+]};
+const defaultFooter = {columns:[
+ {title:"關於本站",html:"<p>這裡是網站介紹測試文字。未來將放置本站成立目的、服務內容與使用方式等資訊。</p>"},
+ {title:"資料說明",html:"<p>候選人資料依登記日期排序。<br>資料內容以公開資訊為基礎，實際資訊仍請以主管機關公告為準。</p>"},
+ {title:"聯絡資訊",html:"<p>聯絡方式測試文字<br>意見回饋與資料更正管道將於此處公布。</p>"}
+]};
+const freeFonts = new Set(["Arial, sans-serif","'Microsoft JhengHei', sans-serif","'Noto Sans TC', sans-serif","serif","monospace"]);
 function safeContentHtml(input){
- const parser = new DOMParser();
- const doc = parser.parseFromString(String(input || ""),"text/html");
- const allowedTags = new Set(["P","BR","DIV","SPAN","B","STRONG","I","EM","U","S","UL","OL","LI","A","H2","H3","H4","BLOCKQUOTE"]);
- const allowedStyles = new Set(["color","background-color","font-family","font-size","font-weight","font-style","text-decoration","text-align","text-shadow"]);
- const allowedClasses = new Set(["effect-glow","effect-pulse","effect-rainbow"]);
+ const parser=new DOMParser();const doc=parser.parseFromString(String(input||""),"text/html");
+ const allowedTags=new Set(["P","BR","DIV","SPAN","B","STRONG","I","EM","U","S","UL","OL","LI","A","H2","H3","H4","BLOCKQUOTE","FONT"]);
+ const allowedStyles=new Set(["color","background-color","font-family","font-size","font-weight","font-style","text-decoration","text-align","text-shadow"]);
+ const allowedClasses=new Set(["effect-glow","effect-pulse","effect-rainbow"]);
  [...doc.body.querySelectorAll("*")].forEach(el=>{
-  if(!allowedTags.has(el.tagName)){
-   if(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","SVG","MATH","TEMPLATE"].includes(el.tagName)) el.remove();
-   else el.replaceWith(...el.childNodes);
-   return;
-  }
-  [...el.attributes].forEach(attr=>{
-   const name=attr.name.toLowerCase();
-   if(name==="style"){
-    const clean=[];
-    attr.value.split(";").forEach(rule=>{
-     const i=rule.indexOf(":"); if(i<1)return;
-     const prop=rule.slice(0,i).trim().toLowerCase();
-     const value=rule.slice(i+1).trim();
-     if(allowedStyles.has(prop) && !/url\s*\(|expression|javascript/i.test(value)) clean.push(prop+":"+value);
-    });
-    if(clean.length) el.setAttribute("style",clean.join(";")); else el.removeAttribute("style");
-   }else if(name==="class"){
-    const classes=attr.value.split(/\s+/).filter(x=>allowedClasses.has(x));
-    if(classes.length) el.setAttribute("class",classes.join(" ")); else el.removeAttribute("class");
-   }else if(name==="href" && el.tagName==="A"){
-    const href=attr.value.trim();
-    if(!/^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(href)) el.removeAttribute("href");
-   }else if(name==="target" && el.tagName==="A"){
-    if(!["_blank","_self"].includes(attr.value)) el.removeAttribute("target");
-   }else if(name==="rel" && el.tagName==="A"){}
+  if(!allowedTags.has(el.tagName)){if(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","SVG","MATH","TEMPLATE"].includes(el.tagName))el.remove();else el.replaceWith(...el.childNodes);return;}
+  [...el.attributes].forEach(attr=>{const name=attr.name.toLowerCase();
+   if(name==="style"){const clean=[];attr.value.split(";").forEach(rule=>{const i=rule.indexOf(":");if(i<1)return;const prop=rule.slice(0,i).trim().toLowerCase();const value=rule.slice(i+1).trim();if(allowedStyles.has(prop)&&!/url\s*\(|expression|javascript/i.test(value))clean.push(prop+":"+value);});if(clean.length)el.setAttribute("style",clean.join(";"));else el.removeAttribute("style");}
+   else if(name==="class"){const classes=attr.value.split(/\s+/).filter(x=>allowedClasses.has(x));if(classes.length)el.setAttribute("class",classes.join(" "));else el.removeAttribute("class");}
+   else if(name==="href"&&el.tagName==="A"){const href=attr.value.trim();if(!/^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(href))el.removeAttribute("href");}
+   else if(name==="target"&&el.tagName==="A"){if(!["_blank","_self"].includes(attr.value))el.removeAttribute("target");}
+   else if(name==="rel"&&el.tagName==="A"){}
+   else if(el.tagName==="FONT"&&["face","size","color"].includes(name)){if(name==="face"&&!freeFonts.has(attr.value))el.removeAttribute(name);else if(name==="size"&&!/^[1-7]$/.test(attr.value))el.removeAttribute(name);else if(name==="color"&&!/^#[0-9a-f]{3,8}$/i.test(attr.value)&&!/^rgba?\(/i.test(attr.value))el.removeAttribute(name);}
    else el.removeAttribute(name);
   });
-  if(el.tagName==="A" && el.getAttribute("target")==="_blank") el.setAttribute("rel","noopener noreferrer");
- });
- return doc.body.innerHTML;
+  if(el.tagName==="A"&&el.getAttribute("target")==="_blank")el.setAttribute("rel","noopener noreferrer");
+ });return doc.body.innerHTML;
 }
-
-function safeLinkUrl(value){
- const v=String(value||"").trim();
- if(!v) return "#";
- if(/^(javascript:|data:|vbscript:)/i.test(v)) throw new Error("連結網址不允許使用 javascript、data 或 vbscript 協定。");
- if(/^(https?:\/\/|mailto:|tel:|\/|\.\/|\.\.\/|#)/i.test(v)) return v;
- return "https://"+v;
-}
-
+function safeLinkUrl(value){const v=String(value||"").trim();if(!v)return "#";if(/^(javascript:|data:|vbscript:)/i.test(v))throw new Error("連結網址不允許使用 javascript、data 或 vbscript 協定。");if(/^(https?:\/\/|mailto:|tel:|\/|\.\/|\.\.\/|#)/i.test(v))return v;return "https://"+v;}
 function renderHeaderPreview(){
- const title=$("headerTitleInput").value.trim() || defaultHeader.title;
- const titleNode=$("headerPreviewTitle");
- titleNode.textContent=title;
- titleNode.style.fontSize=($("headerTitleSize").value||22)+"px";
- $("headerPreview").style.background=$("headerBackground").value||"#222222";
- const nav=$("headerPreviewLinks"); nav.replaceChildren();
- document.querySelectorAll(".header-link-row").forEach(row=>{
-  const label=row.querySelector("[data-link-label]").value.trim();
-  const url=row.querySelector("[data-link-url]").value.trim();
-  if(!label)return;
-  const a=document.createElement("a"); a.textContent=label;
-  try{a.href=safeLinkUrl(url);}catch(_){a.href="#";}
-  a.target=row.querySelector("[data-link-target]").checked?"_blank":"_self";
-  if(a.target==="_blank")a.rel="noopener noreferrer";
-  nav.append(a);
+ const nav=$("headerPreviewLinks");nav.replaceChildren();$("headerPreview").style.background=$("headerBackground").value||"#ffffff";
+ document.querySelectorAll(".header-item-editor").forEach(row=>{const label=row.querySelector("[data-item-label]").value.trim();if(!label)return;const type=row.querySelector("[data-item-type]").value;
+  if(type==="dropdown"){const details=document.createElement("details");details.className="header-preview-dropdown";const summary=document.createElement("summary");summary.textContent=label+" ▾";details.append(summary);const menu=document.createElement("div");menu.className="header-preview-dropdown-menu";row.querySelectorAll(".header-child-row").forEach(child=>{const text=child.querySelector("[data-child-label]").value.trim();if(!text)return;const a=document.createElement("a");a.textContent=text;try{a.href=safeLinkUrl(child.querySelector("[data-child-url]").value);}catch(_){a.href="#";}a.target=child.querySelector("[data-child-target]").checked?"_blank":"_self";menu.append(a);});details.append(menu);nav.append(details);
+  }else{const a=document.createElement("a");a.textContent=label;a.className="header-preview-link";try{a.href=safeLinkUrl(row.querySelector("[data-item-url]").value);}catch(_){a.href="#";}a.target=row.querySelector("[data-item-target]").checked?"_blank":"_self";nav.append(a);}
  });
 }
-
-function addHeaderLink(link={label:"",url:"",newTab:false}){
- const row=document.createElement("div"); row.className="header-link-row";
- row.innerHTML='<input type="text" data-link-label maxlength="80" aria-label="連結文字" placeholder="導覽文字">'+
-  '<input type="text" data-link-url aria-label="連結網址" placeholder="https:// 或站內路徑">'+
-  '<label class="check-item" style="margin:0;white-space:nowrap"><input type="checkbox" data-link-target> 新分頁</label>'+
-  '<button type="button" class="danger" data-remove-link>刪除</button>';
- row.querySelector("[data-link-label]").value=link.label||"";
- row.querySelector("[data-link-url]").value=link.url||"";
- row.querySelector("[data-link-target]").checked=!!link.newTab;
- row.querySelectorAll("input").forEach(input=>input.addEventListener("input",renderHeaderPreview));
- row.querySelector("[data-link-target]").addEventListener("change",renderHeaderPreview);
- row.querySelector("[data-remove-link]").addEventListener("click",()=>{row.remove();renderHeaderPreview();});
- $("headerLinksEditor").append(row); renderHeaderPreview();
+function addHeaderChild(container,child={label:"",url:"",newTab:false}){
+ const row=document.createElement("div");row.className="header-child-row";row.innerHTML='<input type="text" data-child-label maxlength="80" placeholder="下拉選單文字"><input type="text" data-child-url placeholder="https:// 或站內路徑"><label class="check-item" style="margin:0"><input type="checkbox" data-child-target> 新分頁</label><button type="button" class="danger" data-remove-child>刪除</button>';
+ row.querySelector("[data-child-label]").value=child.label||"";row.querySelector("[data-child-url]").value=child.url||"";row.querySelector("[data-child-target]").checked=!!child.newTab;
+ row.querySelectorAll("input").forEach(x=>x.addEventListener("input",renderHeaderPreview));row.querySelector("[data-remove-child]").onclick=()=>{row.remove();renderHeaderPreview();};container.append(row);renderHeaderPreview();
 }
-
-function readHeaderDraft(){
- const links=[];
- document.querySelectorAll(".header-link-row").forEach(row=>{
-  const label=row.querySelector("[data-link-label]").value.trim();
-  const raw=row.querySelector("[data-link-url]").value.trim();
-  if(label){links.push({label,url:safeLinkUrl(raw),newTab:row.querySelector("[data-link-target]").checked});}
- });
- return {title:$ ("headerTitleInput").value.trim(),titleSize:Number($("headerTitleSize").value)||22,background:$("headerBackground").value||"#222222",links};
+function addHeaderItem(item={},index=0){
+ const row=document.createElement("div");row.className="header-item-editor";
+ row.innerHTML='<div class="header-item-fields"><label>第 '+(index+1)+' 個標題<input type="text" data-item-label maxlength="80" placeholder="導覽標題"></label><label>呈現方式<select data-item-type><option value="link">文字超連結</option><option value="dropdown">下拉式選單</option></select></label><label class="item-url-label">連結網址<input type="text" data-item-url placeholder="https:// 或站內路徑"></label><label class="check-item" style="margin:0"><input type="checkbox" data-item-target> 新分頁</label></div><div class="header-children hidden"><div class="small">下拉選單項目</div><div class="header-child-list"></div><button type="button" data-add-child>＋新增下拉選單項目</button></div>';
+ row.querySelector("[data-item-label]").value=item.label||"";row.querySelector("[data-item-type]").value=item.type||"link";row.querySelector("[data-item-url]").value=item.url||"";row.querySelector("[data-item-target]").checked=!!item.newTab;
+ const type=row.querySelector("[data-item-type]"),children=row.querySelector(".header-children"),urlLabel=row.querySelector(".item-url-label"),targetLabel=row.querySelector("[data-item-target]").parentElement;
+ function sync(){const drop=type.value==="dropdown";children.classList.toggle("hidden",!drop);urlLabel.classList.toggle("hidden",drop);targetLabel.classList.toggle("hidden",drop);renderHeaderPreview();}
+ type.addEventListener("change",sync);row.querySelectorAll("input").forEach(x=>x.addEventListener("input",renderHeaderPreview));
+ row.querySelector("[data-add-child]").onclick=()=>addHeaderChild(row.querySelector(".header-child-list"));(item.children||[]).forEach(child=>addHeaderChild(row.querySelector(".header-child-list"),child));sync();$("headerLinksEditor").append(row);
 }
-
-function renderRichPreview(editorId,previewId,marquee=false){
- const html=safeContentHtml($(editorId).innerHTML);
- const preview=$(previewId);
- preview.innerHTML=html || (marquee?"請在下方輸入跑馬燈內容":"請在下方輸入資訊欄內容");
- if(marquee){preview.style.background="#222";preview.style.color="#fff";}
-}
-
-function setupRichEditor(editorId,previewId){
- const editor=$(editorId); const toolbar=document.querySelector('[data-toolbar="'+editorId+'"]');
- editor.addEventListener("input",()=>renderRichPreview(editorId,previewId,editorId==="marqueeEditor"));
- toolbar.querySelectorAll("[data-command]").forEach(button=>button.addEventListener("click",()=>{
-  editor.focus(); const command=button.dataset.command;
-  if(command==="createLink"){
-   const url=prompt("請輸入超連結網址（https://、站內路徑或 mailto:）");
-   if(url){try{document.execCommand("createLink",false,safeLinkUrl(url));}catch(e){alert(e.message);}}
-  }else document.execCommand(command,false,null);
-  renderRichPreview(editorId,previewId,editorId==="marqueeEditor");
- }));
- toolbar.querySelector("[data-font]").addEventListener("change",e=>{editor.focus();document.execCommand("fontName",false,e.target.value);renderRichPreview(editorId,previewId,editorId==="marqueeEditor");});
- toolbar.querySelector("[data-size]").addEventListener("change",e=>{editor.focus();document.execCommand("fontSize",false,"7");editor.querySelectorAll('font[size="7"]').forEach(node=>{node.removeAttribute("size");node.style.fontSize=e.target.value;});renderRichPreview(editorId,previewId,editorId==="marqueeEditor");});
- toolbar.querySelectorAll("[data-color]").forEach(input=>input.addEventListener("input",e=>{editor.focus();document.execCommand(e.target.dataset.color,false,e.target.value);renderRichPreview(editorId,previewId,editorId==="marqueeEditor");}));
- toolbar.querySelector("[data-effect]").addEventListener("change",e=>{
-  const effect=e.target.value; if(!effect)return; editor.focus();
-  const selection=window.getSelection();
-  if(selection && selection.rangeCount && !selection.isCollapsed){const span=document.createElement("span");span.className=effect;try{selection.getRangeAt(0).surroundContents(span);}catch(_){document.execCommand("insertHTML",false,'<span class="'+effect+'">'+esc(selection.toString())+'</span>');}}
-  e.target.value="";renderRichPreview(editorId,previewId,editorId==="marqueeEditor");
- });
- editor.addEventListener("paste",event=>{
-  event.preventDefault(); const text=(event.clipboardData||window.clipboardData).getData("text/plain");
-  document.execCommand("insertText",false,text);
- });
-}
-
+function readHeaderDraft(){const items=[];document.querySelectorAll(".header-item-editor").forEach(row=>{const label=row.querySelector("[data-item-label]").value.trim();const type=row.querySelector("[data-item-type]").value;if(!label)throw new Error("Header 的五個標題都必須填寫文字。");if(type==="dropdown"){const children=[];row.querySelectorAll(".header-child-row").forEach(child=>{const text=child.querySelector("[data-child-label]").value.trim();if(text)children.push({label:text,url:safeLinkUrl(child.querySelector("[data-child-url]").value),newTab:child.querySelector("[data-child-target]").checked});});if(!children.length)throw new Error("「"+label+"」已設定為下拉式選單，請至少新增一個子項目。");items.push({label,type,url:"#",newTab:false,children});}else items.push({label,type,url:safeLinkUrl(row.querySelector("[data-item-url]").value),newTab:row.querySelector("[data-item-target]").checked,children:[]});});if(items.length!==5)throw new Error("Header 必須保留五個導覽標題。");return {background:$("headerBackground").value||"#ffffff",items};}
+function renderRichPreview(editorId,previewId,marquee=false){const html=safeContentHtml($(editorId).innerHTML);const preview=$(previewId);if(marquee){preview.innerHTML='<span class="marquee-preview-track">'+(html||"請在下方輸入跑馬燈內容")+'</span>';preview.style.background="#222";preview.style.color="#fff";}else preview.innerHTML=html||"請輸入資訊欄內容";}
+function renderFooterPreview(){const root=$("footerInfoPreview");root.replaceChildren();for(let i=1;i<=3;i++){const section=document.createElement("section");section.className="info-preview-column";const h=document.createElement("h3");h.textContent=$("footerTitle"+i).value||["關於本站","資料說明","聯絡資訊"][i-1];const content=document.createElement("div");content.className="info-preview-content";content.innerHTML=safeContentHtml($("footerInfoEditor"+i).innerHTML)||"請輸入內容";section.append(h,content);root.append(section);}}
+function setupRichEditor(editorId,previewId,marquee=false){const editor=$(editorId);const toolbar=document.querySelector('[data-toolbar="'+editorId+'"]');editor.addEventListener("input",()=>{if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});toolbar.querySelectorAll("[data-command]").forEach(button=>button.addEventListener("click",()=>{editor.focus();const command=button.dataset.command;if(command==="createLink"){const url=prompt("請輸入超連結網址（https://、站內路徑或 mailto:）");if(url){try{document.execCommand("createLink",false,safeLinkUrl(url));}catch(e){alert(e.message);}}}else document.execCommand(command,false,null);if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();}));
+ toolbar.querySelector("[data-font]").addEventListener("change",e=>{editor.focus();document.execCommand("fontName",false,e.target.value);if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});toolbar.querySelector("[data-size]").addEventListener("change",e=>{editor.focus();document.execCommand("fontSize",false,"7");editor.querySelectorAll('font[size="7"]').forEach(node=>{node.removeAttribute("size");node.style.fontSize=e.target.value;});if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});toolbar.querySelectorAll("[data-color]").forEach(input=>input.addEventListener("input",e=>{editor.focus();document.execCommand(e.target.dataset.color,false,e.target.value);if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();}));toolbar.querySelector("[data-effect]").addEventListener("change",e=>{const effect=e.target.value;if(!effect)return;editor.focus();const selection=window.getSelection();if(selection&&selection.rangeCount&&!selection.isCollapsed){const span=document.createElement("span");span.className=effect;try{selection.getRangeAt(0).surroundContents(span);}catch(_){document.execCommand("insertHTML",false,'<span class="'+effect+'">'+esc(selection.toString())+'</span>');}}e.target.value="";if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});editor.addEventListener("paste",event=>{event.preventDefault();const text=(event.clipboardData||window.clipboardData).getData("text/plain");document.execCommand("insertText",false,text);});}
+function readFooterDraft(){return {columns:[1,2,3].map(i=>({title:$("footerTitle"+i).value.trim(),html:safeContentHtml($("footerInfoEditor"+i).innerHTML)}))};}
 async function loadSiteContent(){
- await requireAAL2();
- try{
-  const {data,error}=await supabaseClient.from("site_content").select("content_key,draft_data,published_data,updated_at,published_at");
-  if(error)throw error;
+ await requireAAL2();try{
+  const {data,error}=await supabaseClient.from("site_content").select("content_key,draft_data,published_data,updated_at,published_at");if(error)throw error;
   (data||[]).forEach(row=>{siteContentCache[row.content_key]={draft:row.draft_data,published:row.published_data,updated_at:row.updated_at,published_at:row.published_at};});
-  const h=siteContentCache.header?.draft||siteContentCache.header?.published||defaultHeader;
-  $("headerTitleInput").value=h.title||defaultHeader.title;
-  $("headerTitleSize").value=String(h.titleSize||22);
-  $("headerBackground").value=h.background||"#222222";
-  $("headerLinksEditor").replaceChildren(); (h.links||[]).forEach(link=>addHeaderLink(link)); renderHeaderPreview();
-  const m=siteContentCache.marquee?.draft??siteContentCache.marquee?.published??"";
-  $("marqueeEditor").innerHTML=safeContentHtml(m);renderRichPreview("marqueeEditor","marqueePreview",true);
-  const f=siteContentCache.footer_info?.draft??siteContentCache.footer_info?.published??"";
-  $("footerInfoEditor").innerHTML=safeContentHtml(f);renderRichPreview("footerInfoEditor","footerInfoPreview",false);
-  ["header","marquee","footer_info"].forEach(key=>{
-   const status=$(key==="header"?"headerStatus":key==="marquee"?"marqueeStatus":"footerStatus");
-   const item=siteContentCache[key];
-   status.textContent=item?(item.published_at?"已載入；曾發布於 "+new Date(item.published_at).toLocaleString("zh-TW"):"已載入草稿，尚未發布") : "尚無資料，請編輯後儲存草稿。";
-  });
- }catch(e){
-  ["headerStatus","marqueeStatus","footerStatus"].forEach(id=>say(id,"載入網站內容失敗："+e.message+"\n請先確認已在 Supabase 建立 site_content 資料表及 RLS 政策。"));
- }
+  const h=siteContentCache.header?.draft||defaultHeader;$("headerBackground").value=h.background||"#ffffff";$("headerLinksEditor").replaceChildren();
+  const legacyItems=Array.isArray(h.links)?h.links:[];
+  const items=Array.isArray(h.items)?h.items:defaultHeader.items.map((base,i)=>legacyItems[i]?({...base,label:legacyItems[i].label||base.label,type:"link",url:legacyItems[i].url||base.url,newTab:!!legacyItems[i].newTab}):base);
+  for(let i=0;i<5;i++)addHeaderItem(items[i]||defaultHeader.items[i],i);renderHeaderPreview();
+  const m=siteContentCache.marquee?.draft??"";$ ("marqueeEditor").innerHTML=safeContentHtml(m);renderRichPreview("marqueeEditor","marqueePreview",true);
+  let footer=siteContentCache.footer_info?.draft||defaultFooter;
+  if(typeof footer==="string")footer={columns:[{title:"關於本站",html:footer},defaultFooter.columns[1],defaultFooter.columns[2]]};
+  const cols=Array.isArray(footer.columns)?footer.columns:defaultFooter.columns;
+  for(let i=1;i<=3;i++){const col=cols[i-1]||defaultFooter.columns[i-1];$("footerTitle"+i).value=col.title||"";$("footerInfoEditor"+i).innerHTML=safeContentHtml(col.html||"");}
+  renderFooterPreview();
+  ["header","marquee","footer_info"].forEach(key=>{const status=$(key==="header"?"headerStatus":key==="marquee"?"marqueeStatus":"footerStatus");const item=siteContentCache[key];status.textContent=item?(item.published_at?"已載入；曾發布於 "+new Date(item.published_at).toLocaleString("zh-TW"):"已載入草稿，尚未發布"):"尚無資料，請編輯後儲存草稿。";});
+ }catch(e){["headerStatus","marqueeStatus","footerStatus"].forEach(id=>say(id,"載入網站內容失敗："+e.message+"\n請先執行隨附 SQL，建立網站內容資料表及 RLS 政策。"));}
 }
-
-async function saveSiteDraft(key,payload,statusId,button){
- try{
-  button.disabled=true; await requireAAL2();
-  const {error}=await supabaseClient.from("site_content").upsert({content_key:key,draft_data:payload,updated_at:new Date().toISOString()},{onConflict:"content_key"});
-  if(error)throw error;
-  siteContentCache[key]=siteContentCache[key]||{};siteContentCache[key].draft=payload;
-  say(statusId,"草稿已成功儲存。前臺仍維持目前已發布的版本。\n儲存時間："+new Date().toLocaleString("zh-TW"));
- }catch(e){say(statusId,"儲存草稿失敗："+e.message+"\n請確認 site_content 資料表與管理員 RLS 權限已設定。");}
- finally{button.disabled=false;}
-}
-
-async function publishSiteContent(key,payload,statusId,button){
- try{
-  button.disabled=true;await requireAAL2();
-  const {error}=await supabaseClient.from("site_content").upsert({content_key:key,draft_data:payload,published_data:payload,updated_at:new Date().toISOString(),published_at:new Date().toISOString()},{onConflict:"content_key"});
-  if(error)throw error;
-  siteContentCache[key]={...(siteContentCache[key]||{}),draft:payload,published:payload,published_at:new Date().toISOString()};
-  say(statusId,"發布成功！資料已寫入網站公開版本。\n注意：前臺頁面也必須讀取 get_published_site_content()，才會顯示這次發布的內容。\n發布時間："+new Date().toLocaleString("zh-TW"));
- }catch(e){say(statusId,"發布失敗："+e.message+"\n請確認 site_content 資料表與管理員 RLS 權限已設定。");}
- finally{button.disabled=false;}
-}
-
-$("addHeaderLink").addEventListener("click",()=>addHeaderLink());
-["headerTitleInput","headerTitleSize","headerBackground"].forEach(id=>$(id).addEventListener("input",renderHeaderPreview));
-$("saveHeaderDraft").onclick=e=>{try{saveSiteDraft("header",readHeaderDraft(),"headerStatus",e.currentTarget);}catch(err){say("headerStatus",err.message);}};
-$("publishHeader").onclick=e=>{try{publishSiteContent("header",readHeaderDraft(),"headerStatus",e.currentTarget);}catch(err){say("headerStatus",err.message);}};
+async function saveSiteDraft(key,payload,statusId,button){try{button.disabled=true;await requireAAL2();const {error}=await supabaseClient.from("site_content").upsert({content_key:key,draft_data:payload,published_data:siteContentCache[key]?.published??{},updated_at:new Date().toISOString()},{onConflict:"content_key"});if(error)throw error;siteContentCache[key]=siteContentCache[key]||{};siteContentCache[key].draft=payload;say(statusId,"草稿已成功儲存。前臺仍維持目前已發布的版本。\n儲存時間："+new Date().toLocaleString("zh-TW"));}catch(e){say(statusId,"儲存草稿失敗："+e.message+"\n請確認已執行 SQL 並使用完成 TOTP 的管理員帳號。");}finally{button.disabled=false;}}
+async function publishSiteContent(key,payload,statusId,button){try{button.disabled=true;await requireAAL2();const {error}=await supabaseClient.rpc("publish_site_content",{p_content_key:key,p_payload:payload});if(error)throw error;siteContentCache[key]=siteContentCache[key]||{};siteContentCache[key].draft=payload;siteContentCache[key].published=payload;siteContentCache[key].published_at=new Date().toISOString();say(statusId,"發布成功！公開版本已更新，前臺重新載入後即可讀取。\n發布時間："+new Date().toLocaleString("zh-TW"));}catch(e){say(statusId,"發布失敗："+e.message+"\n請確認已執行隨附 SQL、管理員權限及 TOTP AAL2。");}finally{button.disabled=false;}}
+$("headerBackground").addEventListener("input",renderHeaderPreview);
+["saveHeaderDraft","publishHeader"].forEach(id=>$(id).onclick=e=>{try{const payload=readHeaderDraft();if(id==="saveHeaderDraft")saveSiteDraft("header",payload,"headerStatus",e.currentTarget);else publishSiteContent("header",payload,"headerStatus",e.currentTarget);}catch(err){say("headerStatus",err.message);}});
 $("saveMarqueeDraft").onclick=e=>saveSiteDraft("marquee",safeContentHtml($("marqueeEditor").innerHTML),"marqueeStatus",e.currentTarget);
 $("publishMarquee").onclick=e=>publishSiteContent("marquee",safeContentHtml($("marqueeEditor").innerHTML),"marqueeStatus",e.currentTarget);
-$("saveFooterDraft").onclick=e=>saveSiteDraft("footer_info",safeContentHtml($("footerInfoEditor").innerHTML),"footerStatus",e.currentTarget);
-$("publishFooter").onclick=e=>publishSiteContent("footer_info",safeContentHtml($("footerInfoEditor").innerHTML),"footerStatus",e.currentTarget);
-setupRichEditor("marqueeEditor","marqueePreview");
-setupRichEditor("footerInfoEditor","footerInfoPreview");
+["footerTitle1","footerTitle2","footerTitle3"].forEach(id=>$(id).addEventListener("input",renderFooterPreview));
+$("saveFooterDraft").onclick=e=>saveSiteDraft("footer_info",readFooterDraft(),"footerStatus",e.currentTarget);
+$("publishFooter").onclick=e=>publishSiteContent("footer_info",readFooterDraft(),"footerStatus",e.currentTarget);
+setupRichEditor("marqueeEditor","marqueePreview",true);for(let i=1;i<=3;i++)setupRichEditor("footerInfoEditor"+i,"footerInfoPreview",false);
 
 function showAdmin(){
  // 密碼登入成功後只顯示雙重驗證，不開放操作面板。
