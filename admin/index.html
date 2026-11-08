@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -110,15 +109,69 @@ th{background:#eee}
 @media(max-width:420px){
  .filter-options{grid-template-columns:1fr}
 }
+
+
+/* ==========================================
+   登入後管理操作面板
+   ========================================== */
+body.dashboard-mode{padding:0;background:#f1f2f3;min-height:100vh}
+body.dashboard-mode main{max-width:none;margin:0}
+body.dashboard-mode #loginTitle{display:none}
+.dashboard-topbar{height:64px;padding:0 24px;background:#222;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.dashboard-brand{font-size:18px;font-weight:700;letter-spacing:1px}
+.dashboard-topbar .dashboard-user{font-size:12px;color:#ccc;margin-left:auto}
+.dashboard-topbar button{margin:0;border-color:#aaa;background:transparent;color:#fff}
+.dashboard-layout{min-height:calc(100vh - 64px);display:grid;grid-template-columns:250px minmax(0,1fr)}
+.dashboard-sidebar{background:#fff;border-right:1px solid #ccc;padding:18px 12px;min-height:calc(100vh - 64px)}
+.sidebar-heading{padding:8px 12px 15px;font-size:12px;color:#888;letter-spacing:1.5px}
+.sidebar-category{width:100%;display:flex;align-items:center;justify-content:space-between;margin:0 0 7px;padding:13px 12px;text-align:left;background:#f6f6f6;border:1px solid #ddd;font-size:14px;font-weight:700}
+.sidebar-category:hover{background:#eee}
+.sidebar-category .arrow{transition:transform .18s ease;font-size:12px}
+.sidebar-category[aria-expanded="true"] .arrow{transform:rotate(90deg)}
+.sidebar-submenu{padding:0 0 10px 12px}
+.sidebar-submenu.hidden{display:none}
+.sidebar-link{display:block;width:100%;margin:3px 0;padding:10px 12px;border:0;border-left:3px solid transparent;background:#fff;text-align:left;color:#555;font-size:13px}
+.sidebar-link:hover{background:#f2f2f2}
+.sidebar-link.active{border-left-color:#222;background:#e9e9e9;color:#111;font-weight:700}
+.dashboard-content{min-width:0;padding:24px}
+.dashboard-content .panel{max-width:1450px;margin:0 auto 18px}
+.dashboard-page-title{max-width:1450px;margin:0 auto 16px;font-size:22px;font-weight:700}
+.dashboard-placeholder{max-width:1100px;min-height:260px;margin:0 auto;padding:30px;background:#fff;border:1px solid #ccc}
+.dashboard-placeholder h2{font-size:20px;margin:0 0 12px}
+.dashboard-placeholder p{color:#777;line-height:1.8}
+.dashboard-placeholder .placeholder-note{padding:14px;background:#f2f2f2;border:1px solid #ddd;font-size:13px;color:#666}
+#candidateInfoPage>.dashboard-page-title{margin-bottom:16px}
+#candidateInfoPage #dataPanel{margin-bottom:18px}
+#candidateInfoPage #editorPanel{max-width:1450px;margin:0 auto 18px}
+@media(max-width:850px){
+ .dashboard-layout{grid-template-columns:205px minmax(0,1fr)}
+ .dashboard-content{padding:16px}
+ .dashboard-sidebar{padding:12px 8px}
+}
+@media(max-width:650px){
+ body.dashboard-mode{padding:0}
+ .dashboard-topbar{height:58px;padding:0 12px}
+ .dashboard-brand{font-size:15px}
+ .dashboard-layout{display:block;min-height:calc(100vh - 58px)}
+ .dashboard-sidebar{min-height:0;border-right:0;border-bottom:1px solid #ccc;padding:10px}
+ .sidebar-heading{padding:4px 8px 9px}
+ .sidebar-category{padding:10px;margin-bottom:5px}
+ .sidebar-submenu{padding-left:8px}
+ .sidebar-link{padding:9px 10px}
+ .dashboard-content{padding:12px}
+ .dashboard-content .panel{padding:14px}
+ .dashboard-topbar .dashboard-user{display:none}
+}
+
 </style>
 </head>
 
 <body>
 <main>
 
-<h1>地方選舉候選人管理後台</h1>
+<h1 id="loginTitle">地方選舉候選人管理後台</h1>
 
-<div class="panel">
+<div class="panel" id="connectionPanel">
 <h2>一、系統連線設定</h2>
 <div class="row">
  <div>
@@ -182,7 +235,68 @@ th{background:#eee}
 <div id="mfaStatus" class="status">尚未完成 AAL2 驗證</div>
 </div>
 
-<div class="panel hidden" id="dataPanel">
+<section id="adminDashboard" class="hidden">
+ <div class="dashboard-topbar">
+  <div class="dashboard-brand">地方選舉候選人管理系統</div>
+  <div class="dashboard-user" id="dashboardUserLabel">管理員操作中</div>
+  <button type="button" id="dashboardLogout">登出</button>
+ </div>
+ <div class="dashboard-layout">
+  <aside class="dashboard-sidebar">
+   <div class="sidebar-heading">ADMINISTRATION</div>
+
+   <button type="button" class="sidebar-category" data-sidebar-toggle="civicSubmenu" aria-expanded="true">
+    <span>公民投什麼</span><span class="arrow">▶</span>
+   </button>
+   <div class="sidebar-submenu" id="civicSubmenu">
+    <button type="button" class="sidebar-link" data-dashboard-page="headerPage">Header</button>
+    <button type="button" class="sidebar-link" data-dashboard-page="marqueePage">跑馬燈</button>
+    <button type="button" class="sidebar-link active" data-dashboard-page="candidateInfoPage">候選人資訊</button>
+    <button type="button" class="sidebar-link" data-dashboard-page="footerInfoPage">資訊欄</button>
+   </div>
+
+   <button type="button" class="sidebar-category" data-sidebar-toggle="siteSubmenu" aria-expanded="false">
+    <span>網站內容管理</span><span class="arrow">▶</span>
+   </button>
+   <div class="sidebar-submenu hidden" id="siteSubmenu">
+    <button type="button" class="sidebar-link" data-dashboard-page="sitePlaceholderPage">內容管理（待建立）</button>
+   </div>
+
+   <button type="button" class="sidebar-category" data-sidebar-toggle="dataSubmenu" aria-expanded="false">
+    <span>選舉資料管理</span><span class="arrow">▶</span>
+   </button>
+   <div class="sidebar-submenu hidden" id="dataSubmenu">
+    <button type="button" class="sidebar-link" data-dashboard-page="electionPlaceholderPage">資料管理（待建立）</button>
+   </div>
+
+   <button type="button" class="sidebar-category" data-sidebar-toggle="publishSubmenu" aria-expanded="false">
+    <span>發布與版本管理</span><span class="arrow">▶</span>
+   </button>
+   <div class="sidebar-submenu hidden" id="publishSubmenu">
+    <button type="button" class="sidebar-link" data-dashboard-page="versionPlaceholderPage">版本管理（待建立）</button>
+   </div>
+
+   <button type="button" class="sidebar-category" data-sidebar-toggle="systemSubmenu" aria-expanded="false">
+    <span>系統設定</span><span class="arrow">▶</span>
+   </button>
+   <div class="sidebar-submenu hidden" id="systemSubmenu">
+    <button type="button" class="sidebar-link" data-dashboard-page="systemPlaceholderPage">系統設定（待建立）</button>
+   </div>
+  </aside>
+
+  <section class="dashboard-content">
+   <div class="dashboard-page-title" id="currentDashboardPageTitle">候選人資訊</div>
+
+   <section class="dashboard-page hidden" id="headerPage">
+    <div class="dashboard-placeholder"><h2>Header 編輯</h2><p>此區將用於編輯前臺首頁 Header 的標題與連結。</p><div class="placeholder-note">功能尚未建立，後續再進行設計。</div></div>
+   </section>
+   <section class="dashboard-page hidden" id="marqueePage">
+    <div class="dashboard-placeholder"><h2>跑馬燈編輯</h2><p>此區將用於編輯前臺跑馬燈文字與顯示設定。</p><div class="placeholder-note">功能尚未建立，後續再進行設計。</div></div>
+   </section>
+
+   <section class="dashboard-page" id="candidateInfoPage">
+    <div class="dashboard-page-title">候選人資訊管理</div>
+<div class="panel" id="dataPanel">
 <h2>四、候選人資料管理</h2>
 
 <div class="toolbar">
@@ -362,6 +476,26 @@ th{background:#eee}
 </div>
 <div class="small" id="editStatus"></div>
 </div>
+   </section>
+
+   <section class="dashboard-page hidden" id="footerInfoPage">
+    <div class="dashboard-placeholder"><h2>資訊欄編輯</h2><p>此區將用於編輯前臺底部資訊欄內容。</p><div class="placeholder-note">功能尚未建立，後續再進行設計。</div></div>
+   </section>
+   <section class="dashboard-page hidden" id="sitePlaceholderPage">
+    <div class="dashboard-placeholder"><h2>網站內容管理</h2><p>此分類的管理功能將於後續階段建立。</p></div>
+   </section>
+   <section class="dashboard-page hidden" id="electionPlaceholderPage">
+    <div class="dashboard-placeholder"><h2>選舉資料管理</h2><p>此分類的管理功能將於後續階段建立。</p></div>
+   </section>
+   <section class="dashboard-page hidden" id="versionPlaceholderPage">
+    <div class="dashboard-placeholder"><h2>發布與版本管理</h2><p>此分類的管理功能將於後續階段建立。</p></div>
+   </section>
+   <section class="dashboard-page hidden" id="systemPlaceholderPage">
+    <div class="dashboard-placeholder"><h2>系統設定</h2><p>此分類的管理功能將於後續階段建立。</p></div>
+   </section>
+  </section>
+ </div>
+</section>
 
 </main>
 
@@ -395,6 +529,8 @@ const filterPanelOpen = {
 const selectedPublishCategories = new Set();
 
 const $ = id => document.getElementById(id);
+
+initializeDashboardNavigation();
 
 function say(id,msg){
  $(id).textContent = msg;
@@ -450,8 +586,53 @@ async function requireAAL2(){
 }
 
 function showAdmin(){
+ // 密碼登入成功後只顯示雙重驗證，不開放操作面板。
+ $("authPanel").classList.add("hidden");
  $("mfaPanel").classList.remove("hidden");
- $("dataPanel").classList.remove("hidden");
+ $("adminDashboard").classList.add("hidden");
+}
+
+function showDashboard(){
+ // 只有取得 AAL2 後，才顯示完整管理操作面板。
+ $("connectionPanel").classList.add("hidden");
+ $("authPanel").classList.add("hidden");
+ $("mfaPanel").classList.add("hidden");
+ $("adminDashboard").classList.remove("hidden");
+ $("dashboardUserLabel").textContent = currentUser?.email || "管理員操作中";
+ document.body.classList.add("dashboard-mode");
+ switchDashboardPage("candidateInfoPage","候選人資訊");
+}
+
+function switchDashboardPage(pageId,title){
+ document.querySelectorAll(".dashboard-page").forEach(page=>{
+  page.classList.toggle("hidden",page.id !== pageId);
+ });
+ document.querySelectorAll("[data-dashboard-page]").forEach(link=>{
+  link.classList.toggle("active",link.dataset.dashboardPage === pageId);
+ });
+ const titleNode = $("currentDashboardPageTitle");
+ if(titleNode) titleNode.textContent = title || "管理操作面板";
+}
+
+function initializeDashboardNavigation(){
+ document.querySelectorAll("[data-sidebar-toggle]").forEach(button=>{
+  button.addEventListener("click",()=>{
+   const target = $(button.dataset.sidebarToggle);
+   if(!target) return;
+   const opening = target.classList.contains("hidden");
+   target.classList.toggle("hidden",!opening);
+   button.setAttribute("aria-expanded",opening ? "true" : "false");
+  });
+ });
+
+ document.querySelectorAll("[data-dashboard-page]").forEach(link=>{
+  link.addEventListener("click",()=>{
+   switchDashboardPage(link.dataset.dashboardPage,link.textContent.trim());
+  });
+ });
+
+ const dashboardLogout = $("dashboardLogout");
+ if(dashboardLogout) dashboardLogout.addEventListener("click",()=>$("logout").click());
 }
 
 function esc(v){
@@ -994,7 +1175,10 @@ $("login").onclick = async () => {
    say("mfaStatus","目前沒有 TOTP 因子，請按「建立／檢查 TOTP 驗證器」。");
   }
 
-  if(aal.currentLevel === "aal2") await loadRows();
+  if(aal.currentLevel === "aal2"){
+   showDashboard();
+   await loadRows();
+  }
 
  }catch(e){
   say("authStatus",e.message);
@@ -1015,10 +1199,14 @@ $("logout").onclick = async () => {
   selectedFilters.region.clear();
   selectedPublishCategories.clear();
 
-  $("dataPanel").classList.add("hidden");
+  $("adminDashboard").classList.add("hidden");
+  $("connectionPanel").classList.remove("hidden");
+  $("authPanel").classList.remove("hidden");
   $("mfaPanel").classList.add("hidden");
   $("editorPanel").classList.add("hidden");
   $("partialPublishPanel").classList.add("hidden");
+  document.body.classList.remove("dashboard-mode");
+  $("loginTitle").style.display = "";
 
   say("authStatus","已登出");
  }catch(e){
@@ -1194,6 +1382,7 @@ $("verify").onclick = async () => {
 
   if(aal.currentLevel === "aal2"){
    say("mfaStatus","TOTP 驗證成功！目前安全等級：aal2。");
+   showDashboard();
    await loadRows();
   }else{
    say("mfaStatus",
