@@ -325,18 +325,17 @@ body{
 }
 
 .candidate-profile-hero{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start;margin:12px 0 28px}
-.candidate-profile-photo{display:block;width:240px;max-width:100%;height:300px;object-fit:cover;border:1px solid #aaa;background:#eee}
+.candidate-profile-photo{display:block;width:240px;max-width:100%;height:300px;object-fit:cover;border:1px solid #aaa;background:#eee;filter:none!important;-webkit-filter:none!important;mix-blend-mode:normal!important;opacity:1!important}
 .candidate-profile-placeholder{width:240px;max-width:100%;height:300px;aspect-ratio:auto;display:flex;align-items:center;justify-content:center;border:1px dashed #aaa;background:#f2f2f2;color:#888}
-.candidate-profile-facts{display:grid;gap:16px}
-.candidate-profile-fact{padding:12px 0;border-bottom:1px solid #ddd;line-height:1.8}
-.candidate-profile-fact strong{display:block;margin-bottom:3px}
-.candidate-profile-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0}
-.candidate-profile-nav a{display:flex;align-items:center;justify-content:center;min-height:74px;padding:12px;border:1px solid #333;color:inherit;text-decoration:none;text-align:center;font-weight:700}
-.candidate-profile-nav a:hover{background:#eee}
-.candidate-profile-section{padding:20px 0;border-top:1px dashed #777;line-height:1.9;scroll-margin-top:20px}
-.candidate-profile-section h4{margin:0 0 10px;font-size:20px}
-.candidate-profile-section .profile-copy{white-space:pre-wrap;overflow-wrap:anywhere}
-@media(max-width:650px){.candidate-profile-hero{grid-template-columns:1fr;gap:16px}.candidate-profile-photo,.candidate-profile-placeholder{width:190px;height:238px;max-width:100%}.candidate-profile-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.candidate-profile-facts{display:grid;gap:0;height:300px;max-height:300px;overflow-y:auto;align-content:start}
+.candidate-profile-fact{padding:6px 0;border-bottom:1px solid #ddd;line-height:1.35;font-size:14px}
+.candidate-profile-fact strong{display:block;margin-bottom:2px;font-size:13px}
+.candidate-profile-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:22px 0 28px}
+.candidate-profile-card{min-width:0;border:1px solid #333;padding:14px 12px;min-height:150px}
+.candidate-profile-card h4{margin:0 0 12px;text-align:center;font-size:17px;line-height:1.4}
+.candidate-profile-card-content{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;text-align:center}
+.candidate-profile-card-content:empty{color:#888}
+@media(max-width:900px){.candidate-profile-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.candidate-profile-hero{grid-template-columns:1fr;gap:16px}.candidate-profile-photo,.candidate-profile-placeholder{width:190px;height:238px;max-width:100%}.candidate-profile-facts{height:auto;max-height:300px}.candidate-profile-cards{grid-template-columns:1fr 1fr;gap:8px}.candidate-profile-card{min-height:120px;padding:12px 8px}}
 .candidate-detail{padding:24px 0 10px}
 .detail-back{
   margin:0 0 24px;
@@ -1262,7 +1261,7 @@ function renderCandidateDetail(candidateId){
   const fields=[["推薦政黨",candidate.party||"未提供政黨"],["參選職位",candidate.position||"未提供"],["參選地區",candidate.region||"未提供"],["選舉區",candidate.district||"未提供"],["登記日期",candidate.date||"未提供"]];
   const sections=[
     ["crime-history","犯罪史／司法紀錄",profile.crime_history],["attendance","出席率",profile.attendance],
-    ["interpellations","質詢率／質詢紀錄",profile.interpellations],["projects","專案",profile.projects],
+    ["interpellations","質詢／被質詢率",profile.interpellations],["projects","專案",profile.projects],
     ["policy","政見（更新中）",profile.policy],["experience","經歷",profile.experience],
     ["education","學歷",profile.education],["extra","其他補充",profile.extra]
   ];
@@ -1278,12 +1277,14 @@ function renderCandidateDetail(candidateId){
           <div class="candidate-profile-facts">${fields.map(([label,value])=>`<div class="candidate-profile-fact"><strong>${escapeHTML(label)}</strong>${escapeHTML(value)}</div>`).join("")}</div>
         </div>
       </div>
-      ${visibleSections.length?`
-        <nav class="candidate-profile-nav">
-          ${visibleSections.filter(([id])=>["crime-history","attendance","interpellations","projects"].includes(id)).map(([id,label])=>`<a href="#profile-${id}">${escapeHTML(label)}</a>`).join("")}
-        </nav>
-        ${visibleSections.map(([id,label,content])=>`<section class="candidate-profile-section" id="profile-${id}"><h4>${escapeHTML(label)}</h4><div class="profile-copy">${String(content||"").trim()?escapeHTML(content):"尚未提供資料"}</div></section>`).join("")}
-      `:`<div class="detail-list">${fields.map(([label,value])=>`<div class="detail-row"><div class="detail-label">${escapeHTML(label)}</div><div class="detail-value">${escapeHTML(value)}</div></div>`).join("")}<p class="data-note">此候選人尚未提供更多個人專頁內容。</p></div>`}
+      <div class="candidate-profile-cards">
+        ${sections.filter(([id])=>["crime-history","attendance","interpellations","projects"].includes(id)).map(([id,label,content])=>`
+          <section class="candidate-profile-card" id="profile-${id}">
+            <h4>${escapeHTML(label)}</h4>
+            <div class="candidate-profile-card-content">${String(content||"").trim()?escapeHTML(content):"暫無資料"}</div>
+          </section>
+        `).join("")}
+      </div>
     </div>
   `;
 
