@@ -108,6 +108,10 @@ th{background:#eee}
 .info-preview-column h3{margin:0 0 9px;padding-bottom:8px;border-bottom:1px solid #aaa;font-size:15px}
 .info-preview-column .info-preview-content{font-size:13px;line-height:1.8;overflow-wrap:anywhere}
 .marquee-preview{height:58px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;background:#222;color:#fff}
+.header-color-row{display:flex;gap:8px;align-items:center}
+.header-color-row input[type=text]{max-width:180px;font-family:monospace;text-transform:uppercase}
+.header-color-row input[type=color]{width:52px;height:38px;padding:2px;border:1px solid #aaa;background:#fff}
+.header-color-control small{display:block;margin-top:6px;color:#777;line-height:1.6}
 .marquee-preview-track{display:inline-block;min-width:max-content;padding-left:100%;animation:adminTickerMove 20s linear infinite}
 @keyframes adminTickerMove{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @media(max-width:900px){.info-column-editors{grid-template-columns:1fr}.info-preview-grid{grid-template-columns:1fr}.info-preview-column{border-right:0;border-bottom:1px solid #ccc}.header-item-fields{grid-template-columns:1fr 1fr}.header-child-row{grid-template-columns:1fr}}
@@ -200,6 +204,17 @@ body.dashboard-mode #loginTitle{display:none}
 #candidateInfoPage>.dashboard-page-title{margin-bottom:16px}
 #candidateInfoPage #dataPanel{margin-bottom:18px}
 #candidateInfoPage #editorPanel{max-width:1450px;margin:0 auto 18px}
+.candidate-profile-name-link{padding:0;border:0;background:transparent;color:#222;text-decoration:underline;text-underline-offset:3px;font:inherit;font-weight:700;cursor:pointer;text-align:left}.candidate-profile-name-link:hover{color:#555}\n.profile-editor-grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:20px;align-items:start}
+.profile-photo-editor{padding:12px;border:1px solid #ccc;background:#fafafa}
+.profile-photo-preview{width:100%;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px dashed #aaa;background:#eee;color:#888;text-align:center;margin-bottom:10px}
+.profile-photo-preview img{width:100%;height:100%;object-fit:cover}
+.profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.profile-fields label{grid-column:1/-1;font-weight:600;margin-top:5px}
+.profile-fields textarea{grid-column:1/-1;width:100%;min-height:70px;padding:9px;border:1px solid #bbb;font:inherit;resize:vertical}
+.profile-photo-editor input[type=file]{width:100%;font-size:12px;margin:8px 0}
+.profile-photo-editor button{width:100%;margin:5px 0}
+.profile-photo-editor small{display:block;color:#777;line-height:1.6}
+@media(max-width:700px){.profile-editor-grid{grid-template-columns:1fr}.profile-photo-editor{max-width:300px}.profile-fields{grid-template-columns:1fr}}
 @media(max-width:850px){
  .dashboard-layout{grid-template-columns:205px minmax(0,1fr)}
  .dashboard-content{padding:16px}
@@ -355,7 +370,7 @@ body.dashboard-mode #loginTitle{display:none}
       </div>
      </div>
      <div class="field-grid" style="margin-top:10px">
-      <div><label for="headerBackground">Header 背景色</label><input id="headerBackground" type="color" value="#ffffff"></div>
+      <div class="header-color-control"><label for="headerBackground">Header 背景色（輸入 HEX 色碼）</label><div class="header-color-row"><input id="headerBackground" type="text" value="#ffffff" maxlength="7" placeholder="#ffffff" spellcheck="false"><input id="headerBackgroundPicker" type="color" value="#ffffff" aria-label="選擇 Header 背景色"></div><small>例如：#ffffff（白色）、#222222（深灰）、#e0e0e0（淺灰）。可直接輸入色碼，也可點右側色票選色。</small></div>
      </div>
      <h3 style="font-size:16px;margin:20px 0 8px">五個導覽標題</h3>
      <div id="headerLinksEditor"></div>
@@ -374,7 +389,7 @@ body.dashboard-mode #loginTitle{display:none}
       <button type="button" data-command="bold"><b>B</b></button><button type="button" data-command="italic"><i>I</i></button><button type="button" data-command="underline"><u>U</u></button>
       <button type="button" data-command="insertUnorderedList">項目符號</button><button type="button" data-command="justifyLeft">靠左</button><button type="button" data-command="justifyCenter">置中</button>
       <label style="display:flex;align-items:center;gap:5px;margin:0">文字色<input type="color" data-color="foreColor" value="#ffffff"></label>
-      <label style="display:flex;align-items:center;gap:5px;margin:0">底色<input type="color" data-color="hiliteColor" value="#222222"></label>
+      <label style="display:flex;align-items:center;gap:5px;margin:0">跑馬燈背景色<input id="marqueeBackground" type="color" value="#222222"></label>
       <button type="button" data-command="createLink">加入連結</button><button type="button" data-command="removeFormat">清除格式</button>
       <select data-effect><option value="">文字特效</option><option value="effect-glow">發光</option><option value="effect-pulse">閃爍</option><option value="effect-rainbow">彩虹漸層</option></select>
      </div>
@@ -557,6 +572,23 @@ body.dashboard-mode #loginTitle{display:none}
  </div>
 </div>
 
+<div class="editor-fields candidate-profile-editor">
+ <h3>候選人個人專頁編輯</h3>
+ <p class="small">此區內容會顯示在前台候選人名牌點入的個人專頁。先儲存候選人基本資料後，即可上傳照片。個人專頁內容仍須發布該候選人資料才會公開。</p>
+ <div class="profile-editor-grid">
+  <div class="profile-photo-editor"><div class="profile-photo-preview" id="profilePhotoPreview">尚未上傳照片</div><label for="profilePhotoFile">上傳候選人照片</label><input id="profilePhotoFile" type="file" accept="image/png,image/jpeg,image/webp"><button type="button" id="uploadProfilePhoto">上傳／更新照片</button><small id="profilePhotoStatus">建議使用 JPG、PNG 或 WebP 圖片，最大 5 MB。</small></div>
+  <div class="profile-fields">
+   <label for="profileExperience">經歷</label><textarea id="profileExperience" rows="3" placeholder="可輸入服務經歷、工作經歷等"></textarea>
+   <label for="profileEducation">學歷</label><textarea id="profileEducation" rows="2" placeholder="可輸入學歷"></textarea>
+   <label for="profileCrime">犯罪史／司法紀錄</label><textarea id="profileCrime" rows="3" placeholder="請填寫可查證的公開資料；無資料可留白"></textarea>
+   <label for="profileAttendance">出席率</label><textarea id="profileAttendance" rows="3" placeholder="可輸入出席率、統計期間及資料來源"></textarea>
+   <label for="profileInterpellations">質詢率／質詢紀錄</label><textarea id="profileInterpellations" rows="3" placeholder="可輸入質詢統計、紀錄及資料來源"></textarea>
+   <label for="profileProjects">專案</label><textarea id="profileProjects" rows="3" placeholder="可輸入重要提案、專案及成果"></textarea>
+   <label for="profilePolicy">政見／政見條列</label><textarea id="profilePolicy" rows="6" placeholder="可逐條輸入政見，建議每一項分行"></textarea>
+   <label for="profileExtra">其他補充</label><textarea id="profileExtra" rows="3" placeholder="其他希望呈現的個人專頁內容"></textarea>
+  </div>
+ </div>
+</div>
 <label for="recordJson">進階 JSON 資料（可保留原本欄位）</label>
 <textarea id="recordJson" spellcheck="false"></textarea>
 <div class="toolbar">
@@ -736,7 +768,7 @@ function safeContentHtml(input){
 }
 function safeLinkUrl(value){const v=String(value||"").trim();if(!v)return "#";if(/^(javascript:|data:|vbscript:)/i.test(v))throw new Error("連結網址不允許使用 javascript、data 或 vbscript 協定。");if(/^(https?:\/\/|mailto:|tel:|\/|\.\/|\.\.\/|#)/i.test(v))return v;return "https://"+v;}
 function renderHeaderPreview(){
- const nav=$("headerPreviewLinks");nav.replaceChildren();$("headerPreview").style.background=$("headerBackground").value||"#ffffff";
+ const nav=$("headerPreviewLinks");nav.replaceChildren();$("headerPreview").style.background=normalizeHexColor($("headerBackground").value)||"#ffffff";
  document.querySelectorAll(".header-item-editor").forEach(row=>{const label=row.querySelector("[data-item-label]").value.trim();if(!label)return;const type=row.querySelector("[data-item-type]").value;
   if(type==="dropdown"){const details=document.createElement("details");details.className="header-preview-dropdown";const summary=document.createElement("summary");summary.textContent=label+" ▾";details.append(summary);const menu=document.createElement("div");menu.className="header-preview-dropdown-menu";row.querySelectorAll(".header-child-row").forEach(child=>{const text=child.querySelector("[data-child-label]").value.trim();if(!text)return;const a=document.createElement("a");a.textContent=text;try{a.href=safeLinkUrl(child.querySelector("[data-child-url]").value);}catch(_){a.href="#";}a.target=child.querySelector("[data-child-target]").checked?"_blank":"_self";menu.append(a);});details.append(menu);nav.append(details);
   }else{const a=document.createElement("a");a.textContent=label;a.className="header-preview-link";try{a.href=safeLinkUrl(row.querySelector("[data-item-url]").value);}catch(_){a.href="#";}a.target=row.querySelector("[data-item-target]").checked?"_blank":"_self";nav.append(a);}
@@ -756,8 +788,8 @@ function addHeaderItem(item={},index=0){
  type.addEventListener("change",sync);row.querySelectorAll("input").forEach(x=>x.addEventListener("input",renderHeaderPreview));
  row.querySelector("[data-add-child]").onclick=()=>addHeaderChild(row.querySelector(".header-child-list"));(item.children||[]).forEach(child=>addHeaderChild(row.querySelector(".header-child-list"),child));sync();$("headerLinksEditor").append(row);
 }
-function readHeaderDraft(){const items=[];document.querySelectorAll(".header-item-editor").forEach(row=>{const label=row.querySelector("[data-item-label]").value.trim();const type=row.querySelector("[data-item-type]").value;if(!label)throw new Error("Header 的五個標題都必須填寫文字。");if(type==="dropdown"){const children=[];row.querySelectorAll(".header-child-row").forEach(child=>{const text=child.querySelector("[data-child-label]").value.trim();if(text)children.push({label:text,url:safeLinkUrl(child.querySelector("[data-child-url]").value),newTab:child.querySelector("[data-child-target]").checked});});if(!children.length)throw new Error("「"+label+"」已設定為下拉式選單，請至少新增一個子項目。");items.push({label,type,url:"#",newTab:false,children});}else items.push({label,type,url:safeLinkUrl(row.querySelector("[data-item-url]").value),newTab:row.querySelector("[data-item-target]").checked,children:[]});});if(items.length!==5)throw new Error("Header 必須保留五個導覽標題。");return {background:$("headerBackground").value||"#ffffff",items};}
-function renderRichPreview(editorId,previewId,marquee=false){const html=safeContentHtml($(editorId).innerHTML);const preview=$(previewId);if(marquee){preview.innerHTML='<span class="marquee-preview-track">'+(html||"請在下方輸入跑馬燈內容")+'</span>';preview.style.background="#222";preview.style.color="#fff";}else preview.innerHTML=html||"請輸入資訊欄內容";}
+function readHeaderDraft(){const items=[];document.querySelectorAll(".header-item-editor").forEach(row=>{const label=row.querySelector("[data-item-label]").value.trim();const type=row.querySelector("[data-item-type]").value;if(!label)throw new Error("Header 的五個標題都必須填寫文字。");if(type==="dropdown"){const children=[];row.querySelectorAll(".header-child-row").forEach(child=>{const text=child.querySelector("[data-child-label]").value.trim();if(text)children.push({label:text,url:safeLinkUrl(child.querySelector("[data-child-url]").value),newTab:child.querySelector("[data-child-target]").checked});});if(!children.length)throw new Error("「"+label+"」已設定為下拉式選單，請至少新增一個子項目。");items.push({label,type,url:"#",newTab:false,children});}else items.push({label,type,url:safeLinkUrl(row.querySelector("[data-item-url]").value),newTab:row.querySelector("[data-item-target]").checked,children:[]});});if(items.length!==5)throw new Error("Header 必須保留五個導覽標題。");const background=normalizeHexColor($("headerBackground").value);if(!background)throw new Error("Header 背景色請輸入有效的 HEX 色碼，例如 #ffffff。");return {background,items};}
+function renderRichPreview(editorId,previewId,marquee=false){const html=safeContentHtml($(editorId).innerHTML);const preview=$(previewId);if(marquee){preview.innerHTML='<span class="marquee-preview-track">'+(html||"請在下方輸入跑馬燈內容")+'</span>';preview.style.background=$("marqueeBackground")?.value||"#222";preview.style.color="#fff";}else preview.innerHTML=html||"請輸入資訊欄內容";}
 function renderFooterPreview(){const root=$("footerInfoPreview");root.replaceChildren();for(let i=1;i<=3;i++){const section=document.createElement("section");section.className="info-preview-column";const h=document.createElement("h3");h.textContent=$("footerTitle"+i).value||["關於本站","資料說明","聯絡資訊"][i-1];const content=document.createElement("div");content.className="info-preview-content";content.innerHTML=safeContentHtml($("footerInfoEditor"+i).innerHTML)||"請輸入內容";section.append(h,content);root.append(section);}}
 function setupRichEditor(editorId,previewId,marquee=false){const editor=$(editorId);const toolbar=document.querySelector('[data-toolbar="'+editorId+'"]');editor.addEventListener("input",()=>{if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});toolbar.querySelectorAll("[data-command]").forEach(button=>button.addEventListener("click",()=>{editor.focus();const command=button.dataset.command;if(command==="createLink"){const url=prompt("請輸入超連結網址（https://、站內路徑或 mailto:）");if(url){try{document.execCommand("createLink",false,safeLinkUrl(url));}catch(e){alert(e.message);}}}else document.execCommand(command,false,null);if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();}));
  toolbar.querySelector("[data-font]").addEventListener("change",e=>{editor.focus();document.execCommand("fontName",false,e.target.value);if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});toolbar.querySelector("[data-size]").addEventListener("change",e=>{editor.focus();document.execCommand("fontSize",false,"7");editor.querySelectorAll('font[size="7"]').forEach(node=>{node.removeAttribute("size");node.style.fontSize=e.target.value;});if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});toolbar.querySelectorAll("[data-color]").forEach(input=>input.addEventListener("input",e=>{editor.focus();document.execCommand(e.target.dataset.color,false,e.target.value);if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();}));toolbar.querySelector("[data-effect]").addEventListener("change",e=>{const effect=e.target.value;if(!effect)return;editor.focus();const selection=window.getSelection();if(selection&&selection.rangeCount&&!selection.isCollapsed){const span=document.createElement("span");span.className=effect;try{selection.getRangeAt(0).surroundContents(span);}catch(_){document.execCommand("insertHTML",false,'<span class="'+effect+'">'+esc(selection.toString())+'</span>');}}e.target.value="";if(marquee)renderRichPreview(editorId,previewId,true);else renderFooterPreview();});editor.addEventListener("paste",event=>{event.preventDefault();const text=(event.clipboardData||window.clipboardData).getData("text/plain");document.execCommand("insertText",false,text);});}
@@ -766,11 +798,15 @@ async function loadSiteContent(){
  await requireAAL2();try{
   const {data,error}=await supabaseClient.from("site_content").select("content_key,draft_data,published_data,updated_at,published_at");if(error)throw error;
   (data||[]).forEach(row=>{siteContentCache[row.content_key]={draft:row.draft_data,published:row.published_data,updated_at:row.updated_at,published_at:row.published_at};});
-  const h=siteContentCache.header?.draft||defaultHeader;$("headerBackground").value=h.background||"#ffffff";$("headerLinksEditor").replaceChildren();
+  const h=siteContentCache.header?.draft||defaultHeader;$("headerBackground").value=h.background||"#ffffff";$("headerBackgroundPicker").value=normalizeHexColor(h.background)||"#ffffff";$("headerLinksEditor").replaceChildren();
   const legacyItems=Array.isArray(h.links)?h.links:[];
   const items=Array.isArray(h.items)?h.items:defaultHeader.items.map((base,i)=>legacyItems[i]?({...base,label:legacyItems[i].label||base.label,type:"link",url:legacyItems[i].url||base.url,newTab:!!legacyItems[i].newTab}):base);
   for(let i=0;i<5;i++)addHeaderItem(items[i]||defaultHeader.items[i],i);renderHeaderPreview();
-  const m=siteContentCache.marquee?.draft??"";$ ("marqueeEditor").innerHTML=safeContentHtml(m);renderRichPreview("marqueeEditor","marqueePreview",true);
+  const m=siteContentCache.marquee?.draft??"";
+  const marqueePayload=(m&&typeof m==="object"&&!Array.isArray(m))?m:{html:m,background:"#222222"};
+  $("marqueeEditor").innerHTML=safeContentHtml(marqueePayload.html||"");
+  $("marqueeBackground").value=/^#[0-9a-f]{6}$/i.test(marqueePayload.background||"")?marqueePayload.background:"#222222";
+  renderRichPreview("marqueeEditor","marqueePreview",true);
   let footer=siteContentCache.footer_info?.draft||defaultFooter;
   if(typeof footer==="string")footer={columns:[{title:"關於本站",html:footer},defaultFooter.columns[1],defaultFooter.columns[2]]};
   const cols=Array.isArray(footer.columns)?footer.columns:defaultFooter.columns;
@@ -781,10 +817,14 @@ async function loadSiteContent(){
 }
 async function saveSiteDraft(key,payload,statusId,button){try{button.disabled=true;await requireAAL2();const {error}=await supabaseClient.from("site_content").upsert({content_key:key,draft_data:payload,published_data:siteContentCache[key]?.published??{},updated_at:new Date().toISOString()},{onConflict:"content_key"});if(error)throw error;siteContentCache[key]=siteContentCache[key]||{};siteContentCache[key].draft=payload;say(statusId,"草稿已成功儲存。前臺仍維持目前已發布的版本。\n儲存時間："+new Date().toLocaleString("zh-TW"));}catch(e){say(statusId,"儲存草稿失敗："+e.message+"\n請確認已執行 SQL 並使用完成 TOTP 的管理員帳號。");}finally{button.disabled=false;}}
 async function publishSiteContent(key,payload,statusId,button){try{button.disabled=true;await requireAAL2();const {error}=await supabaseClient.rpc("publish_site_content",{p_content_key:key,p_payload:payload});if(error)throw error;siteContentCache[key]=siteContentCache[key]||{};siteContentCache[key].draft=payload;siteContentCache[key].published=payload;siteContentCache[key].published_at=new Date().toISOString();say(statusId,"發布成功！公開版本已更新，前臺重新載入後即可讀取。\n發布時間："+new Date().toLocaleString("zh-TW"));}catch(e){say(statusId,"發布失敗："+e.message+"\n請確認已執行隨附 SQL、管理員權限及 TOTP AAL2。");}finally{button.disabled=false;}}
-$("headerBackground").addEventListener("input",renderHeaderPreview);
+function normalizeHexColor(value){const v=String(value||"").trim();return /^#[0-9a-f]{6}$/i.test(v)?v.toLowerCase():null;}
+$("headerBackground").addEventListener("input",()=>{const c=normalizeHexColor($("headerBackground").value);if(c){$("headerBackgroundPicker").value=c;renderHeaderPreview();}});
+$("headerBackgroundPicker").addEventListener("input",()=>{$("headerBackground").value=$("headerBackgroundPicker").value;renderHeaderPreview();});
 ["saveHeaderDraft","publishHeader"].forEach(id=>$(id).onclick=e=>{try{const payload=readHeaderDraft();if(id==="saveHeaderDraft")saveSiteDraft("header",payload,"headerStatus",e.currentTarget);else publishSiteContent("header",payload,"headerStatus",e.currentTarget);}catch(err){say("headerStatus",err.message);}});
-$("saveMarqueeDraft").onclick=e=>saveSiteDraft("marquee",safeContentHtml($("marqueeEditor").innerHTML),"marqueeStatus",e.currentTarget);
-$("publishMarquee").onclick=e=>publishSiteContent("marquee",safeContentHtml($("marqueeEditor").innerHTML),"marqueeStatus",e.currentTarget);
+$("marqueeBackground").addEventListener("input",()=>renderRichPreview("marqueeEditor","marqueePreview",true));
+function readMarqueeDraft(){return {html:safeContentHtml($("marqueeEditor").innerHTML),background:$("marqueeBackground").value||"#222222"};}
+$("saveMarqueeDraft").onclick=e=>saveSiteDraft("marquee",readMarqueeDraft(),"marqueeStatus",e.currentTarget);
+$("publishMarquee").onclick=e=>publishSiteContent("marquee",readMarqueeDraft(),"marqueeStatus",e.currentTarget);
 ["footerTitle1","footerTitle2","footerTitle3"].forEach(id=>$(id).addEventListener("input",renderFooterPreview));
 $("saveFooterDraft").onclick=e=>saveSiteDraft("footer_info",readFooterDraft(),"footerStatus",e.currentTarget);
 $("publishFooter").onclick=e=>publishSiteContent("footer_info",readFooterDraft(),"footerStatus",e.currentTarget);
@@ -1733,7 +1773,7 @@ function renderRows(){
   return `
    <tr>
     <td>
-     <strong>${esc(d.name)}</strong>
+     <button type="button" class="candidate-profile-name-link" data-profile-edit="${esc(r.id)}">${esc(d.name)}</button>
      ${drawNumber ? `<span class="number-tag"> ${esc(drawNumber)}</span>` : ""}
      ${flagsHtml ? `<div class="record-tags">${flagsHtml}</div>` : ""}
      ${noteHtml}
@@ -1746,7 +1786,7 @@ function renderRows(){
     <td>${esc(d.party)}</td>
     <td><span class="pill">${statusText}</span></td>
     <td>
-     <button data-edit="${esc(r.id)}">編輯</button>
+     <button data-edit="${esc(r.id)}">編輯資料</button><button data-profile-edit="${esc(r.id)}">個人專頁</button>
      <button data-pub="${esc(r.id)}">
       ${r.is_published ? (pending ? "發布修改" : "重新發布") : "發布"}
      </button>
@@ -1762,6 +1802,7 @@ function renderRows(){
   b.onclick = ()=>edit(b.dataset.edit);
  });
 
+ $("rows").querySelectorAll("[data-profile-edit]").forEach(b=>{b.onclick=()=>edit(b.dataset.profileEdit,true);});
  $("rows").querySelectorAll("[data-pub]").forEach(b=>{
   b.onclick = ()=>publishOne(b.dataset.pub);
  });
@@ -1785,7 +1826,7 @@ $("refresh").onclick = async () => {
 };
 
 /* 十三、編輯候選人 */
-function edit(id){
+function edit(id,focusProfile=false){
  const r = rows.find(x=>x.id === id);
  if(!r) return;
 
@@ -1800,6 +1841,43 @@ function edit(id){
  $("editorPanel").classList.remove("hidden");
  $("editorPanel").scrollIntoView({behavior:"smooth",block:"start"});
 }
+
+// 個人專頁欄位讀寫
+function loadCandidateProfileFields(profile){
+ const p=profile||{};
+ $("profileExperience").value=p.experience||"";$("profileEducation").value=p.education||"";
+ $("profileCrime").value=p.crime_history||"";$("profileAttendance").value=p.attendance||"";
+ $("profileInterpellations").value=p.interpellations||"";$("profileProjects").value=p.projects||"";
+ $("profilePolicy").value=p.policy||"";$("profileExtra").value=p.extra||"";
+ $("profilePhotoStatus").textContent=p.image_url?"已設定候選人照片；如需替換請選擇新圖片。":"尚未上傳照片。";
+ $("profilePhotoPreview").innerHTML=p.image_url?'<img src="'+esc(p.image_url)+'" alt="候選人照片預覽">':"尚未上傳照片";
+ $("profilePhotoFile").value="";
+}
+function applyCandidateProfileFields(obj){
+ const old=obj.profile||{};
+ obj.profile={...old,experience:$("profileExperience").value.trim(),education:$("profileEducation").value.trim(),crime_history:$("profileCrime").value.trim(),attendance:$("profileAttendance").value.trim(),interpellations:$("profileInterpellations").value.trim(),projects:$("profileProjects").value.trim(),policy:$("profilePolicy").value.trim(),extra:$("profileExtra").value.trim()};
+}
+$("uploadProfilePhoto").onclick=async()=>{
+ const file=$("profilePhotoFile").files?.[0];
+ if(!file){alert("請先選擇一張候選人照片。");return;}
+ if(!editingId){alert("請先儲存候選人基本資料，建立候選人資料後再上傳照片。");return;}
+ if(!/^image\/(jpeg|png|webp)$/.test(file.type)){alert("僅支援 JPG、PNG 或 WebP 圖片。");return;}
+ if(file.size>5*1024*1024){alert("圖片不可超過 5 MB。");return;}
+ const btn=$("uploadProfilePhoto");btn.disabled=true;
+ try{
+  await requireAAL2();
+  const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+  const path=editingId+"/"+Date.now()+"."+ext;
+  const {error:uploadError}=await supabaseClient.storage.from("candidate-profiles").upload(path,file,{upsert:true,contentType:file.type});
+  if(uploadError)throw uploadError;
+  const {data:urlData}=supabaseClient.storage.from("candidate-profiles").getPublicUrl(path);
+  const obj=JSON.parse($("recordJson").value);obj.profile=obj.profile||{};obj.profile.image_url=urlData.publicUrl;
+  $("recordJson").value=JSON.stringify(obj,null,2);
+  $("profilePhotoPreview").innerHTML='<img src="'+esc(urlData.publicUrl)+'" alt="候選人照片預覽">';
+  $("profilePhotoStatus").textContent="照片已上傳；請再按「儲存為草稿」，並發布候選人資料後才會公開。";
+ }catch(err){$("profilePhotoStatus").textContent="上傳失敗："+err.message;}
+ finally{btn.disabled=false;}
+};
 
 /* 十四、新增候選人 */
 $("newRecord").onclick = () => {
@@ -1818,7 +1896,8 @@ $("newRecord").onclick = () => {
   note:"",
   draw_number:"",
   status_flags:[],
-  notes:[]
+  notes:[],
+  profile:{experience:"",education:"",crime_history:"",attendance:"",interpellations:"",projects:"",policy:"",extra:"",image_url:""}
  },null,2);
 
  loadStructuredEditorFields({
@@ -1826,6 +1905,7 @@ $("newRecord").onclick = () => {
   status_flags:[],
   notes:[]
  });
+ loadCandidateProfileFields({});
 
  $("deleteRecord").classList.add("hidden");
  $("editorPanel").classList.remove("hidden");
@@ -1846,6 +1926,7 @@ $("saveRecord").onclick = async () => {
 
   const obj = JSON.parse($("recordJson").value);
   applyStructuredEditorFields(obj);
+  applyCandidateProfileFields(obj);
 
   for(const k of [
    "level","region","role","position","district",
@@ -1871,7 +1952,9 @@ $("saveRecord").onclick = async () => {
      data:obj,
      is_published:false,
      published_data:null
-    });
+    })
+    .select("id")
+    .single();
   }
 
   if(result.error) throw result.error;
