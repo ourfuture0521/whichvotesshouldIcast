@@ -1963,12 +1963,27 @@ $("cancelEdit").onclick = () => {
 $("saveRecord").onclick = async () => {
  const button = $("saveRecord");
 
+ // 在任何非同步驗證開始前，先固定使用者當下勾選的狀態。
+ // 避免 AAL2 驗證／重新整理畫面後，才讀取到已被重設的 checkbox。
+ const structuredSnapshot = {
+  draw_number: $("drawNumber").value.trim(),
+  status_flags: [
+   $("flagNotRegistered").checked ? "not_registered" : null,
+   $("flagUncontested").checked ? "uncontested" : null,
+   $("flagIncumbent").checked ? "incumbent" : null
+  ].filter(Boolean),
+  notes: editorNotes.slice()
+ };
+ const expectedFlags = structuredSnapshot.status_flags.slice();
+
  try{
   button.disabled = true;
-  await requireAAL2();
 
   const obj = JSON.parse($("recordJson").value);
-  applyStructuredEditorFields(obj);
+  // 先把勾選狀態直接寫進待儲存 JSON，再進行 AAL2 驗證。
+  obj.draw_number = structuredSnapshot.draw_number;
+  obj.status_flags = structuredSnapshot.status_flags;
+  obj.notes = structuredSnapshot.notes;
   applyCandidateProfileFields(obj);
 
   for(const k of [
@@ -1977,6 +1992,8 @@ $("saveRecord").onclick = async () => {
   ]){
    if(!(k in obj)) throw new Error("缺少欄位："+k);
   }
+
+  await requireAAL2();
 
   const wasExistingRecord = !!editingId;
   const wasProfileMode = $("editorPanel").classList.contains("profile-only-mode");
@@ -1990,8 +2007,9 @@ $("saveRecord").onclick = async () => {
      data:obj,
      updated_at:new Date().toISOString()
     })
-    .eq("id",editingId);
-
+    .eq("id",editingId)
+    .select("id,data")
+    .single();
   }else{
    result = await supabaseClient
     .from("candidates")
@@ -2000,31 +2018,41 @@ $("saveRecord").onclick = async () => {
      is_published:false,
      published_data:null
     })
-    .select("id")
+    .select("id,data")
     .single();
-
-   if(!result.error){
-    savedId=result.data?.id||null;
-    editingId=savedId;
-   }
   }
 
   if(result.error) throw result.error;
+  savedId = result.data?.id || savedId;
   if(!savedId) throw new Error("資料已送出，但未取得候選人 ID，請重新載入確認。");
 
+  // 讀回資料庫實際結果；若標記未寫入，不顯示儲存成功。
+  const savedFlags = Array.isArray(result.data?.data?.status_flags)
+   ? result.data.data.status_flags
+   : [];
+  const flagsMatch = expectedFlags.length === savedFlags.length &&
+   expectedFlags.every(flag => savedFlags.includes(flag));
+  if(!flagsMatch){
+   throw new Error(
+    "資料庫未完整保存候選人標記。請勿發布；請重新登入後再試。資料庫回傳標記："+
+    JSON.stringify(savedFlags)
+   );
+  }
+
+  editingId = savedId;
+
   // 重新從 Supabase 載入資料，再將剛保存的候選人重新開啟。
-  // 讓後台畫面立即顯示資料庫實際保存的文字、照片網址及其他欄位。
   await loadRows();
   edit(savedId,wasProfileMode);
 
   say("editStatus",
    wasExistingRecord
-    ? "個人資料／候選人資料已成功保存，並已重新從資料庫載入顯示。前台仍維持原本已發布版本；按下發布後才會更新。"
-    : "候選人已新增為草稿，並已重新載入顯示。前台尚未公開；可繼續上傳照片及編輯個人專頁。"
+    ? "候選人資料及狀態標記已成功保存，並已從資料庫讀回確認。前台仍維持原本已發布版本；按下發布後才會更新。"
+    : "候選人已新增為草稿，狀態標記已從資料庫讀回確認。前台尚未公開。"
   );
 
  }catch(e){
-  say("editStatus",e.message);
+  say("editStatus","儲存失敗或驗證未通過："+(e?.message||String(e)));
  }finally{
   button.disabled = false;
  }
